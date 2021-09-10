@@ -1,0 +1,8 @@
+/**:
+  ros__parameters:
+    hardware_protection_layer_max_range: 0.220 # 105mm Robot outer radius + 15mm accuracy offset+ 100mm buffer zone
+    hardware_protection_layer_min_range: 0.11 # 80 mm
+    hardware_protection_layer_front_attraction: 2.0
+    hardware_protection_layer_threshold: 5
+    max_translational_velocity: 0.22
+    max_rotational_velocity: 2.84

@@ -1,0 +1,7 @@
+/**:
+  ros__parameters:
+    majority_rule_choose_start_value_at_random: true
+    majority_rule_initial_value: 0 # if majority_rule_choose_start_value_at_random is False use this value
+    majority_rule_min_opinion: 0 # [majority_rule_min_opinion,voter_model_max_opinion)
+    majority_rule_max_opinion: 3 # [majority_rule_min_opinion,voter_model_max_opinion)
+    majority_rule_timer_period: 5.0 # in sec

@@ -1,0 +1,9 @@
+/**:
+  ros__parameters:
+    attraction_max_range: 3.0
+    attraction_min_range: 0.8
+    attraction_front_attraction: -1.0
+    attraction_threshold: 1
+    attraction_stop_if_alone: False
+    max_translational_velocity: 0.5 # max 2.0
+    max_rotational_velocity: 4.0

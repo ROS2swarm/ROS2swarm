@@ -1,0 +1,23 @@
+/**:
+  ros__parameters:
+    # global params
+    max_translational_velocity: 0.26
+    max_rotational_velocity: 1.82
+    # params discussed dispersion node (master)
+    discussed_dispersion_timer_period: 0.25
+    discussed_dispersion_discussion_time: 20.0 # 20seconds
+    discussed_dispersion_discussion_base_distance: 0.6 # 60cm
+    discussed_dispersion_discussion_opinion_multiply: 0.4 # 40cm
+    # params dispersion node
+    dispersion_max_range: 3.5 # 3.5 in simulation
+    dispersion_min_range: 0.12
+    dispersion_front_attraction: 1.0
+    dispersion_threshold: 1
+    dispersion_stop_if_alone: True
+    dispersion_allow_dynamic_max_range_setting: True
+    # params majority rule node
+    majority_rule_choose_start_value_at_random: true
+    majority_rule_initial_value: 0 # if majority_rule_choose_start_value_at_random is False use this value
+    majority_rule_min_opinion: 0 # [majority_rule_min_opinion,voter_model_max_opinion)
+    majority_rule_max_opinion: 3 # [majority_rule_min_opinion,voter_model_max_opinion)
+    majority_rule_timer_period: 5.0 # in sec

@@ -1,0 +1,8 @@
+/**:
+  ros__parameters:
+    hardware_protection_layer_max_range: 1.2 # turn radius plus buffer
+    hardware_protection_layer_min_range: 0.8 # 120 mm
+    hardware_protection_layer_front_attraction: 2.0
+    hardware_protection_layer_threshold: 5
+    max_translational_velocity: 0.5 #2.0
+    max_rotational_velocity: 4.0
