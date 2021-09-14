@@ -27,7 +27,7 @@ def generate_launch_description():
 
     world_name = LaunchConfiguration('world_name', default='arena_large.world')
     world_directory = os.path.join(get_package_share_directory('launch_turtlebot_gazebo'), 'worlds')
-    use_sim_time = LaunchConfiguration('use_sim_time', default='True')
+    #use_sim_time = LaunchConfiguration('use_sim_time', default='True')
 
     return LaunchDescription([
         DeclareLaunchArgument('world_name', description='The name of the world to load, default: turtle.world'),
@@ -39,8 +39,8 @@ def generate_launch_description():
         ),
 
         # died eventually at startup
-        ExecuteProcess(
-           cmd=['ros2', 'param', 'set', '/gazebo', 'use_sim_time', use_sim_time],
-           output='screen'
-         ),
+        #ExecuteProcess(
+        #   cmd=['ros2', 'param', 'set', '/gazebo', 'use_sim_time', use_sim_time],
+        #   output='screen'
+        # ),
     ])
