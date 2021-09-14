@@ -1,0 +1,5 @@
+{
+  "ros2swarm/test/test_copyright.py": true,
+  "ros2swarm/test/test_flake8.py": true,
+  "ros2swarm/test/test_pep257.py": true
+}

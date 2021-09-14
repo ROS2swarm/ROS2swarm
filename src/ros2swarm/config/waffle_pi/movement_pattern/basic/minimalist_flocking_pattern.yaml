@@ -1,0 +1,15 @@
+/**:
+  ros__parameters:
+    minimalist_flocking_translational_velocity: 0.2
+    minimalist_flocking_rotational_left_velocity: 0.2
+    minimalist_flocking_rotational_right_velocity: -0.2
+    minimalist_flocking_drive_timer_period: 0
+    minimalist_flocking_zone1_threshold: 0.6 # sim 0.5
+    minimalist_flocking_zone2_threshold: 0.6 # sim 0.5
+    minimalist_flocking_zone3_threshold: 1.0 # sim 1.5
+    minimalist_flocking_zone4_threshold: 1.2 # sim 2.5
+    minimalist_flocking_zone2_robot_threshold: 18
+    minimalist_flocking_robot_threshold: 4
+    # global params
+    max_range: 1.4 # sim 3.5
+    min_range: 0.12

@@ -1,0 +1,9 @@
+/**:
+  ros__parameters:
+    dispersion_max_range: 3.5    # max range: 3500mm
+    dispersion_min_range: 0.12                  # min range: 120mm
+    dispersion_front_attraction: 1.0
+    dispersion_threshold: 1
+    dispersion_stop_if_alone: True
+    max_translational_velocity: 0.22
+    max_rotational_velocity: 2.84
