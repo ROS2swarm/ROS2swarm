@@ -42,7 +42,13 @@ This launch scripts get called in the script **restart_turtle.sh** (on turtle)
 and **restart.sh** (gazebo). In this scripts the parameter are already set and 
 you can switch between the launched patterns by changing -p parameter in the script.
 
-To activate the patterns after startup run the following line:
+To activate the patterns after startup open a new terminal, source the setup.bash  
+
+```
+source ./install/setup.bash
+```
+
+and run the following line:
 ```
  ros2 topic pub --once /swarm_command communication_interfaces/msg/Int8Message "{data: 1}"
 ```
