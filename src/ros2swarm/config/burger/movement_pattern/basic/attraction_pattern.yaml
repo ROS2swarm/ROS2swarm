@@ -1,7 +1,7 @@
 /**:
   ros__parameters:
-    attraction_max_range: 1.5 # 0.8 on turtle
-    attraction_min_range: 0.12
+    attraction_max_range: 3.0 # 0.8 on turtle
+    attraction_min_range: 0.15
     attraction_front_attraction: -1.0
     attraction_threshold: 1
     attraction_stop_if_alone: False

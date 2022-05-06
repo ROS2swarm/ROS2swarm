@@ -30,15 +30,27 @@ class AbstractPattern(Node):
                                      self.swarm_command_callback, 10)
 
     def swarm_command_callback(self, msg: Int8Message):
+        """
+        Set the start flag to true if on the /swarm_command topic a SwarmState.START
+        and to false if SwarmState.STOP is revised.If the flag is ture the callback is executed.
+
+        ros2 topic pub --once /swarm_command communication_interfaces/msg/Int8Message "{data: 1}"
+
+        ros2 topic pub --once /swarm_command communication_interfaces/msg/Int8Message "{data: 0}"
+        """
         self.get_logger().debug('Robot "{}" received command "{}"'.format(self.get_namespace(), msg.data))
         if msg.data == int(SwarmState.START):
-            # ros2 topic pub --once /swarm_command communication_interfaces/msg/Int8Message "{data: 1}"
             self.start_flag = True
         if msg.data == int(SwarmState.STOP):
             self.start_flag = False
 
     def swarm_command_controlled(self, callback_func):
-        # TODO only working for callbacks with one parameter
+        """
+        The callback function is only called if the start flag is set to true, which is done by publishing
+        start message to the /swarm_command topic
+
+        Only working for callbacks with **one** parameter
+        """
         def callb(x):
             if self.start_flag:
                 callback_func(x)
@@ -47,7 +59,12 @@ class AbstractPattern(Node):
         return lambda x: callb(x)
 
     def swarm_command_controlled_timer(self, callback_func):
-        # TODO only working for callbacks with zero parameters
+        """
+        The callback function is only called if the start flag is set to true, which is done by publishing
+        start message to the /swarm_command topic
+
+        Only working for callbacks with **zero** parameters
+        """
         def callb():
             if self.start_flag:
                 callback_func()
@@ -56,4 +73,6 @@ class AbstractPattern(Node):
         return lambda: callb()
 
     def swarm_command_false_case(self):
+        """Defines the general behavior if the swarm command ist false."""
         pass
+

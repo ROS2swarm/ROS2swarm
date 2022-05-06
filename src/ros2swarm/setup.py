@@ -63,17 +63,17 @@ setup(
     zip_safe=True,
     author='Marian Begemann',
     author_email='marian.begemann(at)student.uni-luebeck.de',
-    maintainer='Tanja Katharina Kaiser',
+    maintainer='Tanja Kaiser',
     maintainer_email='kaiser(at)iti.uni-luebeck.de',
-    keywords=['ros2 swarm pattern robot behaviour dispersion'
-              ' attraction flocking voter model majority rule random walk'],
+    keywords=['ros2 swarm pattern robot behaviour dispersion aggregation'
+              ' attraction magnetometer flocking voter model'],
     description='Contains swarm behaviour pattern implementations. '
                 'These could be launched individually or '
                 'get combined by redirecting their output topic streams.'
                 'All patterns have param files to adjust their behaviour.'
-                'Movement: Basic: drive, dispersion, attraction, minimalist flocking, random walk'
+                'Movement: Basic: drive, dispersion, attraction, aggregation, magnetometer, minimalist flocking'
                 'Combined: discussed dispersion'
-                'Voting: Basic: voter model, majority rule',
+                'Voting: Basic: voter model, voter model with wifi dBm limiter, majority rule',
     license='apache-2.0',
     tests_require=['pytest'],
     entry_points={
@@ -85,12 +85,20 @@ setup(
             'drive_pattern = ros2swarm.movement_pattern.basic.drive_pattern:main',
             'dispersion_pattern = '
             'ros2swarm.movement_pattern.basic.dispersion_pattern:main',
+            'aggregation_pattern = '
+            'ros2swarm.movement_pattern.basic.aggregation_pattern:main',
             'attraction_pattern = '
             'ros2swarm.movement_pattern.basic.attraction_pattern:main',
+            'attraction_pattern2 = '
+            'ros2swarm.movement_pattern.basic.attraction_pattern2:main',
+            'magnetometer_pattern = '
+            'ros2swarm.movement_pattern.basic.magnetometer_pattern:main',
             'random_walk_pattern = '
             'ros2swarm.movement_pattern.basic.random_walk_pattern:main', 
             'minimalist_flocking_pattern = '
             'ros2swarm.movement_pattern.basic.minimalist_flocking_pattern:main',
+            'rat_search_pattern = '
+            'ros2swarm.movement_pattern.basic.rat_search_pattern:main',
             # movement_pattern.combined
             'discussed_dispersion_pattern = '
             'ros2swarm.movement_pattern.combined.discussed_dispersion_pattern:main',
@@ -98,6 +106,8 @@ setup(
             # voting.basic
             'voter_model_pattern = '
             'ros2swarm.voting_pattern.basic.voter_model_pattern:main',
+            'voter_model_with_limiter_pattern = '
+            'ros2swarm.voting_pattern.basic.voter_model_with_limiter_pattern:main',
             'majority_rule_pattern = '
             'ros2swarm.voting_pattern.basic.majority_rule_pattern:main',
         ],

@@ -7,3 +7,5 @@
     attraction_stop_if_alone: False
     max_translational_velocity: 0.5 # max 2.0
     max_rotational_velocity: 4.0
+    #lidar_config: 0.0
+

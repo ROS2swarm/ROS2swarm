@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+#
 #    Copyright 2020 Marian Begemann
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,71 +17,107 @@
 # https://discourse.ros.org/t/spawning-a-robot-entity-using-a-node-with-gazebo-and-ros-2/9985,
 # at date 2020-06-08
 
-import argparse
+import os
+import sys
 import launch_ros.actions
 from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
-import os
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 
 def generate_launch_description():
-    parser = argparse.ArgumentParser(description='Environment settings')
-    parser.add_argument('-n', '--number_robots', type=int, default=1,
-                        help='The number of robots to spawn in the world')
-    parser.add_argument('-p', '--pattern', type=str, default='',
-                        help='The pattern executed by the robots')
-    parser.add_argument('-i', '--namespace_index', type=int, default=1,
-                        help='The first used namespace index')
-    parser.add_argument('-r', '--robot', type=str, default='',
-                        help='The type of robot')
-    args, unknown = parser.parse_known_args()
-    number_robots = args.number_robots
-    start_index = args.namespace_index
-    pattern = args.pattern
-    robot = args.robot
-    config_dir = os.path.join(get_package_share_directory('ros2swarm'), 'config', robot)
+    """Add turtlebot(s) to an already running gazebo simulation."""
+
+    for arg in sys.argv:
+        if arg.startswith("start_index:="):  # The start index for the robots number
+            start_index = int(arg.split(":=")[1])
+        if arg.startswith("number_robots:="):  # The number of robots to spawn in the world
+            number_robots = int(arg.split(":=")[1])
+        elif arg.startswith("pattern:="):  # The pattern executed by the robots
+            pattern = arg.split(":=")[1]
+        elif arg.startswith("log_level:="):  # The log level used in this execution
+            log_level = arg.split(":=")[1]
+        elif arg.startswith("robot:="):  # The type of robot
+            robot = arg.split(":=")[1]
+        elif arg.startswith("version:="):  # ROS version used
+            version = int(arg.split(":=")[1])
+        else:
+            if arg not in ['/opt/ros/foxy/bin/ros2',
+                           'launch',
+                           'launch_turtlebot_gazebo',
+                           'add_turtlebot.launch.py']:
+                print("Argument not known: '", arg, "'")
+
     print("number of robots :", number_robots)
     print("pattern :", pattern)
+    print("log level :", log_level)
+    print("robot :", robot)
     print("namespace_index :", start_index)
+    print("version :", version)
+
+    ros_version = version
 
     ld = LaunchDescription()
 
-    for i in (range(args.number_robots)):
+    for i in (range(number_robots)):
         num = i + start_index
         # add gazebo node
         gazebo_node = launch_ros.actions.Node(
             package='launch_turtlebot_gazebo',
-            node_executable='add_bot_node',
-            node_namespace=['namespace_', str(num)],
-            node_name=['gazeboTurtleBotNode_', str(num)],
+            executable='add_bot_node',
+            namespace=['namespace_', str(num)],
+            name=['gazeboTurtleBotNode_', str(num)],
             output='screen',
             arguments=[
                 '--robot_name', ['robot_name_', str(num)],
                 '--robot_namespace', ['robot_namespace_', str(num)],
-                '-x', '0.0',
+                '-x', '1.0',
                 '-y', [str(i), '.0'],
-                '-z', '0.1'
-                '-r', robot
+                '-z', '0.1',
+                '--type_of_robot', robot
             ]
         )
         ld.add_action(gazebo_node)
 
-        # Add Hardware protection layer node
-        ros2_hardware_protection_layer_node = launch_ros.actions.Node(
-            package='ros2swarm',
-            node_executable='hardware_protection_layer',
-            node_namespace=['robot_namespace_', str(num)],
-            output='screen',
-            parameters=[os.path.join(config_dir, 'hardware_protection_layer' + '.yaml')]
-        )
-        ld.add_action(ros2_hardware_protection_layer_node)
+    # allows to use the same configuration files for each robot type but different mesh models
+    robot_type = robot
+    if robot_type.startswith('burger'):
+        robot_type = "burger"
+    elif robot_type.startswith('waffle_pi'):
+        robot_type = "waffle_pi"
 
-        # add pattern
-        ros2_pattern_node = launch_ros.actions.Node(
-            package='ros2swarm',
-            node_executable=args.pattern,
-            node_namespace=['robot_namespace_', str(num)],
-            output='screen',
+    print("robot configuration:", robot_type)
+
+    config_dir = os.path.join(get_package_share_directory('ros2swarm'), 'config', robot_type)
+
+    urdf_file_name = 'turtlebot3_' + robot + '.urdf'
+    urdf_file = os.path.join(get_package_share_directory('turtlebot3_description'), 'urdf', urdf_file_name)
+    launch_pattern_dir = os.path.join(get_package_share_directory('ros2swarm'), 'launch', 'pattern')
+    launch_bringup_dir = os.path.join(get_package_share_directory('ros2swarm'))
+
+    # find out exact path of the patter launch file
+    for i in (range(number_robots)):
+        num = i + start_index
+        pattern_launch_file_name = pattern + '.launch.py'
+        for root, dirs, files in os.walk(launch_pattern_dir):
+            for name in files:
+                if name == pattern_launch_file_name:
+                    pattern_path = os.path.abspath(os.path.join(root, name))
+
+        # add patterns
+        launch_patterns = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                [launch_bringup_dir, '/' + 'bringup_patterns.launch.py']),
+            launch_arguments={'robot': robot,
+                              'robot_type': robot_type,
+                              'robot_namespace': ['robot_namespace_', str(num)],
+                              'pattern': pattern_path,
+                              'config_dir': config_dir,
+                              'urdf_file': urdf_file,
+                              'ros_version': str(ros_version)}.items(),
+
         )
-        ld.add_action(ros2_pattern_node)
+        ld.add_action(launch_patterns)
+
     return ld

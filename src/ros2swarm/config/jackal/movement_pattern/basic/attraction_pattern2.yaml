@@ -1,0 +1,11 @@
+/**:
+  ros__parameters:
+    attraction2_max_range: 3.0
+    attraction2_min_range: 0.8
+    attraction2_front_attraction: 1.0
+    attraction2_threshold: 1
+    attraction2_stop_if_alone: True
+    max_translational_velocity: 0.5 # max 2.0
+    max_rotational_velocity: 4.0
+    #lidar_config: 0.0
+

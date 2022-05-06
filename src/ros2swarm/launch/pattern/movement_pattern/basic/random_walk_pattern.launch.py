@@ -12,34 +12,27 @@
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
-
-import os
 import launch_ros.actions
-import argparse
 from launch import LaunchDescription
-from launch.substitutions import LaunchConfiguration
-from ament_index_python.packages import get_package_share_directory
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 
 
 def generate_launch_description():
     """Start the nodes required for the drive pattern."""
-    parser = argparse.ArgumentParser(description='Robot')
-    parser.add_argument('-r', '--robot', type=str, default='',
-                        help='The type of robot')
-    args, unknown = parser.parse_known_args()
-    robot = args.robot
+
     robot_namespace = LaunchConfiguration('robot_namespace', default='robot_namespace_default')
-    config_dir = os.path.join(get_package_share_directory('ros2swarm'), 'config', robot)
+    config_dir = LaunchConfiguration('config_dir', default='config_dir_default')
     log_level = LaunchConfiguration("log_level", default='debug')
 
     ld = LaunchDescription()
     ros2_pattern_node = launch_ros.actions.Node(
         package='ros2swarm',
-        node_executable='random_walk_pattern',
-        node_namespace=robot_namespace,
+        executable='random_walk_pattern',
+        namespace=robot_namespace,
         output='screen',
-        parameters=[os.path.join(config_dir, 'movement_pattern', 'basic', 'random_walk_pattern.yaml')],
-        arguments=[['__log_level:=', log_level]],
+        parameters=[
+            PathJoinSubstitution([config_dir, 'movement_pattern', 'basic', 'random_walk_pattern.yaml'])],
+        arguments=['--ros-args', '--log-level', log_level]
     )
     ld.add_action(ros2_pattern_node)
 
