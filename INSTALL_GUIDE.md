@@ -1,29 +1,19 @@
-# Install guide ROS2swarm
+# Install guide
 
-This guide is a detailed step by step instruction to install the ROS2swarm package on top of a Ubuntu 18.04 OS.
-It is based on the guide to step up a turtlebot3 development environment and uses the manual install of
+This guide is a detailed step by step instruction to install the ROS2swarm package on top of a Ubuntu 20.04 OS for the use with the TurtleBot3.
+It is based on the guide to set up a turtlebot3 development environment and uses the manual install of
 - https://emanual.robotis.com/docs/en/platform/turtlebot3/quick-start/
 - https://emanual.robotis.com/docs/en/platform/turtlebot3/simulation/
 
 
 ## Prerequirements
 
-This guide expects that the OS Ubuntu Bionic 18.04 is allready installed.
+This guide expects that the OS Ubuntu Bionic 20.04 is already installed.
 
-### Install python 3.7 and set it as default
+### Install ROS 2 Foxy
+Install ROS 2 desktop version following:
 
-```
-python --version
-sudo apt-get update
-sudo apt-get install python3.7
-sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
-sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.7 2
-sudo update-alternatives --config python
-python --version
-```
-
-### Install ROS2 Dashing
-Install ROS2 desktop version following: https://docs.ros.org/en/dashing/Installation/Ubuntu-Install-Debians.html
+https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html
 
 Set locale
 ```
@@ -40,13 +30,13 @@ Setup Sources
 ```
 sudo apt update && sudo apt install curl gnupg2 lsb-release
 sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key  -o /usr/share/keyrings/ros-archive-keyring.gpg
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(source /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
 ```
 Install ROS 2 packages
 ```
 sudo apt update
-sudo apt install ros-dashing-desktop
-echo 'source /opt/ros/dashing/setup.bash' >> ~/.bashrc
+sudo apt install ros-foxy-desktop
+echo 'source /opt/ros/foxy/setup.bash' >> ~/.bashrc
 ```
 Install argcomplete (optional)
 ```
@@ -59,54 +49,53 @@ new Terminal
 ros2 run demo_nodes_cpp talker
 ros2 run demo_nodes_py listener
 ```
-### Install Dependent ROS 2 Packages, including gazebo9
+### Install Dependent ROS 2 Packages, including gazebo
 
 Install colcon
 ```
 sudo apt install python3-colcon-common-extensions
 ```
 
-Install Gazebo9
+Install Gazebo
 ```
-curl -sSL http://get.gazebosim.org | sh
-```
-
-Uninstall Gazebo11 if installed previously
-```
-sudo apt remove gazebo11 libgazebo11-dev
-sudo apt install gazebo9 libgazebo9-dev
-sudo apt install ros-dashing-gazebo-ros-pkgs
+sudo apt install ros-foxy-gazebo-ros-pkgs
 ```
 
 Install Cartographer
 ```
-sudo apt install ros-dashing-cartographer
-sudo apt install ros-dashing-cartographer-ros
+sudo apt install ros-foxy-cartographer
+sudo apt install ros-foxy-cartographer-ros
 ```
 
 Install Navigation2
 ```
-sudo apt install ros-dashing-navigation2
-sudo apt install ros-dashing-nav2-bringup
+sudo apt install ros-foxy-navigation2
+sudo apt install ros-foxy-nav2-bringup
 ```
-
+<!--
 Install vcstool
 ```
 sudo apt install python3-vcstool
 ```
-
+-->
 ### Install turtlebot3
 
-The ROS2swarm package is supported for the following commit states of the turtlebot3 packages, therefore a this commits needs to be checkout from the downloaded git repositories.
+Install TurtleBOt3 Packages
+<!--
+```
+source ~/.bashrc
+sudo apt install ros-foxy-dynamixel-sdk
+sudo apt install ros-foxy-turtlebot3-msgs
+sudo apt install ros-foxy-turtlebot3
+```
+-->
 
 TurtleBot3 packages with source code:
 ```
-sudo apt remove ros-dashing-turtlebot3-msgs
-sudo apt remove ros-dashing-turtlebot3
 mkdir -p ~/turtlebot3_ws/src
 cd ~/turtlebot3_ws/src/
-git clone -b dashing-devel https://github.com/ROBOTIS-GIT/turtlebot3_msgs.git
-git clone -b dashing-devel https://github.com/ROBOTIS-GIT/turtlebot3.git
+git clone -b foxy-devel https://github.com/ROBOTIS-GIT/turtlebot3_msgs.git
+git clone -b foxy-devel https://github.com/ROBOTIS-GIT/turtlebot3.git
 sudo apt install ros-dashing-dynamixel-sdk
 cd ~/turtlebot3_ws && colcon build --symlink-install
 ```
@@ -120,24 +109,26 @@ echo 'export ROS_DOMAIN_ID=30 #TURTLEBOT3' >> ~/.bashrc
 Install turtlebot3_simulation package
 ```
 cd ~/turtlebot3_ws/src/
-git clone -b dashing-devel https://github.com/ROBOTIS-GIT/turtlebot3_simulations.git
+git clone -b foxy-devel https://github.com/ROBOTIS-GIT/turtlebot3_simulations.git
 ```
 
 ### switch to supported commits
+The ROS2swarm package only supports the following commits of the turtlebot3 packages.
+
 turtlebot3:
 ```
 cd  ~/turtlebot3_ws/src/turtlebot3
-git checkout 1ff16b4
+git checkout 8237b796ea1571033bf3230fbc78d1143968ddd1
 ```
 turtlebot3_msgs:
 ```
 cd ~/turtlebot3_ws/src/turtlebot3_msgs
-git checkout 348b3260
+git checkout cf5c56be94b335b1d2c9817bd2dcaceec21ccc68
 ```
 turtlebot3_simulations:
 ```
 cd ~/turtlebot3_ws/src/turtlebot3_simulations
-git checkout 9ecdd65e6
+git checkout f5d86bbeb614f46a176f47b3697c85a8a9b989f9
 ```
 
 Set the gazebo model path
@@ -161,7 +152,7 @@ ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
 
 place the project folder in your home directory (also required for using the scripts)
 ```
-git clone git@gitlab.iti.uni-luebeck.de:kaiser/ROS2swarm.git
+git clone git@gitlab.iti.uni-luebeck.de:ROS2/ros2swarm.git
 cd ~/ROS2swarm
 colcon build --symlink-install
 echo 'source ~/ROS2swarm/install/setup.bash' >> ~/.bashrc
@@ -212,5 +203,3 @@ install open_cv
 ```
 pip install opencv-python
 ```
-
-

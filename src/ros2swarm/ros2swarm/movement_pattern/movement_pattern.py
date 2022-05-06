@@ -30,6 +30,7 @@ class MovementPattern(AbstractPattern):
                                                        self.get_namespace() + '/drive_command', 10)
 
     def swarm_command_false_case(self):
+        """If swarm command is false the robot should not move."""
         self.command_publisher.publish(Twist())
 
     def destroy_node(self):

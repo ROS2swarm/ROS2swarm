@@ -11,9 +11,7 @@
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
-import rclpy
 from geometry_msgs.msg import Twist
-
 from ros2swarm.movement_pattern.movement_pattern import MovementPattern
 from ros2swarm.utils import setup_node
 
@@ -46,6 +44,10 @@ class DrivePattern(MovementPattern):
         self.param_x = float(self.get_parameter("drive_linear").get_parameter_value().double_value)
         self.param_z = float(
             self.get_parameter("drive_angular").get_parameter_value().double_value)
+
+        self.get_logger().warn('Logger is: ' + self.get_logger().get_effective_level().name)
+        self.get_logger().info('Logger is: info ')
+        self.get_logger().debug('Logger is: debug')
 
     def timer_callback(self):
         """Publish the configured twist message when called."""

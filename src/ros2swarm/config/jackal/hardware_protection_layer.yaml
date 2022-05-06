@@ -6,3 +6,4 @@
     hardware_protection_layer_threshold: 5
     max_translational_velocity: 0.5 #2.0
     max_rotational_velocity: 4.0
+    lidar_config: 0.0

@@ -1,5 +1,8 @@
 /**:
   ros__parameters:
-    drive_timer_period: 0.25
-    drive_linear: 0.5 # max 2.0
-    drive_angular: 2.5 # max 4.0
+    random_walk_timer_period: 0.25
+    random_walk_linear: 0.5 # max 2.0
+    random_walk_angular: 4.0 #2.5 # max 4.0
+    random_walk_rot_interval: 1.0
+    random_walk_lin_interval_min: 2.0
+    random_walk_lin_interval_max: 5.0

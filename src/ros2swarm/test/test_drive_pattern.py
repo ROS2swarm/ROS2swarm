@@ -59,7 +59,8 @@ def generate_test_description(ready_fn):
         node_executable='drive_pattern',
         node_namespace=robot_namespace,
         output='screen',
-        parameters=[os.path.join(config_dir, 'movement_pattern', 'basic', 'drive_pattern.yaml')],
+        parameters=[os.path.join(
+            config_dir, 'waffle_pi', 'movement_pattern', 'basic', 'drive_pattern.yaml')],
         arguments=[['__log_level:=', log_level]]
     )
     ld.add_action(ros2_pattern_node)
@@ -98,7 +99,6 @@ class TestDrivePattern(unittest.TestCase):
     def tearDown(self):
         self.testing_node.destroy_node()
 
-
     def callback1(self, msg):
         # self.flag = True
         self.counter += 1
@@ -106,7 +106,8 @@ class TestDrivePattern(unittest.TestCase):
     def test_1(self):
         # rospy.wait_for_service('add_two_ints')
         end_time = time.time() + 10
-        start_time = end_time - 9  # TODO startup time ensure different... pattern node needs time to start
+        # TODO startup time ensure different... pattern node needs time to start
+        start_time = end_time - 9
         while time.time() < start_time:
             while time.time() < end_time:
                 rclpy.spin_once(self.testing_node, timeout_sec=0.1)

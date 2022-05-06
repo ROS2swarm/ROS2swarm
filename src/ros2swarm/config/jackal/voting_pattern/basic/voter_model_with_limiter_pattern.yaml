@@ -1,0 +1,10 @@
+/**:
+  ros__parameters:
+    voter_model_with_limiter_number_of_near_robots: 3
+    voter_model_with_limiter_choose_start_value_at_random: true
+    voter_model_with_limiter_initial_value: 0 # voting_model_choose_start_value_at_random is False use this value
+    voter_model_with_limiter_min_opinion: 0 # [voter_model_min_opinion,voter_model_max_opinion)
+    voter_model_with_limiter_max_opinion: 2 # [voter_model_min_opinion,voter_model_max_opinion)
+    voter_model_with_limiter_timer_period: 5.0 # in sec
+    voter_model_with_limiter_required_dDm_to_be_near: -50
+    voter_model_with_limiter_wifi_interface_name: ad0

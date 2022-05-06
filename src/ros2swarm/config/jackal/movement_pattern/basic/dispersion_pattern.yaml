@@ -1,9 +1,11 @@
 /**:
   ros__parameters:
-    dispersion_max_range: 4.0 # because of arena 4,  # max range: 5m
+    dispersion_max_range: 4.5 # because of arena 4,  # max range: 5m
     dispersion_min_range: 0.8                  # min range: 80cm
     dispersion_front_attraction: 1.0
     dispersion_threshold: 1
     dispersion_stop_if_alone: True
     max_translational_velocity: 0.5 #max 2.0
     max_rotational_velocity: 4.0
+    #lidar_config: 0.0
+

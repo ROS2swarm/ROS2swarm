@@ -20,36 +20,30 @@
 # at date 09.07.2020
 
 import os
-
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, PythonExpression
 from launch.substitutions import ThisLaunchFileDir
 from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    TURTLEBOT3_MODEL = os.environ['TURTLEBOT3_MODEL']
-
+    robot_type = LaunchConfiguration("robot", default='robot_type_default')
     usb_port = LaunchConfiguration('usb_port', default='/dev/ttyACM0')
+    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+    turtle_namespace = LaunchConfiguration('turtle_namespace', default='robot_namespace_NOT_SET')
 
     tb3_param_dir = LaunchConfiguration(
         'tb3_param_dir',
-        default=os.path.join(
-            get_package_share_directory('ros2swarm'),
-            'param',
-            TURTLEBOT3_MODEL + '.yaml'))
+        default=PathJoinSubstitution([get_package_share_directory('ros2swarm'), 'param', PythonExpression(['"', robot_type, '"',' + ".yaml"'])]))
+    # os.path.join(            get_package_share_directory('ros2swarm'), 'param', robot_type + '.yaml'))
 
     # lidar_pkg_dir = LaunchConfiguration(
     #     'lidar_pkg_dir',
     #     default=os.path.join(get_package_share_directory('hls_lfcd_lds_driver'), 'launch'))
-
-    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
-
-    turtle_namespace = LaunchConfiguration('turtle_namespace', default='robot_namespace_NOT_SET')
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -82,14 +76,16 @@ def generate_launch_description():
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([ThisLaunchFileDir(), '/hlds_laser.launch.py']),
             # PythonLaunchDescriptionSource([lidar_pkg_dir, '/hlds_laser.launch.py']),
-            launch_arguments={'port': '/dev/ttyUSB0', 'frame_id': 'base_scan',
-                              'turtle_namespace': turtle_namespace}.items(),
+            launch_arguments={'port': '/dev/ttyUSB0',
+                              'frame_id': 'base_scan',
+                              'turtle_namespace': turtle_namespace
+                              }.items(),
         ),
 
         Node(
             package='turtlebot3_node',
-            node_executable='turtlebot3_ros',
-            node_namespace=[turtle_namespace],
+            executable='turtlebot3_ros',
+            namespace=[turtle_namespace],
             parameters=[tb3_param_dir],
             arguments=['-i', usb_port],
             output='screen'),
