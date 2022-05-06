@@ -51,7 +51,7 @@ def main():
 
     args, unknown = parser.parse_known_args()
 
-    TURTLEBOT3_MODEL = os.environ['TURTLEBOT3_MODEL']
+    #TURTLEBOT3_MODEL = os.environ['TURTLEBOT3_MODEL']
 
     # Start node
     rclpy.init()
@@ -69,14 +69,14 @@ def main():
     # Get path to the turtlebot3
     sdf_file_path = os.path.join(
         get_package_share_directory("turtlebot3_gazebo"), "models",
-        #"turtlebot3_"+args.robot,
-        "turtlebot3_"+TURTLEBOT3_MODEL,
+        "turtlebot3_"+args.robot,
+        #"turtlebot3_"+TURTLEBOT3_MODEL,
         "model.sdf")
     # TODO add here exportvariable!
 
-    print("sdf_file_path", sdf_file_path)
+    print("sdf_file_path: ", sdf_file_path)
 
-    node.get_logger().info('spawning `{}` on namespace `{}` at {}, {}, {}'.format(
+    node.get_logger().debug('spawning `{}` on namespace `{}` at {}, {}, {}'.format(
         args.robot_name, args.robot_namespace, args.x, args.y, args.z))
 
     request = SpawnEntity.Request()
@@ -96,7 +96,7 @@ def main():
         raise RuntimeError(
             'exception while calling service: %r' % future.exception())
 
-    node.get_logger().info("Done! Shutting down add_bot_node.")
+    node.get_logger().debug("Done! Shutting down add_bot_node.")
     node.destroy_node()
     rclpy.shutdown()
 

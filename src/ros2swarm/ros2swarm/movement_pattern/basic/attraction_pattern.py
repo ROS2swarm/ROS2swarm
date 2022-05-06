@@ -45,6 +45,7 @@ class AttractionPattern(MovementPattern):
                 ('attraction_stop_if_alone', None),
                 ('max_translational_velocity', None),
                 ('max_rotational_velocity', None),
+                ('lidar_config', None)
             ])
 
         self.scan_subscription = self.create_subscription(
@@ -68,6 +69,10 @@ class AttractionPattern(MovementPattern):
             "max_translational_velocity").get_parameter_value().double_value
         self.param_max_rotational_velocity = self.get_parameter(
             "max_rotational_velocity").get_parameter_value().double_value
+        # TODO replace magic number '3'
+        self.lidar_config = self.get_parameter(
+            "lidar_config").get_parameter_value().double_value if self.get_parameter(
+            "lidar_config").get_parameter_value().type == 3 else None
 
     def scan_callback(self, incoming_msg):
         """Call back if a new scan msg is available."""
@@ -86,7 +91,8 @@ class AttractionPattern(MovementPattern):
             self.param_max_translational_velocity,
             self.param_min_range,
             current_scan,
-            self.param_threshold)
+            self.param_threshold,
+            self.lidar_config)
 
         if self.param_stop_if_alone:
             direction = Twist() if stop else direction

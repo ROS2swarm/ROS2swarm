@@ -12,4 +12,4 @@
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
-ros2 launch ros2swarm bringup_turtle.launch.py -p dispersion_pattern -n 7 --log_level info
+ros2 launch ros2swarm bringup_turtle.launch.py -p dispersion_pattern -n 7 --log_level info -r burger

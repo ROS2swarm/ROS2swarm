@@ -16,6 +16,7 @@ colcon build --symlink-install &&
  source ./install/setup.bash &&
  ros2 launch ros2swarm bringup_turtle.launch.py -p discussed_dispersion_pattern -n NUM_CHANGE_ME --log_level info -r waffle_pi -v 2
 # -p pattern_name
-## movement pattern: drive_pattern | dispersion_pattern | attraction_pattern |   minimalist_flocking_pattern | random_walk_pattern | discussed_dispersion_pattern
-## voting_pattern voter_model_pattern | majority_rule_pattern
+## movement pattern: drive_pattern | dispersion_pattern | aggregation_pattern | flocking_pattern | flocking_pattern2 | attraction_pattern | attraction_pattern2 | magnetometer_pattern | minimalist_flocking_pattern | discussed_dispersion_pattern
+## voting_pattern voter_model_pattern | voter_model_with_limiter_pattern | majority_rule_pattern
 # -n num_robots
+# -r robot waffle_pi | burger

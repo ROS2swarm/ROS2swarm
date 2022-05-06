@@ -45,6 +45,7 @@ class HardwareProtectionLayer(Node):
                 ('hardware_protection_layer_threshold', None),
                 ('max_translational_velocity', None),
                 ('max_rotational_velocity', None),
+                ('lidar_config', None)
             ])
 
         self.command_subscription = self.create_subscription(
@@ -76,6 +77,11 @@ class HardwareProtectionLayer(Node):
             "max_translational_velocity").get_parameter_value().double_value
         self.param_max_rotational_velocity = self.get_parameter(
             "max_rotational_velocity").get_parameter_value().double_value
+        # TODO replace magic number '3'
+        self.lidar_config = self.get_parameter(
+            "lidar_config").get_parameter_value().double_value if self.get_parameter(
+            "lidar_config").get_parameter_value().type == 3 else None
+
 
     def destroy_node(self):
         """Send a stop twist message and calls the super destroy method."""
@@ -84,7 +90,7 @@ class HardwareProtectionLayer(Node):
 
     def vector_calc(self):
         """
-        Calculate a avoidance vector and if it is needed to avoid.
+        Calculate an avoidance vector and if it is needed to avoid.
 
         Returns
         -------
@@ -95,14 +101,11 @@ class HardwareProtectionLayer(Node):
             return [False, None]
 
         avoid_distance = self.param_max_range
-        direction, obstacle_free = ScanCalculationFunctions.potential_field(
-            self.param_front_attraction,
-            avoid_distance,
-            self.param_max_rotational_velocity,
-            self.param_max_translational_velocity,
-            self.param_min_range,
-            self.current_scan,
-            self.param_threshold)
+        direction, obstacle_free = ScanCalculationFunctions.potential_field(self.param_front_attraction, avoid_distance,
+                                                                            self.param_max_rotational_velocity,
+                                                                            self.param_max_translational_velocity,
+                                                                            self.param_min_range, self.current_scan,
+                                                                            self.param_threshold, self.lidar_config)
         avoid_needed = not obstacle_free
 
         return [avoid_needed, direction]

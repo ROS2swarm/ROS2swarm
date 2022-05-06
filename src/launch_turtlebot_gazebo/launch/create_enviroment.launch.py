@@ -108,6 +108,7 @@ def generate_launch_description():
                 if name == pattern_launch_file_name:
                     pattern_path = os.path.abspath(os.path.join(root, name))
 
+
         # add patterns
         launch_patterns = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(

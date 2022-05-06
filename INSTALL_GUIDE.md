@@ -8,7 +8,11 @@ It is based on the guide to step up a turtlebot3 development environment and use
 
 ## Prerequirements
 
-This guide expects that the OS Ubuntu Bionic 18.04 is allready installed.
+This guide expects that the OS Ubuntu Bionic 18.04 is already installed.
+
+<!--
+In order to work with the test python 3.6 is used now.
+TODO: check if no functionality requires python 3.7
 
 ### Install python 3.7 and set it as default
 
@@ -21,6 +25,8 @@ sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.7 2
 sudo update-alternatives --config python
 python --version
 ```
+
+-->
 
 ### Install ROS2 Dashing
 Install ROS2 desktop version following: https://docs.ros.org/en/dashing/Installation/Ubuntu-Install-Debians.html

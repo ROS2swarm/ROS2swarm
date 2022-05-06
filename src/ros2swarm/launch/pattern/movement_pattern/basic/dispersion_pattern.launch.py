@@ -28,7 +28,17 @@ def generate_launch_description():
     args, unknown = parser.parse_known_args()
     robot = args.robot
     robot_namespace = LaunchConfiguration('robot_namespace', default='robot_namespace_default')
-    config_dir = os.path.join(get_package_share_directory('ros2swarm'), 'config', robot)
+
+    #TODO extract robot argument to central lanuch scripts (and remove it from all pattern files)
+
+    # allows to use the same configuration files for each robot type but different mesh models
+    robot_config = robot
+    if robot_config.startswith('burger'):
+        robot_config = "burger"
+    elif robot_config.startswith('waffle_pi'):
+        robot_config = "waffle_pi"
+
+    config_dir = os.path.join(get_package_share_directory('ros2swarm'), 'config', robot_config)
     log_level = LaunchConfiguration("log_level", default='debug')
 
     ld = LaunchDescription()

@@ -46,13 +46,17 @@ def generate_launch_description():
                         help='The pattern executed by the robots')
     parser.add_argument('-l', '--log_level', type=str, default='',
                         help='The log level used in this execution')
+    parser.add_argument('-r', '--robot', type=str, default='',
+                        help='The TurtleBot robot used')
     args, unknown = parser.parse_known_args()
     robot_number = args.robot_number
     pattern = args.pattern
     log_level = args.log_level
+    robot = args.robot
     print("number of the robot: ", robot_number)
     print("pattern :", pattern)
     print("log level :", log_level)
+    print("robot :", robot)
 
     ld = LaunchDescription()
 
@@ -70,7 +74,7 @@ def generate_launch_description():
     turtle_namespace = ['robot_namespace_', str(robot_number)]
     turtle_node = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([launch_file_dir, '/turtlebot3_bringup.launch.py']),
-        launch_arguments={'turtle_namespace': turtle_namespace, 'pattern': pattern}.items(),
+        launch_arguments={'turtle_namespace': turtle_namespace, 'pattern': pattern, 'robot': robot}.items(),
     )
     ld.add_action(turtle_node)
 
@@ -85,7 +89,8 @@ def generate_launch_description():
     launch_patterns = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([launch_file_dir, '/' + 'bringup_patterns.launch.py']),
         launch_arguments={'robot_namespace': ['robot_namespace_', str(robot_number)],
-                          'pattern': pattern_path}.items(),
+                          'pattern': pattern_path,
+                          'robot': robot}.items(),
     )
     ld.add_action(launch_patterns)
 

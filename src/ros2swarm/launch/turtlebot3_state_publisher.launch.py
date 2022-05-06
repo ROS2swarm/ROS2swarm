@@ -20,7 +20,7 @@
 # at date 09.07.2020
 
 import os
-
+import argparse
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
@@ -29,11 +29,15 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    TURTLEBOT3_MODEL = os.environ['TURTLEBOT3_MODEL']
-
+    #TURTLEBOT3_MODEL = os.environ['TURTLEBOT3_MODEL']
     turtle_namespace = LaunchConfiguration('turtle_namespace', default='robot_namespace_NOT_SET')
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
-    urdf_file_name = 'turtlebot3_' + TURTLEBOT3_MODEL + '.urdf'
+    parser = argparse.ArgumentParser(description='Environment settings')
+    parser.add_argument('-r', '--robot', type=str, default='waffle_pi',
+                        help='The type of robot')
+    args, unknown = parser.parse_known_args()
+    robot = args.robot
+    urdf_file_name = 'turtlebot3_' + robot + '.urdf'
 
     print("urdf_file_name : {}".format(urdf_file_name))
 

@@ -20,7 +20,7 @@
 # at date 09.07.2020
 
 import os
-
+import argparse
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
@@ -32,7 +32,19 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    TURTLEBOT3_MODEL = os.environ['TURTLEBOT3_MODEL']
+    #TURTLEBOT3_MODEL = os.environ['TURTLEBOT3_MODEL']
+    parser = argparse.ArgumentParser(description='Environment settings')
+    parser.add_argument('-r', '--robot', type=str, default='waffle_pi',
+                        help='The type of robot')
+    args, unknown = parser.parse_known_args()
+    robot = args.robot
+
+    # allows to use the same configuration files for each robot type but different mesh models
+    robot_config = robot
+    if robot_config.startswith('burger'):
+        robot_config = "burger"
+    elif robot_config.startswith('waffle_pi'):
+        robot_config = "waffle_pi"
 
     usb_port = LaunchConfiguration('usb_port', default='/dev/ttyACM0')
 
@@ -41,7 +53,7 @@ def generate_launch_description():
         default=os.path.join(
             get_package_share_directory('ros2swarm'),
             'param',
-            TURTLEBOT3_MODEL + '.yaml'))
+            robot_config + '.yaml'))
 
     # lidar_pkg_dir = LaunchConfiguration(
     #     'lidar_pkg_dir',
@@ -50,6 +62,7 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
     turtle_namespace = LaunchConfiguration('turtle_namespace', default='robot_namespace_NOT_SET')
+
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -83,7 +96,8 @@ def generate_launch_description():
             PythonLaunchDescriptionSource([ThisLaunchFileDir(), '/hlds_laser.launch.py']),
             # PythonLaunchDescriptionSource([lidar_pkg_dir, '/hlds_laser.launch.py']),
             launch_arguments={'port': '/dev/ttyUSB0', 'frame_id': 'base_scan',
-                              'turtle_namespace': turtle_namespace}.items(),
+                              'turtle_namespace': turtle_namespace,
+                              'robot': robot}.items(),
         ),
 
         Node(

@@ -25,6 +25,7 @@ from ros2swarm.utils.state import State
 from ros2swarm.utils.scan_calculation_functions import ScanCalculationFunctions
 from enum import IntEnum, unique
 
+
 degree_45 = 45
 
 
@@ -71,6 +72,7 @@ class MinimalistFlockingPattern(MovementPattern):
                 ('minimalist_flocking_robot_threshold', None),
                 ('max_range', None),
                 ('min_range', None),
+                ('lidar_config', None)
             ])
 
         self.state = State.INIT
@@ -112,6 +114,10 @@ class MinimalistFlockingPattern(MovementPattern):
             "max_range").get_parameter_value().double_value
         self.param_min_range = self.get_parameter(
             "min_range").get_parameter_value().double_value
+        # TODO replace magic number '3'
+        self.lidar_config = self.get_parameter(
+            "lidar_config").get_parameter_value().double_value if self.get_parameter(
+            "lidar_config").get_parameter_value().type == 3 else None
 
         self.turn_right = Twist()
         self.turn_right.angular.z = self.param_rotational_right_velocity
@@ -128,14 +134,20 @@ class MinimalistFlockingPattern(MovementPattern):
         adj_ranges = ScanCalculationFunctions.adjust_ranges(incoming_msg.ranges,
                                                             self.param_min_range,
                                                             self.param_max_range)
+
         # Divide the ranges of the scan in 4 parts:
         # [0] = front, [1] = left, [2] = behind, [3] = right
-        adj_ranges = [adj_ranges[(i - degree_45+int(math.degrees(incoming_msg.angle_min)))] for i in
+        param = len(adj_ranges) / 360
+        angle_min = incoming_msg.angle_min if self.lidar_config is None else self.lidar_config
+        adj_ranges = [adj_ranges[(i - (degree_45 - int(math.degrees(angle_min)*param)))] for i in
                       range(0, len(adj_ranges))]
+
         self.ranges = [adj_ranges[i:i + int(len(adj_ranges) / 4)] for i in
                        range(0, len(adj_ranges), int(len(adj_ranges) / 4))]
         self.direction = self.vector_calc()
         self.command_publisher.publish(self.direction)
+
+
 
     def vector_calc(self):
         """State machine for the minimalist flocking behavior.

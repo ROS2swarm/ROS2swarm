@@ -1,0 +1,9 @@
+/**:
+  ros__parameters:
+    magnetometer_target_direction_x: 80.0 # degree
+    magnetometer_front_attraction: 0.0
+    magnetometer_stop_when_target_direction_reached: true
+    magnetometer_allowed_delta_in_target_direction: 20.0 # degree
+    magnetometer_rotational_velocity: 0.6  # rad/s
+    max_translational_velocity: 0.22 
+    max_rotational_velocity: 2.84    

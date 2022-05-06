@@ -1,0 +1,16 @@
+/**:
+  ros__parameters:
+    aggregation_max_range: 3.5
+    aggregation_min_range: 0.12
+    aggregation_front_attraction: 0.5
+    aggregation_time_scale: 24.0
+    aggregation_base_stay_time: 16.0
+    aggregation_group_distance: 0.85
+    aggregation_object_reduction: 'MEAN' # MEAN, NEAREST
+    aggregation_group_reference_selection: 'MEAN' # MEAN, NEAREST, FARTHEST
+    aggregation_object_threshold: 0.2
+    aggregation_object_min_width: 2
+    aggregation_object_max_width: 8
+    aggregation_stay_in_growing_groups: true
+    max_translational_velocity: 0.26
+    max_rotational_velocity: 1.82

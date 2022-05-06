@@ -29,7 +29,13 @@ def generate_launch_description():
     robot = args.robot
     robot_namespace = LaunchConfiguration('robot_namespace', default='robot_namespace_default')
     log_level = LaunchConfiguration("log_level", default='debug')
-    config_dir = os.path.join(get_package_share_directory('ros2swarm'), 'config', robot)
+    # allows to use the same configuration files for each robot type but different mesh models
+    robot_config = robot
+    if robot_config.startswith('burger'):
+        robot_config = "burger"
+    elif robot_config.startswith('waffle_pi'):
+        robot_config = "waffle_pi"
+    config_dir = os.path.join(get_package_share_directory('ros2swarm'), 'config', robot_config)
 
     ld = LaunchDescription()
     ros2_pattern_node = launch_ros.actions.Node(
