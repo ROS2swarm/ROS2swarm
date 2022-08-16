@@ -188,7 +188,7 @@ cd ~/turtlebot3_ws && colcon build --symlink-install
 ```
 3) use robot selection parameter in start_*.sh 
 ```
-number_robots:=waffle_pi_led
+robots:=waffle_pi_led
 ```
 
 #### TurtleBot3 with no sensor visualisation in Gazebo
@@ -216,7 +216,7 @@ cd ~/turtlebot3_ws && colcon build --symlink-install
 ```
 4) use robot selection parameter in start_*.sh 
 ```
-number_robots:=waffle_pi_invisible_sensors
+robots:=waffle_pi_invisible_sensors
 ```
 5)
 ```
