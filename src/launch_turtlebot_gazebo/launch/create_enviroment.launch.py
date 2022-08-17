@@ -141,4 +141,12 @@ def generate_launch_description():
         )
         ld.add_action(launch_patterns)
 
+    #launching other miscellaneous nodes in simulation
+    launch_misc = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [launch_bringup_dir, '/' + 'bringup_misc.launch.py']),
+            launch_arguments={}.items(),
+        )
+    ld.add_action(launch_misc)
+
     return ld
