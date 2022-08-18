@@ -14,15 +14,37 @@
 import rclpy
 from rclpy.node import Node
 
-class ItemsMaster(Node):
+from ros2swarm.utils.items_container import ItemsContainer
+from communication_interfaces.msg import IntListMessage
+from communication_interfaces.srv import ItemService
 
+class ItemsMaster(Node):
     def __init__(self):
         super().__init__('items_master')
-        #TODO implement multiple services in this node
-        #Service1 : giving the list of items to a robot if requested
-        #Service2 : giving an item to a robot if he requests it
-        #TODO implement an array for storing the items (struct = [10,5,6] if 10 items of type A, 5 items of type B, etc)
-        #also implement methods for picking an item from the container or adding items
+
+        self.items_types = 3
+        self.get_logger().info('Initializing list containing %i items' % self.items_types)
+        self.container = ItemsContainer(self.items_types)
+        self.get_logger().info('List initialized successfully')
+
+        self.publisher_ = self.create_publisher(IntListMessage, '/items_list', 10)
+        self.timer_publish = self.create_timer(0.5, self.timer_publish_callback) #publishing the list of items on the topic every 0.5 seconds
+
+        self.srv_ = self.create_service(ItemService, '/item_service', self.item_service_callback) #service used by robots to request to take an item: if the service return False, the item is not available
+
+        self.timer_add_items = self.create_timer(60, self.timer_add_items_callback) #every minute (check the frequency at wich items are added or adapt the number of robots)
+
+    def timer_publish_callback(self):
+        msg = IntListMessage()
+        msg.data = self.container.get_items_list()
+        self.publisher_.publish(msg)
+
+    def item_service_callback(self, request, response):
+        response.success = self.container.take_item(request.item_index)
+        return response
+
+    def timer_add_items_callback(self):
+        self.container.add_items_randomly()
 
 
 def main(args=None):

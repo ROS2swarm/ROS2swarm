@@ -30,6 +30,8 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/StringMessage.msg"
   "msg/DoubleMessage.msg"
   "msg/Int8Message.msg"
+  "msg/IntListMessage.msg"
+  "srv/ItemService.srv"
 )
 
 if(BUILD_TESTING)
