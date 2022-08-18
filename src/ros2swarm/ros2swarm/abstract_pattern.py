@@ -75,4 +75,3 @@ class AbstractPattern(Node):
     def swarm_command_false_case(self):
         """Defines the general behavior if the swarm command ist false."""
         pass
-
