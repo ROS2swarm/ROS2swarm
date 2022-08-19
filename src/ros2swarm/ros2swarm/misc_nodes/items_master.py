@@ -32,7 +32,7 @@ class ItemsMaster(Node):
 
         self.srv_ = self.create_service(ItemService, '/item_service', self.item_service_callback) #service used by robots to request to take an item: if the service return False, the item is not available
 
-        self.timer_add_items = self.create_timer(60, self.timer_add_items_callback) #every minute (check the frequency at wich items are added or adapt the number of robots)
+        self.timer_add_items = self.create_timer(10, self.timer_add_items_callback) #every minute (check the frequency at wich items are added or adapt the number of robots)
 
     def timer_publish_callback(self):
         msg = IntListMessage()
