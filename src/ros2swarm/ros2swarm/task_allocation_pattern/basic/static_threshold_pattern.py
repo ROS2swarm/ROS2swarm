@@ -17,7 +17,8 @@ from communication_interfaces.msg import IntListMessage
 from communication_interfaces.srv import ItemService
 from ros2swarm.utils import setup_node
 from ros2swarm.utils.state import State
-
+import random
+import numpy as np
 
 class StaticThresholdPattern(AbstractPattern):
     """
