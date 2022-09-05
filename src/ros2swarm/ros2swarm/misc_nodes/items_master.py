@@ -18,6 +18,9 @@ from ros2swarm.utils.items_container import ItemsContainer
 from communication_interfaces.msg import IntListMessage
 from communication_interfaces.srv import ItemService
 
+import csv
+import string
+
 class ItemsMaster(Node):
     def __init__(self):
         super().__init__('items_master')
@@ -26,6 +29,15 @@ class ItemsMaster(Node):
         self.get_logger().info('Initializing list containing %i items' % self.items_types)
         self.container = ItemsContainer(self.items_types)
         self.get_logger().info('List initialized successfully')
+
+        self.filepath_log = "log_items.csv"
+        items_string_list = []
+        for item_type in range(self.items_types):
+            items_string_list.append('items_' + string.ascii_lowercase[item_type])
+        with open(self.filepath_log, 'w', encoding='UTF8') as f:
+            writer = csv.writer(f)
+            # write the header
+            writer.writerow(items_string_list)
 
         self.publisher_ = self.create_publisher(IntListMessage, '/items_list', 10)
         self.timer_publish = self.create_timer(0.5, self.timer_publish_callback) #publishing the list of items on the topic every 0.5 seconds
@@ -38,6 +50,12 @@ class ItemsMaster(Node):
         msg = IntListMessage()
         msg.data = self.container.get_items_list()
         self.publisher_.publish(msg)
+        #writing items log data
+        with open(self.filepath_log, 'a', encoding='UTF8') as f:
+            writer = csv.writer(f)
+            # write the data
+            writer.writerow(msg.data)
+
 
     def item_service_callback(self, request, response):
         response.success = self.container.take_item(request.item_index)
