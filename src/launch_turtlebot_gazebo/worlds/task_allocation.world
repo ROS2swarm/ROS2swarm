@@ -1,5 +1,12 @@
 <sdf version='1.7'>
   <world name='default'>
+    <plugin name="gazebo_ros_state" filename="libgazebo_ros_state.so">
+      <ros>
+        <namespace>/model_states</namespace>
+        <argument>model_states:=model_states</argument>
+      </ros>
+      <update_rate>1.0</update_rate>
+    </plugin>
     <light name='sun' type='directional'>
       <cast_shadows>1</cast_shadows>
       <pose>0 0 10 0 -0 0</pose>
@@ -195,7 +202,7 @@
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
-      <model name='unit_cylinder'>
+      <model name='items_master_zone'>
         <pose>5 -5 -0.1 0 -0 0</pose>
         <scale>1 1 1.1</scale>
         <link name='link'>
@@ -205,7 +212,7 @@
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
-      <model name='unit_cylinder_clone'>
+      <model name='A_zone'>
         <pose>5 5 -0.1 0 -0 0</pose>
         <scale>1 1 1.1</scale>
         <link name='link'>
@@ -215,7 +222,7 @@
           <wrench>0 -0 0 0 -0 0</wrench>
         </link>
       </model>
-      <model name='unit_cylinder_clone_0'>
+      <model name='B_zone'>
         <pose>-5 -5 -0.1 0 -0 0</pose>
         <scale>1 1 1.1</scale>
         <link name='link'>
@@ -225,7 +232,7 @@
           <wrench>-0 0 0 0 -0 0</wrench>
         </link>
       </model>
-      <model name='unit_cylinder_clone_1'>
+      <model name='C_zone'>
         <pose>-5 5 -0.1 0 -0 0</pose>
         <scale>1 1 1.1</scale>
         <link name='link'>
@@ -408,7 +415,7 @@
         <kinematic>0</kinematic>
       </link>
     </model>
-    <model name='unit_cylinder'>
+    <model name='items_master_zone'>
       <static>1</static>
       <pose>5 -5 -0.1 0 -0 0</pose>
       <link name='link'>
@@ -433,7 +440,7 @@
           </geometry>
           <material>
             <script>
-              <name>Gazebo/Blue</name>
+              <name>Gazebo/Purple</name>
               <uri>file://media/materials/scripts/gazebo.material</uri>
             </script>
           </material>
@@ -443,7 +450,7 @@
         <kinematic>0</kinematic>
       </link>
     </model>
-    <model name='unit_cylinder_clone'>
+    <model name='A_zone'>
       <static>1</static>
       <pose>5 5 -0.1 0 -0 0</pose>
       <link name='link'>
@@ -478,7 +485,7 @@
         <kinematic>0</kinematic>
       </link>
     </model>
-    <model name='unit_cylinder_clone_0'>
+    <model name='B_zone'>
     <static>1</static>
       <pose>-5 -5 -0.1 0 -0 0</pose>
       <link name='link'>
@@ -513,7 +520,7 @@
         <kinematic>0</kinematic>
       </link>
     </model>
-    <model name='unit_cylinder_clone_1'>
+    <model name='C_zone'>
     <static>1</static>
       <pose>-5 5 -0.1 0 -0 0</pose>
       <link name='link'>
@@ -538,7 +545,7 @@
           </geometry>
           <material>
             <script>
-              <name>Gazebo/Purple</name>
+              <name>Gazebo/Blue</name>
               <uri>file://media/materials/scripts/gazebo.material</uri>
             </script>
           </material>
