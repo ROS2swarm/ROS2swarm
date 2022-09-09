@@ -39,3 +39,6 @@ class State(Enum):
     TUNNEL_CORNER = 17
     DO_TASK = 18
     TASK_ALLOCATION = 19
+    CARRYING_ITEM = 20
+    DROPPING_ITEM = 21
+    BACK_TO_NEST = 22

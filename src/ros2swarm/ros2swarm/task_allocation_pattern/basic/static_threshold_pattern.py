@@ -16,6 +16,7 @@ from ros2swarm.abstract_pattern import AbstractPattern
 from communication_interfaces.msg import IntListMessage
 from communication_interfaces.srv import ItemService
 from gazebo_msgs.msg import ModelStates
+from geometry_msgs.msg import Twist
 from ros2swarm.utils import setup_node
 from ros2swarm.utils.state import State
 import random
@@ -54,6 +55,7 @@ class StaticThresholdPattern(AbstractPattern):
         self.subscription = self.create_subscription(IntListMessage, '/items_list', self.item_list_callback, 10)
         self.subscription = self.create_subscription(ModelStates, '/model_states/model_states', self.model_states_callback, 10)
         self.cli_item_service = self.create_client(ItemService, '/item_service')
+        self.command_publisher = self.create_publisher(Twist, self.get_namespace() + '/drive_command', 10)
 
         while not self.cli_item_service.wait_for_service(timeout_sec=1.0):
             self.get_logger().info('service not available, waiting again...')
@@ -143,24 +145,25 @@ class StaticThresholdPattern(AbstractPattern):
         elif (self.robot_state == State.DO_TASK):
             # do the task here ! taking the item, moving, dropping the item, coming back
             # taking item
-            """
-            msg = Twist()
-            inc_x = self.goalx-self.x
-            inc_y = self.goaly-self.y
-            angle_to_goal = atan2(inc_y, inc_x)
-            if abs(angle_to_goal - self.theta) > 0.1:
-            	msg.linear.x = 0.0
-            	msg.angular.z = 0.3
-            else:
-            	msg.linear.x = 0.5
-            	msg.angular.z = 0.0
-            self.command_publisher.publish(msg)
-            self.get_logger().info('Publishing {}'.format( msg))
-            """
             if (self.future == None):
                 self.send_request()
             if (self.check_future()):
-                self.robot_state = State.TASK_ALLOCATION  # TODO replace this with moving etc
+                self.robot_state = State.CARRYING_ITEM
+
+        elif (self.robot_state == State.CARRYING_ITEM):
+            msg = Twist() #example with linear speed
+            msg.linear.x = 1.0
+            msg.angular.z = 0.0
+            self.command_publisher.publish(msg)
+            self.robot_state = State.DROPPING_ITEM
+
+        elif (self.robot_state == State.DROPPING_ITEM):
+
+            self.robot_state = State.BACK_TO_NEST
+
+        elif (self.robot_state == State.BACK_TO_NEST):
+
+            self.robot_state = State.TASK_ALLOCATION
 
     def destroy_node(self):
         """Call the super destroy method."""
