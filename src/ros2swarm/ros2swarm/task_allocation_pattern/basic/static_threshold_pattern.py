@@ -52,8 +52,8 @@ class StaticThresholdPattern(AbstractPattern):
         self.item_type_hold = None
         self.item_type_to_take = 0
 
-        self.subscription = self.create_subscription(IntListMessage, '/items_list', self.item_list_callback, 10)
-        self.subscription = self.create_subscription(ModelStates, '/model_states/model_states', self.model_states_callback, 10)
+        self.subscription_items_list = self.create_subscription(IntListMessage, '/items_list', self.item_list_callback, 10)
+        self.subscription_models_states = self.create_subscription(ModelStates, '/model_states/model_states', self.model_states_callback, 10)
         self.cli_item_service = self.create_client(ItemService, '/item_service')
         self.command_publisher = self.create_publisher(Twist, self.get_namespace() + '/drive_command', 10)
 
@@ -155,13 +155,29 @@ class StaticThresholdPattern(AbstractPattern):
             msg.linear.x = 1.0
             msg.angular.z = 0.0
             self.command_publisher.publish(msg)
-            self.robot_state = State.DROPPING_ITEM
+            distance_to_zone_x = dist(zones[self.item_type_to_take].x - robot_position.x)
+            distance_to_zone_y = dist(zones[self.item_type_to_take].y - robot_position.y)
+            epsilon = 1
+            if(distance_to_zone_x < epsilon or distance_to_zone_y < epsilon):
+                self.robot_state = State.DROPPING_ITEM
 
         elif (self.robot_state == State.DROPPING_ITEM):
+            self.get_logger().info('Dropped item %s' % self.item_type_to_take)
+            self.item_type_hold = None
+            self.item_type_to_take = 0
 
             self.robot_state = State.BACK_TO_NEST
 
         elif (self.robot_state == State.BACK_TO_NEST):
+            msg = Twist() #example with linear speed
+            msg.linear.x = 1.0
+            msg.angular.z = 0.0
+            self.command_publisher.publish(msg)
+            distance_to_nest_x = dist(nest.x - robot_position.x)
+            distance_to_nest_y = dist(nest.y - robot_position.y)
+            epsilon = 1
+            if(distance_to_nest_x < epsilon or distance_to_nest_y < epsilon):
+                self.robot_state = State.DROPPING_ITEM
 
             self.robot_state = State.TASK_ALLOCATION
 
