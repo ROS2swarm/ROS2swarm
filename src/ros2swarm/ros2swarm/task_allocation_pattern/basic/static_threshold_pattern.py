@@ -151,13 +151,21 @@ class StaticThresholdPattern(AbstractPattern):
                 self.robot_state = State.CARRYING_ITEM
 
         elif (self.robot_state == State.CARRYING_ITEM):
-            msg = Twist() #example with linear speed
-            msg.linear.x = 1.0
-            msg.angular.z = 0.0
+            msg = Twist()
+            speed_value = 0.5
+            vector.x = zones[self.item_type_to_take].x - robot_position.x
+            vector.y = zones[self.item_type_to_take].y - robot_position.y
+            vector.magnitude = sqrt(vector.x * vector.x + vector.y * vector.y)
+            vector.x = vector.x / vector.magnitude
+            vector.y = vector.y / vector.magnitude
+            msg.linear.x = vector.x * speed_value
+            msg.linear.y = vector.y * speed_value
+            theta = np.arctan((zones[self.item_type_to_take].y - robot_position.y)/(zones[self.item_type_to_take].x - robot_position.x))
+            msg.angular.z = theta - robot_orientation
             self.command_publisher.publish(msg)
             distance_to_zone_x = dist(zones[self.item_type_to_take].x - robot_position.x)
             distance_to_zone_y = dist(zones[self.item_type_to_take].y - robot_position.y)
-            epsilon = 1
+            epsilon = 1 #in meters (size of the circle)
             if(distance_to_zone_x < epsilon or distance_to_zone_y < epsilon):
                 self.robot_state = State.DROPPING_ITEM
 
