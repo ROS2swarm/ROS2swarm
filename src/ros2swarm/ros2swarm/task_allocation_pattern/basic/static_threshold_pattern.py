@@ -52,8 +52,10 @@ class StaticThresholdPattern(AbstractPattern):
         self.item_type_hold = None
         self.item_type_to_take = 0
 
-        self.subscription_items_list = self.create_subscription(IntListMessage, '/items_list', self.item_list_callback, 10)
-        self.subscription_models_states = self.create_subscription(ModelStates, '/model_states/model_states', self.model_states_callback, 10)
+        self.subscription_items_list = self.create_subscription(IntListMessage, '/items_list', self.item_list_callback,
+                                                                10)
+        self.subscription_models_states = self.create_subscription(ModelStates, '/model_states/model_states',
+                                                                   self.model_states_callback, 10)
         self.cli_item_service = self.create_client(ItemService, '/item_service')
         self.command_publisher = self.create_publisher(Twist, self.get_namespace() + '/drive_command', 10)
 
@@ -97,6 +99,21 @@ class StaticThresholdPattern(AbstractPattern):
     def model_states_callback(self, msg):
         # the robot has access to the global position of all objects with this
         self.model_states = msg
+        self.pose_indexA = Pose()
+        self.pose_indexB = Pose()
+        self.pose_indexC = Pose()
+        self.get_logger().info('The msg %s' % self.model_states.name)
+        pose_indexA = self.model_states.pose[self.model_states.name.index('A_zone')]
+        pose_indexB = self.model_states.pose[self.model_states.name.index('B_zone')]
+        pose_indexC = self.model_states.pose[self.model_states.name.index('C_zone')]
+        # pose_objA = self.model_states.pose[rob_index]
+        self.get_logger().info('The Pose orientation checking %s' % pose_indexA.orientation) #pose_indexA.position.x
+        indices = [i for i, x in enumerate(self.model_states.name) if "robot_name_" in x]
+        for i in indices:
+            robotname = self.model_states.name[i]
+            robotpose = Pose()
+            robotpose = self.model_states.pose[i]
+            self.get_logger().info('The robots %s' % robotpose.position)  # pose_indexA.position.x
 
     def responseT(self, stimIntensity):
         output = stimIntensity ** self.n / (stimIntensity ** self.n + self.threshold)
@@ -125,7 +142,7 @@ class StaticThresholdPattern(AbstractPattern):
 
                 item_taken = 0
 
-                while(len(choose) > 0 and item_taken == 0):
+                while (len(choose) > 0 and item_taken == 0):
                     chosen = random.choice(choose)
                     choose.remove(chosen)
                     rand = random.random()
@@ -160,13 +177,14 @@ class StaticThresholdPattern(AbstractPattern):
             vector.y = vector.y / vector.magnitude
             msg.linear.x = vector.x * speed_value
             msg.linear.y = vector.y * speed_value
-            theta = np.arctan((zones[self.item_type_to_take].y - robot_position.y)/(zones[self.item_type_to_take].x - robot_position.x))
+            theta = np.arctan((zones[self.item_type_to_take].y - robot_position.y) / (
+                        zones[self.item_type_to_take].x - robot_position.x))
             msg.angular.z = theta - robot_orientation
             self.command_publisher.publish(msg)
             distance_to_zone_x = dist(zones[self.item_type_to_take].x - robot_position.x)
             distance_to_zone_y = dist(zones[self.item_type_to_take].y - robot_position.y)
-            epsilon = 1 #in meters (size of the circle)
-            if(distance_to_zone_x < epsilon or distance_to_zone_y < epsilon):
+            epsilon = 1  # in meters (size of the circle)
+            if (distance_to_zone_x < epsilon or distance_to_zone_y < epsilon):
                 self.robot_state = State.DROPPING_ITEM
 
         elif (self.robot_state == State.DROPPING_ITEM):
@@ -177,14 +195,14 @@ class StaticThresholdPattern(AbstractPattern):
             self.robot_state = State.BACK_TO_NEST
 
         elif (self.robot_state == State.BACK_TO_NEST):
-            msg = Twist() #example with linear speed
+            msg = Twist()  # example with linear speed
             msg.linear.x = 1.0
             msg.angular.z = 0.0
             self.command_publisher.publish(msg)
             distance_to_nest_x = dist(nest.x - robot_position.x)
             distance_to_nest_y = dist(nest.y - robot_position.y)
             epsilon = 1
-            if(distance_to_nest_x < epsilon or distance_to_nest_y < epsilon):
+            if (distance_to_nest_x < epsilon or distance_to_nest_y < epsilon):
                 self.robot_state = State.DROPPING_ITEM
 
             self.robot_state = State.TASK_ALLOCATION
