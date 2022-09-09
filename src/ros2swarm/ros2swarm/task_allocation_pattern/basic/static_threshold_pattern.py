@@ -16,9 +16,11 @@ from ros2swarm.abstract_pattern import AbstractPattern
 from communication_interfaces.msg import IntListMessage
 from communication_interfaces.srv import ItemService
 from gazebo_msgs.msg import ModelStates
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist,Pose
 from ros2swarm.utils import setup_node
+from ros2swarm.utils import quaternion_transform
 from ros2swarm.utils.state import State
+
 import random
 import numpy as np
 from time import sleep
@@ -44,9 +46,12 @@ class StaticThresholdPattern(AbstractPattern):
 
         self.future = None
 
-        self.robot_state = State.TASK_ALLOCATION
+        self.robot_state = State.BACK_TO_NEST
         self.items_list = []
         self.model_states = ModelStates()
+        self.zones = []
+        self.pose_items_master_zone = Pose()
+        self.robot_pose = Pose()
 
         self.has_item = False
         self.item_type_hold = None
@@ -99,21 +104,19 @@ class StaticThresholdPattern(AbstractPattern):
     def model_states_callback(self, msg):
         # the robot has access to the global position of all objects with this
         self.model_states = msg
-        self.pose_indexA = Pose()
-        self.pose_indexB = Pose()
-        self.pose_indexC = Pose()
-        self.get_logger().info('The msg %s' % self.model_states.name)
-        pose_indexA = self.model_states.pose[self.model_states.name.index('A_zone')]
-        pose_indexB = self.model_states.pose[self.model_states.name.index('B_zone')]
-        pose_indexC = self.model_states.pose[self.model_states.name.index('C_zone')]
+        # self.get_logger().info('The msg %s' % self.model_states.name)
+        zone_list = ['A_zone', 'B_zone', 'C_zone']
+        temp_zones = []
+        for zone_id in range(len(zone_list)):
+            temp_zones.append(self.model_states.pose[self.model_states.name.index(zone_list[zone_id])])
+        self.zones = temp_zones
+        self.pose_items_master_zone = self.model_states.pose[self.model_states.name.index('items_master_zone')]
         # pose_objA = self.model_states.pose[rob_index]
-        self.get_logger().info('The Pose orientation checking %s' % pose_indexA.orientation) #pose_indexA.position.x
+        # self.get_logger().info('The Pose orientation checking %s' % self.pose_zoneA.orientation) #pose_indexA.position.x
         indices = [i for i, x in enumerate(self.model_states.name) if "robot_name_" in x]
         for i in indices:
-            robotname = self.model_states.name[i]
-            robotpose = Pose()
-            robotpose = self.model_states.pose[i]
-            self.get_logger().info('The robots %s' % robotpose.position)  # pose_indexA.position.x
+            if(self.get_namespace()[-1] == self.model_states.name[i][-1]):
+                self.robot_pose = self.model_states.pose[i]
 
     def responseT(self, stimIntensity):
         output = stimIntensity ** self.n / (stimIntensity ** self.n + self.threshold)
@@ -169,43 +172,50 @@ class StaticThresholdPattern(AbstractPattern):
 
         elif (self.robot_state == State.CARRYING_ITEM):
             msg = Twist()
-            speed_value = 0.5
-            vector.x = zones[self.item_type_to_take].x - robot_position.x
-            vector.y = zones[self.item_type_to_take].y - robot_position.y
-            vector.magnitude = sqrt(vector.x * vector.x + vector.y * vector.y)
-            vector.x = vector.x / vector.magnitude
-            vector.y = vector.y / vector.magnitude
-            msg.linear.x = vector.x * speed_value
-            msg.linear.y = vector.y * speed_value
-            theta = np.arctan((zones[self.item_type_to_take].y - robot_position.y) / (
-                        zones[self.item_type_to_take].x - robot_position.x))
-            msg.angular.z = theta - robot_orientation
+            vector_x = self.zones[self.item_type_to_take].position.x - self.robot_pose.position.x
+            vector_y = self.zones[self.item_type_to_take].position.y - self.robot_pose.position.y
+            vector_magnitude = np.sqrt(vector_x * vector_x + vector_y * vector_y)
+            vector_x = vector_x / vector_magnitude
+            vector_y = vector_y / vector_magnitude
+            msg.linear.x = vector_x
+            msg.linear.y = vector_y
+            theta = np.arctan((self.zones[self.item_type_to_take].position.y - self.robot_pose.position.y) / (self.zones[self.item_type_to_take].position.x - self.robot_pose.position.x))
+            t_x,t_y,t_z = quaternion_transform.euler_from_quaternion(self.robot_pose.orientation)
+            msg.angular.z = theta - t_z
             self.command_publisher.publish(msg)
-            distance_to_zone_x = dist(zones[self.item_type_to_take].x - robot_position.x)
-            distance_to_zone_y = dist(zones[self.item_type_to_take].y - robot_position.y)
-            epsilon = 1  # in meters (size of the circle)
-            if (distance_to_zone_x < epsilon or distance_to_zone_y < epsilon):
+            distance_to_zone_x = abs(self.zones[self.item_type_to_take].position.x - self.robot_pose.position.x)
+            distance_to_zone_y = abs(self.zones[self.item_type_to_take].position.y - self.robot_pose.position.y)
+            epsilon = 0.2  # in meters (size of the circle)
+            if(distance_to_zone_x < epsilon or distance_to_zone_y < epsilon):
+                self.command_publisher.publish(Twist())
                 self.robot_state = State.DROPPING_ITEM
 
         elif (self.robot_state == State.DROPPING_ITEM):
             self.get_logger().info('Dropped item %s' % self.item_type_to_take)
             self.item_type_hold = None
             self.item_type_to_take = 0
-
             self.robot_state = State.BACK_TO_NEST
 
         elif (self.robot_state == State.BACK_TO_NEST):
-            msg = Twist()  # example with linear speed
-            msg.linear.x = 1.0
-            msg.angular.z = 0.0
+            msg = Twist()
+            vector_x = self.pose_items_master_zone.position.x - self.robot_pose.position.x
+            vector_y = self.pose_items_master_zone.position.y - self.robot_pose.position.y
+            vector_magnitude = np.sqrt(vector_x * vector_x + vector_y * vector_y)
+            vector_x = vector_x / vector_magnitude
+            vector_y = vector_y / vector_magnitude
+            msg.linear.x = vector_x
+            msg.linear.y = vector_y
+            theta = np.arctan((self.pose_items_master_zone.position.y - self.robot_pose.position.y) / (self.pose_items_master_zone.position.x - self.robot_pose.position.x))
+            t_x,t_y,t_z = quaternion_transform.euler_from_quaternion(self.robot_pose.orientation)
+            msg.angular.z = theta - t_z
             self.command_publisher.publish(msg)
-            distance_to_nest_x = dist(nest.x - robot_position.x)
-            distance_to_nest_y = dist(nest.y - robot_position.y)
-            epsilon = 1
-            if (distance_to_nest_x < epsilon or distance_to_nest_y < epsilon):
-                self.robot_state = State.DROPPING_ITEM
-
-            self.robot_state = State.TASK_ALLOCATION
+            distance_to_zone_x = abs(self.pose_items_master_zone.position.x - self.robot_pose.position.x)
+            distance_to_zone_y = abs(self.pose_items_master_zone.position.y - self.robot_pose.position.y)
+            epsilon = 0.2  # in meters (size of the circle)
+            if(distance_to_zone_x < epsilon or distance_to_zone_y < epsilon):
+                self.get_logger().info('At the start zone !')
+                self.command_publisher.publish(Twist())
+                self.robot_state = State.TASK_ALLOCATION
 
     def destroy_node(self):
         """Call the super destroy method."""
