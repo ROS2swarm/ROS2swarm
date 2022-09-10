@@ -105,8 +105,8 @@ def generate_launch_description():
                 x = 0
                 y = 0
                 while(trying == False):
-                    x = np.random.uniform(-9.0,9.0)
-                    y = np.random.uniform(-9.0,9.0)
+                    x = np.random.uniform(-8.0,8.0)
+                    y = np.random.uniform(-8.0,8.0)
                     check_pos = True
                     for robot_pos in robot_spawning_positions:
                         if(abs(robot_pos[0] - x) <= 0.1 and abs(robot_pos[1] - y) <= 0.1):
