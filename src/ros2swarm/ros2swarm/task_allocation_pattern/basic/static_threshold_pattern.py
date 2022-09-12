@@ -174,7 +174,7 @@ class StaticThresholdPattern(AbstractPattern):
             self.set_speeds(self.zones[self.item_type_to_take])
             distance_to_zone_x = abs(self.zones[self.item_type_to_take].position.x - self.robot_pose.position.x)
             distance_to_zone_y = abs(self.zones[self.item_type_to_take].position.y - self.robot_pose.position.y)
-            epsilon = 0.4  # in meters (size of the circle)
+            epsilon = 2.5  # in meters (size of the circle)
             if(distance_to_zone_x < epsilon and distance_to_zone_y < epsilon):
                 self.command_publisher.publish(Twist())
                 self.robot_state = State.DROPPING_ITEM
@@ -189,7 +189,7 @@ class StaticThresholdPattern(AbstractPattern):
             self.set_speeds(self.pose_items_master_zone)
             distance_to_zone_x = abs(self.pose_items_master_zone.position.x - self.robot_pose.position.x)
             distance_to_zone_y = abs(self.pose_items_master_zone.position.y - self.robot_pose.position.y)
-            epsilon = 0.4  # in meters (size of the circle)
+            epsilon = 2.5  # in meters (size of the circle)
             if(distance_to_zone_x < epsilon and distance_to_zone_y < epsilon):
                 self.get_logger().info('At the start zone !')
                 self.command_publisher.publish(Twist())
@@ -204,7 +204,6 @@ class StaticThresholdPattern(AbstractPattern):
         vector_y = vector_y / vector_magnitude
         # self.get_logger().info('X speed %s' % str(vector_x))
         # self.get_logger().info('Y speed %s' % str(vector_y))
-        speed_factor = 0.5
         msg.linear.x = 0.0
         msg.linear.y = 0.0
         if(vector_x >= 0):
@@ -214,25 +213,22 @@ class StaticThresholdPattern(AbstractPattern):
         if(vector_x < 0 and vector_y <0):
             theta = -3.1415 + np.arctan((zone.position.y - self.robot_pose.position.y) / (zone.position.x - self.robot_pose.position.x))
         t_x,t_y,t_z = quaternion_transform.euler_from_quaternion(self.robot_pose.orientation)
-        # if(t_z < -3.1415):
-        #     t_z = t_z + 2*3.1415
-        # if(t_z > 3.1415):
-        #     t_z = t_z - 2*3.1415
+
         delta = theta - t_z
         if(delta > 3.1415):
             delta = delta - 2*3.1415
         if(delta < -3.1415):
             delta = delta + 2*3.1415
         if(delta < 0):
-            msg.angular.z = -0.2
+            msg.angular.z = -0.4
         if(delta > 0):
-            msg.angular.z = 0.2
-        if(delta < 0.5 and delta > -0.5):
-            msg.linear.x = 0.7
+            msg.angular.z = 0.4
+        if(delta < 3.1415/4 and delta > -3.1415/4):
+            msg.linear.x = 0.5
             msg.angular.z = msg.angular.z/2
-        self.get_logger().info('t_z %s' % str(t_z))
-        self.get_logger().info('theta %s' % str(theta))
-        self.get_logger().info('delta %s' % str(delta))
+        # self.get_logger().info('t_z %s' % str(t_z))
+        # self.get_logger().info('theta %s' % str(theta))
+        # self.get_logger().info('delta %s' % str(delta))
         # self.get_logger().info('Z angular speed %s' % str((theta - t_z)))
         self.command_publisher.publish(msg)
 
