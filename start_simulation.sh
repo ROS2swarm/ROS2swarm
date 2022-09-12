@@ -41,6 +41,8 @@ colcon build --symlink-install --allow-overriding communication_interfaces launc
 #  * majority_rule_pattern
 ## task allocation pattern:
 #  * static_threshold_pattern
+#  * fixed_pattern
+
 #
 # number_robots num_robots
 # robot: burger | waffle_pi | jackal
