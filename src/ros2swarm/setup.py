@@ -118,6 +118,9 @@ setup(
             #task allocation patterns
             'static_threshold_pattern = '
             'ros2swarm.task_allocation_pattern.basic.static_threshold_pattern:main',
+            'fixed_pattern = '
+            'ros2swarm.task_allocation_pattern.basic.fixed_pattern:main',
+
 
             #miscellaneous nodes
             'items_master_node = '
