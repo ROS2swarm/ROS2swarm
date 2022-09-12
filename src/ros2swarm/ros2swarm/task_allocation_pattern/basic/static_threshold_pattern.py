@@ -45,7 +45,6 @@ class StaticThresholdPattern(AbstractPattern):
         #     "parameter_name").get_parameter_value().integer_value
 
         self.future = None
-
         self.robot_state = State.BACK_TO_NEST
         self.items_list = []
         self.model_states = ModelStates()
@@ -68,14 +67,11 @@ class StaticThresholdPattern(AbstractPattern):
             self.get_logger().info('service not available, waiting again...')
         self.req_item_service = ItemService.Request()
 
-        # taking items from items_master (example with timers, to implement in main)
-        # self.timer_send_request = self.create_timer(10, self.send_request) #first we need to send a request to items_master
-
-        # self.timer_check_future = self.create_timer(1, self.check_future) #then we check periodically if the request has been processed
-        # sleep(random.uniform(1, 4))
         self.timer = self.create_timer(1, self.swarm_command_controlled_timer(self.static_threshold_pattern_callback))
 
-        self.threshold = random.uniform(0.5, 0.8)
+        self.threshold = []
+        for i in range(3):
+            self.threshold.append(random.uniform(0.1, 0.9))
         self.n = 2
 
     def send_request(self):
@@ -98,7 +94,6 @@ class StaticThresholdPattern(AbstractPattern):
             return False
 
     def item_list_callback(self, msg):
-        # TODO implement condition for updating the list of items ONLY if the robot is in proximity of items_master
         self.items_list = msg.data
 
     def model_states_callback(self, msg):
@@ -118,16 +113,14 @@ class StaticThresholdPattern(AbstractPattern):
             if(self.get_namespace()[-1] == self.model_states.name[i][-1]):
                 self.robot_pose = self.model_states.pose[i]
 
-    def responseT(self, stimIntensity):
-        output = stimIntensity ** self.n / (stimIntensity ** self.n + self.threshold)
+    def responseT(self, stimIntensity, item_type):
+        output = stimIntensity ** self.n / (stimIntensity ** self.n + self.threshold[item_type])
         self.get_logger().info('Publishing {}:"{}"'.format(output, self.get_namespace()))
         # self.get_logger().info('The threshold is  %s and robot is %s' % output,self.get_namespace())
         return output
 
     def static_threshold_pattern_callback(self):
-
         if (self.robot_state == State.TASK_ALLOCATION):
-            # fancy algorithm based on static threshold allocation to implement
             is_all_zero = not np.any(self.items_list)
             # self.get_logger().info('The items %s' % self.items_list)
             if (is_all_zero):
@@ -140,7 +133,7 @@ class StaticThresholdPattern(AbstractPattern):
                 choose = []
                 for i in range(len(self.items_list)):
                     task_demand.append(self.items_list[i] / sum(self.items_list))
-                    prob.append(self.responseT(task_demand[i]))
+                    prob.append(self.responseT(task_demand[i], i))
                     choose.append(i)
 
                 item_taken = 0
@@ -164,7 +157,6 @@ class StaticThresholdPattern(AbstractPattern):
 
         elif (self.robot_state == State.DO_TASK):
             # do the task here ! taking the item, moving, dropping the item, coming back
-            # taking item
             if (self.future == None):
                 self.send_request()
             if (self.check_future()):
