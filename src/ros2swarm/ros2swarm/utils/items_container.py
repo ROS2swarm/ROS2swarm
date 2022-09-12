@@ -17,11 +17,11 @@ class ItemsContainer:
     def __init__(self, items_types):
 
         self.items_list = [ 0 for i in range(items_types)]
-        self.initialize_randomly(5)
+        self.initialize_randomly(30)
 
     def initialize_randomly(self, upper_bound):
-        for index in range(len(self.items_list)):
-            self.items_list[index] = np.random.randint(1,upper_bound+1)
+        for item in range(upper_bound):
+            self.items_list[np.random.randint(0,len(self.items_list))] += 1
 
     def add_items(self, index, quantity):
         self.items_list[index] += quantity

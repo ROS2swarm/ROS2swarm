@@ -26,6 +26,7 @@ class ItemsMaster(Node):
         super().__init__('items_master')
 
         self.items_types = 3
+        self.add_periodically = False
         self.get_logger().info('Initializing list containing %i items' % self.items_types)
         self.container = ItemsContainer(self.items_types)
         self.get_logger().info('List initialized successfully')
@@ -62,7 +63,8 @@ class ItemsMaster(Node):
         return response
 
     def timer_add_items_callback(self):
-        self.container.add_items_randomly()
+        if(self.add_periodically):
+            self.container.add_items_randomly()
 
 
 def main(args=None):

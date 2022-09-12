@@ -149,6 +149,7 @@ class StaticThresholdPattern(AbstractPattern):
 
                 if (item_taken == 0):
                     self.robot_state = State.TASK_ALLOCATION
+                    self.command_publisher.publish(Twist())
                     self.get_logger().info('I have decided to not take an item !')
                 else:
                     self.robot_state = State.DO_TASK
@@ -216,7 +217,7 @@ class StaticThresholdPattern(AbstractPattern):
         if(delta > 0):
             msg.angular.z = 0.4
         if(delta < 3.1415/4 and delta > -3.1415/4):
-            msg.linear.x = 0.5
+            msg.linear.x = 1.0
             msg.angular.z = msg.angular.z/2
         # self.get_logger().info('t_z %s' % str(t_z))
         # self.get_logger().info('theta %s' % str(theta))
