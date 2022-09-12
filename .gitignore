@@ -3,4 +3,3 @@ install/
 log/
 **/__pycache__
 *.pyc
-log_items.csv

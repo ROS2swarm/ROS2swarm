@@ -73,7 +73,7 @@ class StaticThresholdPattern(AbstractPattern):
 
         self.threshold = []
         for i in range(3):
-            self.threshold.append(random.uniform(0.1, 0.9))
+            self.threshold.append(random.uniform(0.0, 1.0))
         self.n = 2
         self.filepath_log = "log_items_removed.csv"
         items_string_list = ['robot_name','item_picked', 'start_time','end_time','time taken']
