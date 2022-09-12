@@ -24,6 +24,8 @@ from ros2swarm.utils.state import State
 import random
 import numpy as np
 from time import sleep
+import time
+import csv
 
 
 class StaticThresholdPattern(AbstractPattern):
@@ -73,6 +75,15 @@ class StaticThresholdPattern(AbstractPattern):
         for i in range(3):
             self.threshold.append(random.uniform(0.1, 0.9))
         self.n = 2
+        self.filepath_log = "log_items_removed.csv"
+        items_string_list = ['robot_name','item_picked', 'start_time','end_time','time taken']
+        with open(self.filepath_log, 'w', encoding='UTF8') as f:
+            writer = csv.writer(f)
+            # write the header
+            writer.writerow(items_string_list)
+        self.moved = [0,0,0,0,0]
+        self.t0 = 0
+        self.t1 = 1
 
     def send_request(self):
         self.req_item_service.item_index = self.item_type_to_take
@@ -146,6 +157,8 @@ class StaticThresholdPattern(AbstractPattern):
                     if (rand < prob[chosen]):
                         item_taken = 1
                         self.item_type_to_take = self.items_list.index(self.items_list[chosen])
+                        self.moved[0]=self.get_namespace()
+                        self.moved[1]= self.item_type_to_take
 
                 if (item_taken == 0):
                     self.robot_state = State.TASK_ALLOCATION
@@ -158,6 +171,7 @@ class StaticThresholdPattern(AbstractPattern):
 
         elif (self.robot_state == State.DO_TASK):
             # do the task here ! taking the item, moving, dropping the item, coming back
+            self.t0 = time.time()
             if (self.future == None):
                 self.send_request()
             if (self.check_future()):
@@ -177,6 +191,16 @@ class StaticThresholdPattern(AbstractPattern):
             self.item_type_hold = None
             self.item_type_to_take = 0
             self.robot_state = State.BACK_TO_NEST
+            self.t1 = time.time()
+            total = self.t1-self.t0
+            with open(self.filepath_log, 'a', encoding='UTF8') as ff:
+                writer = csv.writer(ff)
+                self.moved[2]=self.t0
+                self.moved[3]=self.t1
+                self.moved[4]=total
+                # write the data
+                self.get_logger().info('The item ot take {}'.format(self.moved))
+                writer.writerow(self.moved)
 
         elif (self.robot_state == State.BACK_TO_NEST):
             self.set_speeds(self.pose_items_master_zone)
