@@ -76,15 +76,15 @@ class StaticThresholdPattern(AbstractPattern):
             self.threshold.append(random.uniform(0.0, 1.0))
         self.n = 2
         self.filepath_log = "log_items_removed.csv"
-        items_string_list = ['robot_name','item_picked', 'start_time','end_time','time taken']
+        items_string_list = ['robot_name','item_picked','start_time','drop_time','end_time','time_taken']
         with open(self.filepath_log, 'w', encoding='UTF8') as f:
             writer = csv.writer(f)
             # write the header
             writer.writerow(items_string_list)
-        self.moved = [0,0,0,0,0]
+        self.moved = ['','','','','','']
         self.t0 = 0
-        self.t1 = 1
-        self.time=0
+        self.t1 = 0
+        self.t2 = 0
 
     def send_request(self):
         self.req_item_service.item_index = self.item_type_to_take
@@ -158,8 +158,9 @@ class StaticThresholdPattern(AbstractPattern):
                     if (rand < prob[chosen]):
                         item_taken = 1
                         self.item_type_to_take = self.items_list.index(self.items_list[chosen])
-                        self.moved[0]=self.get_namespace()
-                        self.moved[1]= self.item_type_to_take
+                        self.moved[0]= str(self.get_namespace())
+                        self.moved[1]= str(self.item_type_to_take)
+                        self.get_logger().info('The item in moved  take {}'.format(self.moved))
 
                 if (item_taken == 0):
                     self.robot_state = State.TASK_ALLOCATION
@@ -174,8 +175,9 @@ class StaticThresholdPattern(AbstractPattern):
             # do the task here ! taking the item, moving, dropping the item, coming back
             time_string = str(self.get_clock().now().to_msg()).split('sec=')[1]
             time_string = time_string.split(',')[0]
-            self.t0 = float(time_string)
-            self.get_logger().info('The timer is  %s' % time_string)
+            self.t0 = int(time_string)
+            self.moved[2]=str(self.t0)
+            self.get_logger().info('The start timer is  %s' % self.t0)
             if (self.future == None):
                 self.send_request()
             if (self.check_future()):
@@ -197,16 +199,9 @@ class StaticThresholdPattern(AbstractPattern):
             self.robot_state = State.BACK_TO_NEST
             time_string = str(self.get_clock().now().to_msg()).split('sec=')[1]
             time_string = time_string.split(',')[0]
-            self.t1 = float(time_string)
-            total = self.t1-self.t0
-            with open(self.filepath_log, 'a', encoding='UTF8') as ff:
-                writer = csv.writer(ff)
-                self.moved[2]=self.t0
-                self.moved[3]=self.t1
-                self.moved[4]=total
-                # write the data
-                self.get_logger().info('The item ot take {}'.format(self.moved))
-                writer.writerow(self.moved)
+            self.t1 = int(time_string)
+            self.moved[3]=str(self.t1)
+            self.get_logger().info('The drop timer is  %s' % self.t1)
 
         elif (self.robot_state == State.BACK_TO_NEST):
             self.set_speeds(self.pose_items_master_zone)
@@ -217,6 +212,18 @@ class StaticThresholdPattern(AbstractPattern):
                 self.get_logger().info('At the start zone !')
                 self.command_publisher.publish(Twist())
                 self.robot_state = State.TASK_ALLOCATION
+                time_string = str(self.get_clock().now().to_msg()).split('sec=')[1]
+                time_string = time_string.split(',')[0]
+                self.t2 = int(time_string)
+                total = self.t2-self.t0
+                self.get_logger().info('The total timer is  %s' % str(total))
+                with open(self.filepath_log, 'a', encoding='UTF8') as ff:
+                    writer = csv.writer(ff)
+                    self.moved[4]=str(self.t2)
+                    self.moved[5]=str(total)
+                    # write the data
+                    self.get_logger().info('The item ot take {}'.format(self.moved))
+                    writer.writerow(self.moved)
 
     def set_speeds(self, zone):
         msg = Twist()
