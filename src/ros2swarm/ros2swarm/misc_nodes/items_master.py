@@ -48,7 +48,7 @@ class ItemsMaster(Node):
 
         self.timer_add_items = self.create_timer(10, self.timer_add_items_callback) #every minute (check the frequency at wich items are added or adapt the number of robots)
 
-        self.timer_add_once = self.create_timer(900, self.add_items_once_callback)
+        self.timer_add_once = self.create_timer(400, self.add_items_once_callback)
 
     def timer_publish_callback(self):
         msg = IntListMessage()
@@ -76,7 +76,7 @@ class ItemsMaster(Node):
             self.container.add_items_randomly()
 
     def add_items_once_callback(self):
-        if(False):
+        if(True):
             self.container.add_items(0, 10)
             self.timer_add_once.cancel()
 
