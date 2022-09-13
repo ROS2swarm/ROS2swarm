@@ -85,6 +85,7 @@ class StaticThresholdPattern(AbstractPattern):
         self.t0 = 0
         self.t1 = 0
         self.t2 = 0
+        self.moved[0]= str(self.get_namespace())
 
     def send_request(self):
         self.req_item_service.item_index = self.item_type_to_take
@@ -158,7 +159,6 @@ class StaticThresholdPattern(AbstractPattern):
                     if (rand < prob[chosen]):
                         item_taken = 1
                         self.item_type_to_take = self.items_list.index(self.items_list[chosen])
-                        self.moved[0]= str(self.get_namespace())
                         self.moved[1]= str(self.item_type_to_take)
                         self.get_logger().info('The item in moved  take {}'.format(self.moved))
 
