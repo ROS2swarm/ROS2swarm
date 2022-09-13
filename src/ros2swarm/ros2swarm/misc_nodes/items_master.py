@@ -35,6 +35,7 @@ class ItemsMaster(Node):
         items_string_list = []
         for item_type in range(self.items_types):
             items_string_list.append('items_' + string.ascii_lowercase[item_type])
+        items_string_list.append('time')
         with open(self.filepath_log, 'w', encoding='UTF8') as f:
             writer = csv.writer(f)
             # write the header
@@ -55,7 +56,13 @@ class ItemsMaster(Node):
         with open(self.filepath_log, 'a', encoding='UTF8') as f:
             writer = csv.writer(f)
             # write the data
-            writer.writerow(msg.data)
+            stringList = []
+            for int in msg.data:
+                stringList.append(str(int))
+            time_string = str(self.get_clock().now().to_msg()).split('sec=')[1]
+            time_string = time_string.split(',')[0]
+            stringList.append(time_string)
+            writer.writerow(stringList)
 
 
     def item_service_callback(self, request, response):
