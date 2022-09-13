@@ -76,8 +76,9 @@ class ItemsMaster(Node):
             self.container.add_items_randomly()
 
     def add_items_once_callback(self):
-        self.container.add_items(0, 10)
-        self.timer_add_once.cancel()
+        if(False):
+            self.container.add_items(0, 10)
+            self.timer_add_once.cancel()
 
 
 def main(args=None):
