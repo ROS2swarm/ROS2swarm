@@ -4,7 +4,7 @@ import pandas as pd
 
 
 
-def get_data_per_exp(exp_id,max_length):
+def get_data_per_exp(exp_id=0,max_length=0):
     prev_path = os.getcwd()
     os.chdir('..')
 
@@ -12,6 +12,8 @@ def get_data_per_exp(exp_id,max_length):
     list_experiment_items = []
     list_experiment_removed = []
 
+    name_list_item = []
+    name_list_removed = []
 
     for file in os.listdir():
 
@@ -23,18 +25,18 @@ def get_data_per_exp(exp_id,max_length):
 
                 if('removed' in result):
                     list_experiment_removed.append(df)
+                    name_list_removed.append(result)
 
                 else:
                     list_experiment_items.append(df)
+                    name_list_item.append(result)
                 '''sub_exp = []
                 for col in df.columns:
                     sub_exp.append(df[col].values)
                 '''
 
-
-
     os.chdir(prev_path)
-    return list_experiment_items,list_experiment_removed
+    return list_experiment_items,list_experiment_removed,[name_list_item,name_list_removed]
 
 
 
