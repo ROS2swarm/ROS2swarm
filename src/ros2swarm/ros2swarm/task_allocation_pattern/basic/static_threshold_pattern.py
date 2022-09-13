@@ -26,7 +26,7 @@ import numpy as np
 from time import sleep
 import time
 import csv
-
+from rclpy.node import Node
 
 class StaticThresholdPattern(AbstractPattern):
     """
@@ -84,6 +84,7 @@ class StaticThresholdPattern(AbstractPattern):
         self.moved = [0,0,0,0,0]
         self.t0 = 0
         self.t1 = 1
+        self.time=0
 
     def send_request(self):
         self.req_item_service.item_index = self.item_type_to_take
@@ -171,7 +172,10 @@ class StaticThresholdPattern(AbstractPattern):
 
         elif (self.robot_state == State.DO_TASK):
             # do the task here ! taking the item, moving, dropping the item, coming back
-            self.t0 = time.time()
+            time_string = str(self.get_clock().now().to_msg()).split('sec=')[1]
+            time_string = time_string.split(',')[0]
+            self.t0 = float(time_string)
+            self.get_logger().info('The timer is  %s' % time_string)
             if (self.future == None):
                 self.send_request()
             if (self.check_future()):
@@ -191,7 +195,9 @@ class StaticThresholdPattern(AbstractPattern):
             self.item_type_hold = None
             self.item_type_to_take = 0
             self.robot_state = State.BACK_TO_NEST
-            self.t1 = time.time()
+            time_string = str(self.get_clock().now().to_msg()).split('sec=')[1]
+            time_string = time_string.split(',')[0]
+            self.t1 = float(time_string)
             total = self.t1-self.t0
             with open(self.filepath_log, 'a', encoding='UTF8') as ff:
                 writer = csv.writer(ff)
