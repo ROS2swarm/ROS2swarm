@@ -8,7 +8,7 @@ def get_data_per_exp(exp_id=0,max_length=0):
     prev_path = os.getcwd()
     os.chdir('..')
 
-    exp_pattern = ['AZ','AH','RZ']
+    exp_pattern = ['AS','AH','RZ']
     list_experiment_items = []
     list_experiment_removed = []
 
@@ -21,7 +21,7 @@ def get_data_per_exp(exp_id=0,max_length=0):
 
             for result in os.listdir(f"{file}/"):
                 df = pd.read_csv(f'{file}/{result}')
-                print(f"Read: {result}")
+                #print(f"Read: {result}")
 
                 if('removed' in result):
                     list_experiment_removed.append(df)
