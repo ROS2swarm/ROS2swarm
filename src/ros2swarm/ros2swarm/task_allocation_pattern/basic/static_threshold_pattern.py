@@ -31,7 +31,6 @@ from rclpy.node import Node
 class StaticThresholdPattern(AbstractPattern):
     """
     Implementation of the Static Threshold approach.
-
     """
 
     def __init__(self):
@@ -224,6 +223,7 @@ class StaticThresholdPattern(AbstractPattern):
                     # write the data
                     self.get_logger().info('The item ot take {}'.format(self.moved))
                     writer.writerow(self.moved)
+
 
     def set_speeds(self, zone):
         msg = Twist()
