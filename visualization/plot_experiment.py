@@ -53,8 +53,10 @@ def plot_two_exp(name=""):
     axs[0].set_ylim(0,30)
     axs[1].set_ylim(0, 6)
 
-    axs[0].set_title(f"Remaining items per types over time ({file_name_items})")
-    axs[1].set_title(f"Number of working robots by tasks type over time ({file_name_items_removed})")
+    #axs[0].set_title(f"Remaining items per types over time ({file_name_items})")
+    axs[0].set_title(f"Remaining items per types over time")
+    #axs[1].set_title(f"Number of working robots by tasks type over time ({file_name_items_removed})")
+    axs[1].set_title(f"Number of working robots by tasks type over time")
     print(f"Choosen File: {file_name_items} | {file_name_items_removed}")
 
     axs[0].set_xlabel('Time (second)')
