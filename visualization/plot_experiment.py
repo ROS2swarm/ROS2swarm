@@ -26,7 +26,12 @@ def plot_two_exp(name=""):
         if(name != "" and name in name_lists[1][file_name]): # Search for log_items_removed files
             exp_id_remove = file_name
 
-    print(f"Choosen File: {name_lists[0][exp_id_item]} | {name_lists[1][exp_id_remove]}")
+
+    file_name_items = name_lists[0][exp_id_item]
+    file_name_items_removed = name_lists[1][exp_id_remove]
+
+
+
     exp_item_df = df_item_list[exp_id_item] # log_items dataframe
     exp_removed_df = df_item_removed[exp_id_remove].fillna(-1) # log_items_removed dataframe without NaN
 
@@ -49,6 +54,16 @@ def plot_two_exp(name=""):
     axs[1].set_xlim(0, exp_item_df['diff_time'].iloc[-1])
     axs[0].set_ylim(0,30)
     axs[1].set_ylim(0, 6)
+
+    axs[0].set_title(f"Remaining items per types over time ({file_name_items})")
+    axs[1].set_title(f"Number of working robots by tasks type over time ({file_name_items_removed})")
+    print(f"Choosen File: {file_name_items} | {file_name_items_removed}")
+
+    axs[0].set_xlabel('Time (second)')
+    axs[1].set_xlabel('Time (second)')
+
+    axs[0].set_ylabel('Number of items')
+    axs[1].set_ylabel('Number of robots')
 
     '''Plot Number of remaining items by type across time'''
     for col in exp_item_df.columns:
@@ -101,9 +116,12 @@ def plot_two_exp(name=""):
         for sub_array in range(len(number_of_working_robots)):
             number_of_working_robots[sub_array].append(counter[sub_array])
 
+    mapping_label={0:'items_a',1:'items_b',2:'items_c'}
     for sub_array in range(len(number_of_working_robots)):
         #print(number_of_working_robots[sub_array])
-        axs[1].plot(timesteps,number_of_working_robots[sub_array], label=sub_array,color=COLOR[sub_array])
+
+        axs[1].plot(timesteps,number_of_working_robots[sub_array], label=mapping_label[sub_array],color=COLOR[sub_array])
+
 
 
     axs[1].legend()
@@ -111,5 +129,5 @@ def plot_two_exp(name=""):
     plt.show()
 
 
-plot_two_exp(name="spike")
+plot_two_exp(name="breakdown")
 
