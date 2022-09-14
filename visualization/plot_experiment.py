@@ -7,11 +7,9 @@ from utils import get_data_per_exp
 
 COLORS = {'a':'green','b':'red','c':'blue'}
 COLOR = ['green','red','blue']
+LABELS = ['items_a','items_b','items_c']
 
 def plot_two_exp(name=""):
-
-
-
     OFFSET = 50
     fig, axs = plt.subplots(nrows=2, ncols=1)
     df_item_list, df_item_removed, name_lists = get_data_per_exp()
@@ -122,12 +120,78 @@ def plot_two_exp(name=""):
 
         axs[1].plot(timesteps,number_of_working_robots[sub_array], label=mapping_label[sub_array],color=COLOR[sub_array])
 
-
-
     axs[1].legend()
     axs[1].grid()
     plt.show()
 
 
-plot_two_exp(name="breakdown")
+def load_specific_files(name="newtime"):
+    df_item_list, df_item_removed, name_lists = get_data_per_exp()
 
+    '''File and dataframe loading'''
+    exp_id_items = []
+    exp_id_removes = []
+    df_big_list_items = []
+    df_big_list_removed = []
+
+    for file_name in range(len(name_lists[0])):  # Search for log_items files
+        if (name != "" and name in name_lists[0][file_name]):
+            exp_id_items.append(name_lists[0][file_name])
+            df_big_list_items.append(df_item_list[file_name])
+
+    for file_name in range(len(name_lists[1])):
+        if (name != "" and name in name_lists[1][file_name]):  # Search for log_items_removed files
+            exp_id_removes.append(name_lists[1][file_name])
+            df_big_list_removed.append(df_item_removed[file_name].fillna(-1))
+
+    return pd.concat(df_big_list_items), pd.concat(df_big_list_removed),[exp_id_items,exp_id_removes]
+
+
+
+def plot_median_time(name=""):
+
+    OFFSET = 50
+    #fig, axs = plt.subplots(nrows=2, ncols=1)
+    #df_item_list, df_item_removed, name_lists = get_data_per_exp()
+
+    df_items, df_removed, list_name = load_specific_files(name=name)
+
+    print(list_name)
+
+    exp_id_item = list_name[0]
+    exp_id_remove = list_name[1]
+
+    item_dic = {}
+
+    item_picked = df_removed['item_picked']
+    time_taken = df_removed['time_taken']
+
+    for i in range(len(item_picked)):
+        if (item_picked.iloc[i] != -1):
+            if(item_picked.iloc[i] in item_dic.keys()):
+                item_dic[item_picked.iloc[i]] += [time_taken.iloc[i]]
+            else:
+                item_dic[item_picked.iloc[i]] = [time_taken.iloc[i]]
+
+    label_convert = {0:['items_a','green'],1:['items_b','red'],2:['items_c','blue']}
+    new_label = []
+    for key in item_dic.keys():
+        new_label.append(LABELS[int(key)])
+
+    plt.ylim(0, int(max(item_dic[1])*2))
+
+
+    boxes = plt.boxplot(x=item_dic.values(),labels=new_label,patch_artist = True)
+
+
+
+    '''System time to simulation time'''
+    plt.title(f"Median time taken by the robot for each task type")
+    plt.xlabel("Task type")
+    plt.ylabel("Time (second)")
+    plt.legend()
+    plt.grid()
+    plt.show()
+
+#plot_two_exp(name="breakdown")
+plot_median_time(name="newtime")
