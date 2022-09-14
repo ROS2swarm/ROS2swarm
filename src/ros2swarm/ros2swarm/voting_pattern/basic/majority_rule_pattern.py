@@ -41,11 +41,11 @@ class MajorityRulePattern(VotingPattern):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('majority_rule_initial_value', None),
-                ('majority_rule_choose_start_value_at_random', None),
-                ('majority_rule_min_opinion', None),
-                ('majority_rule_max_opinion', None),
-                ('majority_rule_timer_period', None),
+                ('majority_rule_initial_value', False),
+                ('majority_rule_choose_start_value_at_random', 0),
+                ('majority_rule_min_opinion', 0),
+                ('majority_rule_max_opinion', 0),
+                ('majority_rule_timer_period', 0.0),
             ])
 
         self.param_initial_value = self.get_parameter(

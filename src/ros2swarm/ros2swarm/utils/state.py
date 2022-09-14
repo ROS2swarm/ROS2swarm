@@ -27,7 +27,7 @@ class State(Enum):
     DISPERSION = 5
     STAY_ON_ROUTE = 6
     ATTRACTION = 7
-    AVOID = 8 
+    AVOID = 8
     ATTRACTION_BACK = 9
     TUNNEL = 10
     CROSSING = 11
@@ -37,3 +37,8 @@ class State(Enum):
     START_CHAMBER = 15
     SEARCH_WALL = 16
     TUNNEL_CORNER = 17
+    DO_TASK = 18
+    TASK_ALLOCATION = 19
+    CARRYING_ITEM = 20
+    DROPPING_ITEM = 21
+    BACK_TO_NEST = 22

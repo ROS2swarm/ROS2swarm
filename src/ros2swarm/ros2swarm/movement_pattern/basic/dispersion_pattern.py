@@ -38,15 +38,15 @@ class DispersionPattern(MovementPattern):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('dispersion_max_range', None),
-                ('dispersion_min_range', None),
-                ('dispersion_front_attraction', None),
-                ('dispersion_threshold', None),
-                ('dispersion_stop_if_alone', None),
+                ('dispersion_max_range', 0.0),
+                ('dispersion_min_range', 0.0),
+                ('dispersion_front_attraction', 0.0),
+                ('dispersion_threshold', 0),
+                ('dispersion_stop_if_alone', False),
                 ('dispersion_allow_dynamic_max_range_setting', False),
-                ('max_translational_velocity', None),
-                ('max_rotational_velocity', None),
-                ('lidar_config', None)
+                ('max_translational_velocity', 0.0),
+                ('max_rotational_velocity', 0.0),
+                ('lidar_config', 0.0)
             ])
 
         self.scan_subscription = self.create_subscription(

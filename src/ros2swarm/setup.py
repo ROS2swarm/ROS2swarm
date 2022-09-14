@@ -23,6 +23,10 @@ setup(
          glob('launch/pattern/movement_pattern/combined/*.launch.py')),
         (os.path.join('share', package_name, 'launch', 'pattern', 'voting_pattern', 'basic'),
          glob('launch/pattern/voting_pattern/basic/*.launch.py')),
+        (os.path.join('share', package_name, 'launch', 'pattern', 'task_allocation_pattern', 'basic'),
+         glob('launch/pattern/task_allocation_pattern/basic/*.launch.py')),
+        (os.path.join('share', package_name, 'launch', 'pattern', 'task_allocation_pattern', 'combined'),
+         glob('launch/pattern/task_allocation_pattern/combined/*.launch.py')),
         # (os.path.join('share', package_name, 'launch', 'pattern', 'voting_pattern', 'combined'),
         #     glob('launch/pattern/voting_pattern/combined/*.launch.py')),
 
@@ -94,7 +98,7 @@ setup(
             'magnetometer_pattern = '
             'ros2swarm.movement_pattern.basic.magnetometer_pattern:main',
             'random_walk_pattern = '
-            'ros2swarm.movement_pattern.basic.random_walk_pattern:main', 
+            'ros2swarm.movement_pattern.basic.random_walk_pattern:main',
             'minimalist_flocking_pattern = '
             'ros2swarm.movement_pattern.basic.minimalist_flocking_pattern:main',
             'rat_search_pattern = '
@@ -110,6 +114,17 @@ setup(
             'ros2swarm.voting_pattern.basic.voter_model_with_limiter_pattern:main',
             'majority_rule_pattern = '
             'ros2swarm.voting_pattern.basic.majority_rule_pattern:main',
+
+            #task allocation patterns
+            'static_threshold_pattern = '
+            'ros2swarm.task_allocation_pattern.basic.static_threshold_pattern:main',
+            'fixed_pattern = '
+            'ros2swarm.task_allocation_pattern.basic.fixed_pattern:main',
+
+
+            #miscellaneous nodes
+            'items_master_node = '
+            'ros2swarm.misc_nodes.items_master:main'
         ],
     },
 )

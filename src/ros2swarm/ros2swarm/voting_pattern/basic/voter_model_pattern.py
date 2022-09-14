@@ -38,11 +38,11 @@ class VoterModelPattern(VotingPattern):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('voter_model_initial_value', None),
-                ('voter_model_choose_start_value_at_random', None),
-                ('voter_model_min_opinion', None),
-                ('voter_model_max_opinion', None),
-                ('voter_model_timer_period', None),
+                ('voter_model_initial_value', False),
+                ('voter_model_choose_start_value_at_random', 0),
+                ('voter_model_min_opinion', 0),
+                ('voter_model_max_opinion', 0),
+                ('voter_model_timer_period', 0.0),
             ])
 
         self.param_initial_value = self.get_parameter(

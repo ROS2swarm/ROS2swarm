@@ -31,12 +31,12 @@ class DiscussedDispersion(MovementPattern):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('max_translational_velocity', None),
-                ('max_rotational_velocity', None),
-                ('discussed_dispersion_timer_period', None),
-                ('discussed_dispersion_discussion_base_distance', None),
-                ('discussed_dispersion_discussion_time', None),
-                ('discussed_dispersion_discussion_opinion_multiply', None),
+                ('max_translational_velocity', 0.0),
+                ('max_rotational_velocity', 0.0),
+                ('discussed_dispersion_timer_period', 0.0),
+                ('discussed_dispersion_discussion_base_distance', 0.0),
+                ('discussed_dispersion_discussion_time', 0.0),
+                ('discussed_dispersion_discussion_opinion_multiply', 0.0),
             ])
         self.counter = 0
         self.dispersion_latest = Twist()

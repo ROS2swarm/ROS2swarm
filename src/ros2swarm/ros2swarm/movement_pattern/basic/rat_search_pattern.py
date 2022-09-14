@@ -70,22 +70,22 @@ class RatSearchPattern(MovementPattern):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('rat_search_max_range', None),
-                ('rat_search_min_range', None),
-                ('rat_search_timer_period', None),
-                ('rat_search_color_red', None),
-                ('rat_search_color_green', None),
-                ('rat_search_color_blue', None),
-                ('rat_search_right_distance', None),
-                ('rat_search_left_distance', None),
-                ('rat_search_distance_buffer', None),
+                ('rat_search_max_range', 0.0),
+                ('rat_search_min_range', 0.0),
+                ('rat_search_timer_period', 0.0),
+                ('rat_search_color_red', 0.0),
+                ('rat_search_color_green', 0.0),
+                ('rat_search_color_blue', 0.0),
+                ('rat_search_right_distance', 0.0),
+                ('rat_search_left_distance', 0.0),
+                ('rat_search_distance_buffer', 0.0),
 
-                ('rat_search_wall_right_degree', None),
-                ('rat_search_wall_degree', None),
-                ('rat_search_wall_batch_size', None),
+                ('rat_search_wall_right_degree', 0),
+                ('rat_search_wall_degree', 0),
+                ('rat_search_wall_batch_size', 0),
 
-                ('max_translational_velocity', None),
-                ('max_rotational_velocity', None),
+                ('max_translational_velocity', 0.0),
+                ('max_rotational_velocity', 0.0),
             ])
 
         self.scan_subscription = self.create_subscription(

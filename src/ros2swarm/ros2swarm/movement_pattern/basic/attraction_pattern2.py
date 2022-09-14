@@ -39,14 +39,14 @@ class AttractionPattern2(MovementPattern):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('attraction2_max_range', None),
-                ('attraction2_min_range', None),
-                ('attraction2_front_attraction', None),
-                ('attraction2_threshold', None),
-                ('attraction2_stop_if_alone', None),
-                ('max_translational_velocity', None),
-                ('max_rotational_velocity', None),
-                ('lidar_config', None)
+                ('attraction2_max_range', 0.0),
+                ('attraction2_min_range', 0.0),
+                ('attraction2_front_attraction', 0.0),
+                ('attraction2_threshold', 0.0),
+                ('attraction2_stop_if_alone', False),
+                ('max_translational_velocity', 0.0),
+                ('max_rotational_velocity', 0.0),
+                ('lidar_config', 0.0)
             ])
 
         self.scan_subscription = self.create_subscription(

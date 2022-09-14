@@ -59,19 +59,19 @@ class MinimalistFlockingPattern(MovementPattern):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('minimalist_flocking_translational_velocity', None),
-                ('minimalist_flocking_rotational_left_velocity', None),
-                ('minimalist_flocking_rotational_right_velocity', None),
-                ('minimalist_flocking_drive_timer_period', None),
-                ('minimalist_flocking_zone1_threshold', None),
-                ('minimalist_flocking_zone2_threshold', None),
-                ('minimalist_flocking_zone3_threshold', None),
-                ('minimalist_flocking_zone4_threshold', None),
-                ('minimalist_flocking_zone2_robot_threshold', None),
-                ('minimalist_flocking_robot_threshold', None),
-                ('max_range', None),
-                ('min_range', None),
-                ('lidar_config', None)
+                ('minimalist_flocking_translational_velocity', 0.0),
+                ('minimalist_flocking_rotational_left_velocity', 0.0),
+                ('minimalist_flocking_rotational_right_velocity', 0.0),
+                ('minimalist_flocking_drive_timer_period', 0),
+                ('minimalist_flocking_zone1_threshold', 0.0),
+                ('minimalist_flocking_zone2_threshold', 0.0),
+                ('minimalist_flocking_zone3_threshold', 0.0),
+                ('minimalist_flocking_zone4_threshold', 0.0),
+                ('minimalist_flocking_zone2_robot_threshold', 0),
+                ('minimalist_flocking_robot_threshold', 0),
+                ('max_range', 0.0),
+                ('min_range', 0.0),
+                ('lidar_config', 0.0)
             ])
 
         self.state = State.INIT

@@ -15,6 +15,7 @@
 import os
 import sys
 import launch_ros.actions
+import numpy as np
 
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
@@ -95,23 +96,57 @@ def generate_launch_description():
         )
         ld.add_action(gazebo_start)
 
+        random_pos_flag = True
+        robot_spawning_positions = []
         for i in range(number_robots):
             # add gazebo node
-            gazebo_node = launch_ros.actions.Node(
-                package='launch_turtlebot_gazebo',
-                executable='add_bot_node',
-                namespace=['namespace_', str(i)],
-                name=['gazeboTurtleBotNode_', str(i)],
-                output='screen',
-                arguments=[
-                    '--robot_name', ['robot_name_', str(i)],
-                    '--robot_namespace', ['robot_namespace_', str(i)],
-                    '-x', '0.0',
-                    '-y', [str(i), '.0'],
-                    '-z', '0.1',
-                    '--type_of_robot', robot
-                ]
-            )
+            if(random_pos_flag == True):
+                trying = False
+                x = 0
+                y = 0
+                while(trying == False):
+                    x = np.random.uniform(-8.0,8.0)
+                    y = np.random.uniform(-8.0,8.0)
+                    check_pos = True
+                    for robot_pos in robot_spawning_positions:
+                        if(abs(robot_pos[0] - x) <= 0.1 and abs(robot_pos[1] - y) <= 0.1):
+                            check_pos = False
+                    if(check_pos == True):
+                        trying = True
+                        robot_spawning_positions.append([x,y])
+
+                gazebo_node = launch_ros.actions.Node(
+                    package='launch_turtlebot_gazebo',
+                    executable='add_bot_node',
+                    namespace=['namespace_', str(i)],
+                    name=['gazeboTurtleBotNode_', str(i)],
+                    output='screen',
+                    arguments=[
+                        '--robot_name', ['robot_name_', str(i)],
+                        '--robot_namespace', ['robot_namespace_', str(i)],
+                        '-x', [str(robot_spawning_positions[i][0])],
+                        '-y', [str(robot_spawning_positions[i][1])],
+                        '-z', '0.1',
+                        '--type_of_robot', robot
+                    ]
+                )
+            else:
+                gazebo_node = launch_ros.actions.Node(
+                    package='launch_turtlebot_gazebo',
+                    executable='add_bot_node',
+                    namespace=['namespace_', str(i)],
+                    name=['gazeboTurtleBotNode_', str(i)],
+                    output='screen',
+                    arguments=[
+                        '--robot_name', ['robot_name_', str(i)],
+                        '--robot_namespace', ['robot_namespace_', str(i)],
+                        '-x', '0.0',
+                        '-y', [str(i), '.0'],
+                        '-z', '0.1',
+                        '--type_of_robot', robot
+                    ]
+                )
+
             ld.add_action(gazebo_node)
 
     config_dir = os.path.join(get_package_share_directory('ros2swarm'), 'config', robot_type)
@@ -140,5 +175,13 @@ def generate_launch_description():
 
         )
         ld.add_action(launch_patterns)
+
+    #launching other miscellaneous nodes in simulation
+    launch_misc = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [launch_bringup_dir, '/' + 'bringup_misc.launch.py']),
+            launch_arguments={}.items(),
+        )
+    ld.add_action(launch_misc)
 
     return ld

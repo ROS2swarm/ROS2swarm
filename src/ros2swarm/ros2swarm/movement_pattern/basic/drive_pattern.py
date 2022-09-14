@@ -31,9 +31,9 @@ class DrivePattern(MovementPattern):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('drive_timer_period', None),
-                ('drive_linear', None),
-                ('drive_angular', None),
+                ('drive_timer_period', 0.0),
+                ('drive_linear', 0.0),
+                ('drive_angular', 0.0),
             ])
 
         timer_period = float(
