@@ -69,18 +69,17 @@ class StaticThresholdPattern(AbstractPattern):
         self.req_item_service = ItemService.Request()
 
         self.timer = self.create_timer(1, self.swarm_command_controlled_timer(self.static_threshold_pattern_callback))
-
         self.threshold = []
-        for i in range(3):
+        for i in range(3): #set threshold for each of three object
             self.threshold.append(random.uniform(0.0, 1.0))
-        self.n = 2
-        self.filepath_log = "log_items_removed.csv"
-        items_string_list = ['robot_name','item_picked','start_time','drop_time','end_time','time_taken']
+        self.n = 2  #set the responsiveness to stimulus
+        self.filepath_log = "log_items_removed.csv"  #file to save object type removed and time taken to drop and come back
+        items_string_list = ['robot_name','item_picked','start_time','drop_time','end_time','time_taken'] #header in csv log file
         with open(self.filepath_log, 'w', encoding='UTF8') as f:
             writer = csv.writer(f)
             # write the header
             writer.writerow(items_string_list)
-        self.moved = ['','','','','','']
+        self.moved = ['','','','','',''] #list to save data to write to csv file as a row
         self.t0 = 0
         self.t1 = 0
         self.t2 = 0
@@ -125,7 +124,7 @@ class StaticThresholdPattern(AbstractPattern):
             if(self.get_namespace()[-1] == self.model_states.name[i][-1]):
                 self.robot_pose = self.model_states.pose[i]
 
-    def responseT(self, stimIntensity, item_type):
+    def responseT(self, stimIntensity, item_type): #the response function takes stimulus(task demand) and caluclates response value
         output = stimIntensity ** self.n / (stimIntensity ** self.n + self.threshold[item_type])
         self.get_logger().info('Publishing {}:"{}"'.format(output, self.get_namespace()))
         # self.get_logger().info('The threshold is  %s and robot is %s' % output,self.get_namespace())
@@ -135,7 +134,7 @@ class StaticThresholdPattern(AbstractPattern):
         if (self.robot_state == State.TASK_ALLOCATION):
             is_all_zero = not np.any(self.items_list)
             # self.get_logger().info('The items %s' % self.items_list)
-            if (is_all_zero):
+            if (is_all_zero): # if items to pick = 0
                 self.get_logger().info('No item s')
             else:
                 # calculate the probabilities for the stimulation (the normalized demand of each task)
@@ -144,18 +143,18 @@ class StaticThresholdPattern(AbstractPattern):
                 prob = []
                 choose = []
                 for i in range(len(self.items_list)):
-                    task_demand.append(self.items_list[i] / sum(self.items_list))
-                    prob.append(self.responseT(task_demand[i], i))
-                    choose.append(i)
+                    task_demand.append(self.items_list[i] / sum(self.items_list)) # the stimulus
+                    prob.append(self.responseT(task_demand[i], i)) #get values from response function
+                    choose.append(i) #append to list to randomnly choose which one to probabilistically check first
 
                 item_taken = 0
 
-                while (len(choose) > 0 and item_taken == 0):
+                while (len(choose) > 0 and item_taken == 0): #choose one probability randomnly and remove items probabilistically
                     chosen = random.choice(choose)
                     choose.remove(chosen)
                     rand = random.random()
                     self.get_logger().info('The Rand %s' % rand)
-                    if (rand < prob[chosen]):
+                    if (rand < prob[chosen]): # compare the chosen item probability with a random number 0-1 to remove an item of that type
                         item_taken = 1
                         self.item_type_to_take = self.items_list.index(self.items_list[chosen])
                         self.moved[1]= str(self.item_type_to_take)
@@ -172,9 +171,9 @@ class StaticThresholdPattern(AbstractPattern):
 
         elif (self.robot_state == State.DO_TASK):
             # do the task here ! taking the item, moving, dropping the item, coming back
-            time_string = str(self.get_clock().now().to_msg()).split('sec=')[1]
+            time_string = str(self.get_clock().now().to_msg()).split('sec=')[1]  #get current time
             time_string = time_string.split(',')[0]
-            self.t0 = int(time_string)
+            self.t0 = int(time_string) #save time of when task to drop an item starts
             self.moved[2]=str(self.t0)
             self.get_logger().info('The start timer is  %s' % self.t0)
             if (self.future == None):
@@ -199,7 +198,7 @@ class StaticThresholdPattern(AbstractPattern):
             time_string = str(self.get_clock().now().to_msg()).split('sec=')[1]
             time_string = time_string.split(',')[0]
             self.t1 = int(time_string)
-            self.moved[3]=str(self.t1)
+            self.moved[3]=str(self.t1)#log time to drop the item in zones to save in csv file
             self.get_logger().info('The drop timer is  %s' % self.t1)
 
         elif (self.robot_state == State.BACK_TO_NEST):
@@ -214,9 +213,9 @@ class StaticThresholdPattern(AbstractPattern):
                 time_string = str(self.get_clock().now().to_msg()).split('sec=')[1]
                 time_string = time_string.split(',')[0]
                 self.t2 = int(time_string)
-                total = self.t2-self.t0
+                total = self.t2-self.t0  #get time took to complete the task (pick object from nest, drop to zone and come back to nest)
                 self.get_logger().info('The total timer is  %s' % str(total))
-                with open(self.filepath_log, 'a', encoding='UTF8') as ff:
+                with open(self.filepath_log, 'a', encoding='UTF8') as ff:  #write in the csv file
                     writer = csv.writer(ff)
                     self.moved[4]=str(self.t2)
                     self.moved[5]=str(total)

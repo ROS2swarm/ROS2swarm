@@ -67,17 +67,19 @@ The following table gives an overview the current implemented patterns.
 The patterns are separated into movement and voting patterns. 
 Every pattern can either be a basic pattern or a combined one, which make use of one or more other patterns to create more complex behaviors.
 
-| Pattern                  | Domain   | Type     | Simulation          | Robot  |
-| ------                   | ------   | ------   | ------              | ------ |
-| drive                    | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
-| dispersion               | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
-| attraction               | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
-| magnetometer             | Movement | Basic    | :x:                 | :heavy_check_mark: |
-| minimalist flocking      | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
-| random walk      | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
-| discussed dispersion pattern                 | Movement | Combined | :heavy_check_mark:  | :heavy_check_mark: |
-| voter model              | Voting   | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
-| majority rule            | Voting   | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
+| Pattern                      | Domain          | Type     | Simulation          | Robot              |
+|------------------------------|-----------------| ------   | ------              |--------------------|
+| drive                        | Movement        | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
+| dispersion                   | Movement        | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
+| attraction                   | Movement        | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
+| magnetometer                 | Movement        | Basic    | :x:                 | :heavy_check_mark: |
+| minimalist flocking          | Movement        | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
+| random walk                  | Movement        | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
+| discussed dispersion pattern | Movement        | Combined | :heavy_check_mark:  | :heavy_check_mark: |
+| voter model                  | Voting          | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
+| majority rule                | Voting          | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
+| static threshold pattern     | Task Allocation | Basic    | :heavy_check_mark:  | :x:                |           
+| fixed pattern                | Task Allocation | Basic    | :heavy_check_mark:  | :x:                |           
 
 In addition, a hardware protection layer is started to prevent collisions.
 
@@ -118,6 +120,7 @@ For robot types TurtleBot3 Waffle Pi and TurtleBot3 Burger:
       * ros2swarm/hardware_protection_layer.py - hardware protection layer node
       * ros2swarm/pattern_domain/pattern_type/pattern_name.launch.py - launch script for the pattern node
       * robot_state_publisher package - robot_state_publisher node
+    * ros2swarm/launch_turtlebot_gazebo/worlds/task_allocation.world - the world to be specified for task allocation pattern
 
 * scripts/add_robots_to_simulation.sh - shell script to add more robots to simulation
   * launch_turtlebot_gazebo/launch/add_turtlebot.launch.py - allows adding additional robots to a simulation started by the create environment script (see above)

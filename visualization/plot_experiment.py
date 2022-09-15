@@ -7,98 +7,86 @@ from utils import get_data_per_exp
 
 COLORS = {'a':'green','b':'red','c':'blue'}
 COLOR = ['green','red','blue']
+LABELS = ['items_a','items_b','items_c']
 
-def plot_two_exp(exp_id = 0, name=""):
-
-    N = 2
+def plot_two_exp(name=""):
     OFFSET = 50
     fig, axs = plt.subplots(nrows=2, ncols=1)
-
-
-
     df_item_list, df_item_removed, name_lists = get_data_per_exp()
 
-    exp_id_item = exp_id
-    exp_id_remove = exp_id
 
-    for file_name in range(len(name_lists[0])):
+    '''File and dataframe loading'''
+    for file_name in range(len(name_lists[0])): #Search for log_items files
         if(name != "" and name in name_lists[0][file_name]):
             exp_id_item = file_name
 
     for file_name in range(len(name_lists[1])):
-        if(name != "" and name in name_lists[1][file_name]):
+        if(name != "" and name in name_lists[1][file_name]): # Search for log_items_removed files
             exp_id_remove = file_name
-    print(name_lists)
-    print(f"Choosen File: {name_lists[0][exp_id_item]} | {name_lists[1][exp_id_remove]}")
 
 
-    id_item = exp_id_item
-    id_remove = exp_id_remove
-
-    exp_item_df = df_item_list[id_item]
-    exp_removed_df = df_item_removed[id_remove].fillna(-1)
-
-    start_time = int(exp_removed_df['end_time'].iloc[0])
-    #print(start_time)
-
-    exp_removed_df['diff_time'] = exp_removed_df['start_time'] - start_time
-    exp_removed_df['diff_time'][:6] = exp_removed_df['end_time'][:6] - start_time
-
-    exp_removed_df['real_time_taken'] = exp_removed_df['end_time'] - exp_removed_df['start_time']
-
-    #exp_removed_df['real_time_taken'][:6] = exp_removed_df['start_time'][:6] - exp_removed_df['end_time']
+    file_name_items = name_lists[0][exp_id_item]
+    file_name_items_removed = name_lists[1][exp_id_remove]
 
 
-    #print(exp_removed_df['diff_time'])
+
+    exp_item_df = df_item_list[exp_id_item] # log_items dataframe
+    exp_removed_df = df_item_removed[exp_id_remove].fillna(-1) # log_items_removed dataframe without NaN
 
 
-    '''print(exp_removed_df[:6].head(5))
-    exp_removed_df = exp_removed_df.fillna(-1)
-    print(exp_removed_df[:6].head(5))
-    exit("end")'''
 
-    start_time_item = int(exp_item_df['time'].iloc[0])
-    exp_item_df['diff_time'] = exp_item_df['time'] - start_time
+    '''System time to simulation time'''
+    start_time = int(exp_removed_df['end_time'].iloc[0])  # first recorded time in the simulation
+    exp_removed_df['diff_time'] = exp_removed_df['start_time'] - start_time # Convert system time to simulation time
+    exp_removed_df['diff_time'][:6] = exp_removed_df['end_time'][:6] - start_time # Same but the 6 first elements are set with end_time due to unavailability of start_time
+    exp_removed_df['real_time_taken'] = exp_removed_df['end_time'] - exp_removed_df['start_time'] # Same to time_taken
+
+    exp_item_df['diff_time'] = exp_item_df['time'] - start_time # Same for log_items
+
+
+    '''Plot parameters'''
     print(start_time)
     print(exp_item_df.head(5))
 
     axs[0].set_xlim(0,exp_item_df['diff_time'].iloc[-1])
     axs[1].set_xlim(0, exp_item_df['diff_time'].iloc[-1])
-
-
     axs[0].set_ylim(0,30)
     axs[1].set_ylim(0, 6)
 
-    #exp_item_df['diff_time'].iloc[-1] += OFFSET
+    #axs[0].set_title(f"Remaining items per types over time ({file_name_items})")
+    axs[0].set_title(f"Remaining items per types over time")
+    #axs[1].set_title(f"Number of working robots by tasks type over time ({file_name_items_removed})")
+    axs[1].set_title(f"Number of working robots by tasks type over time")
+    print(f"Choosen File: {file_name_items} | {file_name_items_removed}")
 
+    axs[0].set_xlabel('Time (second)')
+    axs[1].set_xlabel('Time (second)')
+
+    axs[0].set_ylabel('Number of items')
+    axs[1].set_ylabel('Number of robots')
+
+    '''Plot Number of remaining items by type across time'''
     for col in exp_item_df.columns:
         if('items' in col):
             item_name = col.split('_')[1]
             axs[0].plot(exp_item_df['diff_time'],exp_item_df[col].values,label=f"{col}",color=COLORS[item_name])
-
-    print(len(exp_item_df['diff_time']))
-    #axs[0].title(f'{name_lists[0][exp_id]} - Number of remaining items by type across time')
-
     axs[0].legend()
     axs[0].grid()
 
 
-
+    '''Prepare second experience visualization'''
     robot_dic = {}
 
     for i in range(len(exp_removed_df['robot_name'])):
         robot_name = exp_removed_df['robot_name'].iloc[i]
 
-        if(not robot_name in robot_dic.keys()):
+        if(not robot_name in robot_dic.keys()): #robot_dic{"/robot_namespace_0":}
             robot_dic[robot_name] = []
         if(int(exp_removed_df['start_time'].iloc[i]) != -1):
             robot_dic[robot_name].append([int(exp_removed_df['diff_time'].iloc[i]),int(exp_removed_df['diff_time'].iloc[i]) + int(exp_removed_df['real_time_taken'].iloc[i]),int(exp_removed_df['item_picked'].iloc[i])])
+            # robot_dic{"/robot_namespace_0":[starting_time, starting_time + time_taken, item_type]}
 
-
-
-    #print(int(exp_removed_df['end_time'].iloc[0]),int(exp_removed_df['end_time'].iloc[len(exp_removed_df)-1]))
-
-    #timesteps = np.arange(int(exp_removed_df['end_time'].iloc[0]),int(exp_removed_df['end_time'].iloc[len(exp_removed_df)-1]))
+    '''Time management to match work period'''
     corrected_timestamps = []
     for elem in range(len(exp_removed_df['end_time'])):
 
@@ -109,26 +97,15 @@ def plot_two_exp(exp_id = 0, name=""):
             val = exp_removed_df['end_time'].iloc[elem]
             corrected_timestamps.append(val - start_time)
 
-    '''plt.plot(corrected_timestamps)
-    plt.show()
-    exit("end")'''
-
-
-    #timesteps =
     total_second =  (int(exp_removed_df['end_time'].iloc[len(exp_removed_df)-1]) - int(exp_removed_df['end_time'].iloc[0]))
     print(f"Total simulation time: {total_second} seconds | {round(total_second/60)} mins")
 
     number_of_working_robots = [[],[],[]] # one sub array per item type
     max_length = len(exp_removed_df['diff_time'])-1
-    timesteps = exp_removed_df['diff_time']
     timesteps = np.arange(exp_removed_df['diff_time'].iloc[0],exp_removed_df['diff_time'].iloc[max_length]+exp_removed_df['real_time_taken'].iloc[max_length]+OFFSET)
+    #timesteps = [0,simulation_time + OFFSET]
 
-
-    print(len(timesteps),len(exp_removed_df['end_time']))
-
-    #timesteps = np.arange(int(exp_removed_df['start_time'].iloc[0]),int(exp_removed_df['end_time'].iloc[len(exp_removed_df) - 1]))
-
-
+    '''Counting number of working robots per time period and their task type'''
     for timestep in timesteps:
         counter =  [0,0,0]
         for key in robot_dic.keys():
@@ -139,28 +116,84 @@ def plot_two_exp(exp_id = 0, name=""):
         for sub_array in range(len(number_of_working_robots)):
             number_of_working_robots[sub_array].append(counter[sub_array])
 
-
-
-    x_axis = []
-    count = 0
-    for z in range(start_time,start_time+total_second):
-        x_axis.append(())
-
-    #axs[1].yticks(np.arange(0, 6))
-    #plt.xticks(x_axis)
-
+    mapping_label={0:'items_a',1:'items_b',2:'items_c'}
     for sub_array in range(len(number_of_working_robots)):
         #print(number_of_working_robots[sub_array])
-        axs[1].plot(timesteps,number_of_working_robots[sub_array], label=sub_array,color=COLOR[sub_array])
 
-    #axs[1].title(f'{name_lists[0][exp_id]} - Number of working robots across time')
-
+        axs[1].plot(timesteps,number_of_working_robots[sub_array], label=mapping_label[sub_array],color=COLOR[sub_array])
 
     axs[1].legend()
     axs[1].grid()
-
     plt.show()
 
 
-plot_two_exp(exp_id=2, name="spike")
+def load_specific_files(name="newtime"):
+    df_item_list, df_item_removed, name_lists = get_data_per_exp()
 
+    '''File and dataframe loading'''
+    exp_id_items = []
+    exp_id_removes = []
+    df_big_list_items = []
+    df_big_list_removed = []
+
+    for file_name in range(len(name_lists[0])):  # Search for log_items files
+        if (name != "" and name in name_lists[0][file_name]):
+            exp_id_items.append(name_lists[0][file_name])
+            df_big_list_items.append(df_item_list[file_name])
+
+    for file_name in range(len(name_lists[1])):
+        if (name != "" and name in name_lists[1][file_name]):  # Search for log_items_removed files
+            exp_id_removes.append(name_lists[1][file_name])
+            df_big_list_removed.append(df_item_removed[file_name].fillna(-1))
+
+    return pd.concat(df_big_list_items), pd.concat(df_big_list_removed),[exp_id_items,exp_id_removes]
+
+
+
+def plot_median_time(name=""):
+
+    OFFSET = 50
+    #fig, axs = plt.subplots(nrows=2, ncols=1)
+    #df_item_list, df_item_removed, name_lists = get_data_per_exp()
+
+    df_items, df_removed, list_name = load_specific_files(name=name)
+
+    print(list_name)
+
+    exp_id_item = list_name[0]
+    exp_id_remove = list_name[1]
+
+    item_dic = {}
+
+    item_picked = df_removed['item_picked']
+    time_taken = df_removed['time_taken']
+
+    for i in range(len(item_picked)):
+        if (item_picked.iloc[i] != -1):
+            if(item_picked.iloc[i] in item_dic.keys()):
+                item_dic[item_picked.iloc[i]] += [time_taken.iloc[i]]
+            else:
+                item_dic[item_picked.iloc[i]] = [time_taken.iloc[i]]
+
+    label_convert = {0:['items_a','green'],1:['items_b','red'],2:['items_c','blue']}
+    new_label = []
+    for key in item_dic.keys():
+        new_label.append(LABELS[int(key)])
+
+    plt.ylim(0, int(max(item_dic[1])*2))
+
+
+    boxes = plt.boxplot(x=item_dic.values(),labels=new_label,patch_artist = True)
+
+
+
+    '''System time to simulation time'''
+    plt.title(f"Median time taken by the robot for each task type")
+    plt.xlabel("Task type")
+    plt.ylabel("Time (second)")
+    plt.legend()
+    plt.grid()
+    plt.show()
+
+#plot_two_exp(name="breakdown")
+plot_median_time(name="newtime")
