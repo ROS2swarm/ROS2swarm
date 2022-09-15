@@ -100,11 +100,11 @@ def generate_launch_description():
         robot_spawning_positions = []
         for i in range(number_robots):
             # add gazebo node
-            if(random_pos_flag == True):
+            if(random_pos_flag == True): #flag for choosing if the robot spawn in line or randomly
                 trying = False
                 x = 0
                 y = 0
-                while(trying == False):
+                while(trying == False): #checking for collisions between robots before spawning
                     x = np.random.uniform(-8.0,8.0)
                     y = np.random.uniform(-8.0,8.0)
                     check_pos = True

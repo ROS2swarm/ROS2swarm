@@ -31,6 +31,8 @@ from rclpy.node import Node
 class StaticThresholdPattern(AbstractPattern):
     """
     Implementation of the Static Threshold approach.
+    Every robot is initialised with different thresholds for each type of item.
+    These determine the probability to take an item and do the associated task.
     """
 
     def __init__(self):
@@ -57,17 +59,22 @@ class StaticThresholdPattern(AbstractPattern):
         self.item_type_hold = None
         self.item_type_to_take = 0
 
+        #to see the number of each item at items_master
         self.subscription_items_list = self.create_subscription(IntListMessage, '/items_list', self.item_list_callback,
                                                                 10)
+        #to ease the implementation of movement, absolute positioning is used
         self.subscription_models_states = self.create_subscription(ModelStates, '/model_states/model_states',
                                                                    self.model_states_callback, 10)
+        #to request items
         self.cli_item_service = self.create_client(ItemService, '/item_service')
+        #to drive the robot
         self.command_publisher = self.create_publisher(Twist, self.get_namespace() + '/drive_command', 10)
 
         while not self.cli_item_service.wait_for_service(timeout_sec=1.0):
             self.get_logger().info('service not available, waiting again...')
         self.req_item_service = ItemService.Request()
 
+        #main loop
         self.timer = self.create_timer(1, self.swarm_command_controlled_timer(self.static_threshold_pattern_callback))
         self.threshold = []
         for i in range(3): #set threshold for each of three object

@@ -20,7 +20,7 @@ colcon build --symlink-install --allow-overriding communication_interfaces launc
  number_robots:=6 \
  log_level:=info \
  robot:=waffle_pi
-# gazebo_world arena_large.world | arena.world | empty.world | turtle.world | 560x540m.world | Ymaze.world | Ymaze_camber.world | Ymaze_camber_top.world
+# gazebo_world arena_large.world | arena.world | empty.world | turtle.world | 560x540m.world | Ymaze.world | Ymaze_camber.world | Ymaze_camber_top.world | task_allocation.world
 # pattern pattern_name
 ## movement pattern:
 #  * drive_pattern
