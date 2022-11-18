@@ -23,6 +23,10 @@ class MoveToTargetPattern(MovementPattern):
     """
     Pattern to move to a target point defined in global coordinates
 
+    To use: publish on the /target_pose topic the pose of the target point and on the /robot_pose topic the position of the robot
+
+    To stop moving: publish the same pose on both topics
+
     pattern_node >> publishing to the self.get_namespace()/drive_command topic
     """
 
@@ -79,12 +83,10 @@ class MoveToTargetPattern(MovementPattern):
             self.msg.linear.y = 0.0
             self.msg.angular.z = 0.0
             return
-        vector_magnitude = np.sqrt(vector_x * vector_x + vector_y * vector_y)
-        vector_x = vector_x / vector_magnitude
-        vector_y = vector_y / vector_magnitude
 
         self.msg.linear.x = 0.0
         self.msg.linear.y = 0.0
+        #computing the angle
         if(vector_x >= 0):
             theta = np.arctan((self.target_pose.position.y - self.robot_pose.position.y) / (self.target_pose.position.x - self.robot_pose.position.x))
         if(vector_x < 0 and vector_y >0):
@@ -98,11 +100,11 @@ class MoveToTargetPattern(MovementPattern):
             delta = delta - 2*3.1415
         if(delta < -3.1415):
             delta = delta + 2*3.1415
-        if(delta < 0):
+        if(delta < 0): #for normal angles
             self.msg.angular.z = -0.4
         if(delta > 0):
             self.msg.angular.z = 0.4
-        if(delta < 3.1415/4 and delta > -3.1415/4):
+        if(delta < 3.1415/4 and delta > -3.1415/4): #for small angles
             self.msg.linear.x = 1.0
             self.msg.angular.z = self.msg.angular.z/2
 
