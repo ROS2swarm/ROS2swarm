@@ -65,6 +65,8 @@ def generate_launch_description():
     # allows to use the same configuration files for each robot type but different mesh models
     robot_type = robot
     gazebo_flag = True
+    random_pos_flag = True
+    misc_nodes_flag = True
     if robot_type.startswith('burger'):
         robot_type = "burger"
     elif robot_type.startswith('waffle_pi'):
@@ -96,7 +98,6 @@ def generate_launch_description():
         )
         ld.add_action(gazebo_start)
 
-        random_pos_flag = True
         robot_spawning_positions = []
         for i in range(number_robots):
             # add gazebo node
@@ -177,11 +178,12 @@ def generate_launch_description():
         ld.add_action(launch_patterns)
 
     #launching other miscellaneous nodes in simulation
-    launch_misc = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [launch_bringup_dir, '/' + 'bringup_misc.launch.py']),
-            launch_arguments={}.items(),
-        )
-    ld.add_action(launch_misc)
+    if misc_nodes_flag:
+        launch_misc = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                [launch_bringup_dir, '/' + 'bringup_misc.launch.py']),
+                launch_arguments={}.items(),
+            )
+        ld.add_action(launch_misc)
 
     return ld
