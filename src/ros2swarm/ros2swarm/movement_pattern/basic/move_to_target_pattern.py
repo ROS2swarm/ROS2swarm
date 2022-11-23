@@ -16,16 +16,21 @@
 from geometry_msgs.msg import Twist, Pose
 from ros2swarm.utils import setup_node, quaternion_transform
 from ros2swarm.movement_pattern.movement_pattern import MovementPattern
-
+from gazebo_msgs.msg import ModelStates
 import numpy as np
 
 class MoveToTargetPattern(MovementPattern):
     """
     Pattern to move to a target point defined in global coordinates
+    
+    *Either:
+    	set gotolocation to true and specify the coordinates 
+    *OR:
+    	combine in code by using the following topics
 
-    To use: publish on the /target_pose topic the pose of the target point and on the /robot_pose topic the position of the robot
+    	To use: publish on the /target_pose topic the pose of the target point and on the /robot_pose topic the position of the robot
 
-    To stop moving: publish the same pose on both topics
+    	To stop moving: publish the same pose on both topics
 
     pattern_node >> publishing to the self.get_namespace()/drive_command topic
     """
@@ -41,31 +46,39 @@ class MoveToTargetPattern(MovementPattern):
 
         timer_period = float(
             self.get_parameter("timer_period").get_parameter_value().double_value)
-
+        self.gotolocation = 'false' #set to true if want to go to specific location
         self.target_pose = Pose()
         self.robot_pose = Pose()
         self.msg = Twist()
-
         self.timer = self.create_timer(timer_period, self.swarm_command_controlled_timer(self.timer_callback))
-
-        self.target_pose_subscription = self.create_subscription(
-            Pose,
-            self.get_namespace() + '/target_pose',
-            self.target_pose_callback,
-            10
-        )
-
-        self.robot_pose_subscription = self.create_subscription(
-            Pose,
-            self.get_namespace() + '/robot_pose',
-            self.robot_pose_callback,
-            10
-        )
-
+        #to ease the implementation of movement, absolute positioning is used
+        #we can access the pose of all objects in simulation with this
+        if(self.gotolocation=='true'): 
+            #self.get_logger().info('Comes to go to location')
+            self.model_states = ModelStates()
+            self.target_pose.position.x = -5.0  #specify coordinate x
+            self.target_pose.position.y = -5.0	 #specify coordinate y
+            self.subscription_models_states = self.create_subscription(ModelStates, '/model_states/model_states', self.model_states_callback, 10)
+        else:
+            #self.get_logger().info('Comes to go to task alloc')
+            self.target_pose_subscription = self.create_subscription(Pose, self.get_namespace() + '/target_pose', self.target_pose_callback, 10)
+            self.robot_pose_subscription = self.create_subscription(Pose, self.get_namespace() + '/robot_pose', self.robot_pose_callback, 10)
+            
+            
+    def model_states_callback(self, msg):
+        # the global position of robots
+        self.model_states = msg
+        indices = [i for i, x in enumerate(self.model_states.name) if "robot_name_" in x]
+        for i in indices:
+            if(self.get_namespace()[-1] == self.model_states.name[i][-1]):
+                self.robot_pose = self.model_states.pose[i]
+        if(self.robot_pose != self.target_pose):
+        	self.update_speeds()
+                
     def target_pose_callback(self, pose):
         if(self.target_pose != pose):
-            self.target_pose = pose
-            self.update_speeds()
+        	self.target_pose = pose
+        	self.update_speeds()
 
     def robot_pose_callback(self, pose):
         if(self.robot_pose != pose):
