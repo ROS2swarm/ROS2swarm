@@ -18,6 +18,7 @@ from rclpy.node import Node
 from ros2swarm.movement_pattern.movement_pattern import MovementPattern
 from ros2swarm.utils import setup_node
 from ros2swarm.utils import quaternion_transform
+from ros2swarm.utils.static_threshold import StaticThreshold
 from ros2swarm.utils.state import State
 
 from communication_interfaces.msg import IntListMessage
@@ -140,47 +141,21 @@ class TaskAllocationPattern(MovementPattern):
             if(self.get_namespace()[-1] == self.model_states.name[i][-1]):
                 self.robot_pose = self.model_states.pose[i]
 
-    def responseT(self, stimIntensity, item_type): #the response function takes stimulus (task demand) and caluclates response value
-        output = stimIntensity ** self.n / (stimIntensity ** self.n + self.threshold[item_type])
-        self.get_logger().info('Publishing {}:"{}"'.format(output, self.get_namespace()))
-        return output
-
     def task_allocation_pattern_callback(self):
         if (self.robot_state == State.TASK_ALLOCATION):
             is_all_zero = not np.any(self.items_list)
             if (is_all_zero): # if there are no items available to take
                 self.get_logger().info('No items available')
             else:
-                # calculate the probabilities for the stimulus (the normalized demand of each task)
-                # this goes in to the function T
-                task_demand = []
-                prob = []
-                choose = []
-                for i in range(len(self.items_list)):
-                    task_demand.append(self.items_list[i] / sum(self.items_list)) # the stimulus
-                    prob.append(self.responseT(task_demand[i], i)) #get values from response function
-                    choose.append(i) #append to list to randomly choose which one to probabilistically check first
+                item_taken = StaticThreshold.choose_task(self.items_list, self.n, self.threshold)
 
-                item_taken = 0
-
-                while (len(choose) > 0 and item_taken == 0): #choose one probability randomnly and remove items probabilistically
-                    chosen = random.choice(choose)
-                    choose.remove(chosen)
-                    rand = random.random()
-                    self.get_logger().info('The Rand %s' % rand)
-                    if (rand < prob[chosen]): # compare the chosen item probability with a random number 0-1 to remove an item of that type
-                        item_taken = 1
-                        self.item_type_to_take = self.items_list.index(self.items_list[chosen])
-                        if self.write_file:
-                            self.moved[1]= str(self.item_type_to_take)
-                            self.get_logger().info('The item in moved  take {}'.format(self.moved))
-
-                if (item_taken == 0):
+                if (item_taken == -1):
                     self.robot_state = State.TASK_ALLOCATION
                     self.target_pose_publisher.publish(self.robot_pose)
                     self.robot_pose_publisher.publish(self.robot_pose)
                     self.get_logger().info('I have decided to not take an item !')
                 else:
+                    self.item_type_to_take = item_taken
                     self.robot_state = State.DO_TASK
                     self.get_logger().info('I have decided to take an item !')
 
