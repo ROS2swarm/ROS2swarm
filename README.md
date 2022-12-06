@@ -128,7 +128,7 @@ For robot types TurtleBot3 Waffle Pi and TurtleBot3 Burger:
 For robot type Jackal UGV:
 * start a roscore 
 * run the rosbridge: https://github.com/ros2/ros1_bridge
-* start the jackal simulation: https://gitlab.iti.uni-luebeck.de/plattenteich/jackal-swarm-addition  
+* start the jackal simulation: https://github.com/ROS2swarm/jackal-swarm-simulation
 * start_simulation.sh - with robot:=jackal
 
 <a name="robot"></a>
