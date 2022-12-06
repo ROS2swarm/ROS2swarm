@@ -23,10 +23,6 @@ setup(
          glob('launch/pattern/movement_pattern/combined/*.launch.py')),
         (os.path.join('share', package_name, 'launch', 'pattern', 'voting_pattern', 'basic'),
          glob('launch/pattern/voting_pattern/basic/*.launch.py')),
-        (os.path.join('share', package_name, 'launch', 'pattern', 'task_allocation_pattern', 'basic'),
-         glob('launch/pattern/task_allocation_pattern/basic/*.launch.py')),
-        (os.path.join('share', package_name, 'launch', 'pattern', 'task_allocation_pattern', 'combined'),
-         glob('launch/pattern/task_allocation_pattern/combined/*.launch.py')),
         # (os.path.join('share', package_name, 'launch', 'pattern', 'voting_pattern', 'combined'),
         #     glob('launch/pattern/voting_pattern/combined/*.launch.py')),
 
@@ -103,9 +99,13 @@ setup(
             'ros2swarm.movement_pattern.basic.minimalist_flocking_pattern:main',
             'rat_search_pattern = '
             'ros2swarm.movement_pattern.basic.rat_search_pattern:main',
+            'move_to_target_pattern = '
+            'ros2swarm.movement_pattern.basic.move_to_target_pattern:main',
             # movement_pattern.combined
             'discussed_dispersion_pattern = '
             'ros2swarm.movement_pattern.combined.discussed_dispersion_pattern:main',
+            'task_allocation_pattern = '
+            'ros2swarm.movement_pattern.combined.task_allocation_pattern:main',
 
             # voting.basic
             'voter_model_pattern = '
@@ -114,13 +114,6 @@ setup(
             'ros2swarm.voting_pattern.basic.voter_model_with_limiter_pattern:main',
             'majority_rule_pattern = '
             'ros2swarm.voting_pattern.basic.majority_rule_pattern:main',
-
-            #task allocation patterns
-            'static_threshold_pattern = '
-            'ros2swarm.task_allocation_pattern.basic.static_threshold_pattern:main',
-            'fixed_pattern = '
-            'ros2swarm.task_allocation_pattern.basic.fixed_pattern:main',
-
 
             #miscellaneous nodes
             'items_master_node = '

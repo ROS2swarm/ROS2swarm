@@ -1,4 +1,5 @@
-#    Copyright 2022 Antoine Sion
+#!/usr/bin/env python3
+#    Copyright 2021 Marian Begemann
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -17,7 +18,7 @@ from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 
 
 def generate_launch_description():
-    """Start the nodes required for the aggregation pattern."""
+    """Start the nodes required for the task allocation pattern."""
     robot_namespace = LaunchConfiguration('robot_namespace', default='robot_namespace_default')
     config_dir = LaunchConfiguration('config_dir', default='config_dir_default')
     log_level = LaunchConfiguration("log_level", default='debug')
@@ -25,13 +26,24 @@ def generate_launch_description():
     ld = LaunchDescription()
     ros2_pattern_node = launch_ros.actions.Node(
         package='ros2swarm',
-        executable='fixed_pattern',
+        executable='task_allocation_pattern',
         namespace=robot_namespace,
         output='screen',
         parameters=[
-            PathJoinSubstitution([config_dir, 'task_allocation_pattern', 'basic', 'fixed_pattern.yaml'])],
+            PathJoinSubstitution([config_dir, 'movement_pattern', 'combined', 'task_allocation_pattern.yaml'])],
         arguments=['--ros-args', '--log-level', log_level]
     )
     ld.add_action(ros2_pattern_node)
+
+    ros2_pattern_subnode_task_allocation = launch_ros.actions.Node(
+        package='ros2swarm',
+        executable='move_to_target_pattern',
+        namespace=robot_namespace,
+        output='screen',
+        parameters=[
+            PathJoinSubstitution([config_dir, 'movement_pattern', 'combined', 'task_allocation_pattern.yaml'])],
+        arguments=['--ros-args', '--log-level', log_level]
+    )
+    ld.add_action(ros2_pattern_subnode_task_allocation)
 
     return ld

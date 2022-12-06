@@ -42,7 +42,7 @@ def generate_launch_description():
         elif arg.startswith("robot:="):  # The type of robot
             robot = arg.split(":=")[1]
         else:
-            if arg not in ['/opt/ros/foxy/bin/ros2',
+            if arg not in ['/opt/ros/galactic/bin/ros2',
                            'launch',
                            'launch_turtlebot_gazebo',
                            'create_enviroment.launch.py']:
@@ -65,6 +65,8 @@ def generate_launch_description():
     # allows to use the same configuration files for each robot type but different mesh models
     robot_type = robot
     gazebo_flag = True
+    random_pos_flag = True
+    misc_nodes_flag = True
     if robot_type.startswith('burger'):
         robot_type = "burger"
     elif robot_type.startswith('waffle_pi'):
@@ -96,15 +98,14 @@ def generate_launch_description():
         )
         ld.add_action(gazebo_start)
 
-        random_pos_flag = True
         robot_spawning_positions = []
         for i in range(number_robots):
             # add gazebo node
-            if(random_pos_flag == True):
+            if(random_pos_flag == True): #flag for choosing if the robot spawn in line or randomly
                 trying = False
                 x = 0
                 y = 0
-                while(trying == False):
+                while(trying == False): #checking for collisions between robots before spawning
                     x = np.random.uniform(-8.0,8.0)
                     y = np.random.uniform(-8.0,8.0)
                     check_pos = True
@@ -177,11 +178,12 @@ def generate_launch_description():
         ld.add_action(launch_patterns)
 
     #launching other miscellaneous nodes in simulation
-    launch_misc = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [launch_bringup_dir, '/' + 'bringup_misc.launch.py']),
-            launch_arguments={}.items(),
-        )
-    ld.add_action(launch_misc)
+    if misc_nodes_flag:
+        launch_misc = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                [launch_bringup_dir, '/' + 'bringup_misc.launch.py']),
+                launch_arguments={}.items(),
+            )
+        ld.add_action(launch_misc)
 
     return ld

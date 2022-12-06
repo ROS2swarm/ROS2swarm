@@ -13,6 +13,7 @@
 #    limitations under the License.
 import numpy as np
 
+#class used to store and manage virtual items
 class ItemsContainer:
     def __init__(self, items_types):
 
