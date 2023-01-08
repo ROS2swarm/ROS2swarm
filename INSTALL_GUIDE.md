@@ -96,7 +96,7 @@ mkdir -p ~/turtlebot3_ws/src
 cd ~/turtlebot3_ws/src/
 git clone -b foxy-devel https://github.com/ROBOTIS-GIT/turtlebot3_msgs.git
 git clone -b foxy-devel https://github.com/ROBOTIS-GIT/turtlebot3.git
-sudo apt install ros-dashing-dynamixel-sdk
+sudo apt install ros-foxy-dynamixel-sdk
 cd ~/turtlebot3_ws && colcon build --symlink-install
 ```
 
