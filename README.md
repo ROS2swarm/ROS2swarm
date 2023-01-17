@@ -179,18 +179,6 @@ ROS2swarm consists of three ROS packages:
 ROS2swarm provides meshes for modified Turtlebot3 models. To use them they have to be copied to the workspace of the turtlebot3 package as described in the following. To select the standard Turtlebot3 Waffle Pi robot, use "waffle_pi" in the start scripts. To select a modified Turtlebot3 Waffle Pi version, use "waffle_pi_name_of_modification" in the start scripts. The mesh for Gazebo is then automatically selected when using the provided launch scripts. The same applies for the TurtleBot3 "burger" model.
 In the following the steps to use the modified models are described.
 
-#### LED:
-1) copy the WaffelPi_Model_Extension/turtlebot3_waffle_pi_led directory to the model directory of the turtlebot3_ws 
-(turtlebot3_ws/src/turtlebot3_simulations/turtlebot3_gazebo/models)
-2) build turtlebot3_ws
-```
-cd ~/turtlebot3_ws && colcon build --symlink-install
-```
-3) use robot selection parameter in start_*.sh 
-```
-robots:=waffle_pi_led
-```
-
 #### TurtleBot3 with no sensor visualisation in Gazebo
 To use the TurtleBot3 Burger, replace "waffle_pi" with "burger" in the following.
 
