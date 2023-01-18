@@ -60,6 +60,7 @@ ROS2swarm currently supports the following robot platforms out of the box:
 * TurtleBot3 Waffle Pi
 * TurtleBot3 Burger
 * Jackal UGV 
+* Thymio II 
 
 <a name="existing-patterns"></a>
 ### **Existing patterns**
