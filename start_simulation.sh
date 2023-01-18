@@ -20,6 +20,7 @@ colcon build --symlink-install --allow-overriding communication_interfaces launc
  number_robots:=9 \
  log_level:=info \
  robot:=waffle_pi
+ 
 # gazebo_world arena_large.world | arena.world | empty.world | turtle.world | 560x540m.world | Ymaze.world | Ymaze_camber.world | Ymaze_camber_top.world
 # pattern pattern_name
 ## movement pattern:
@@ -35,10 +36,11 @@ colcon build --symlink-install --allow-overriding communication_interfaces launc
 #  * flocking_pattern2
 #  * random_walk_pattern
 #  * discussed_dispersion_pattern
+#  * beeclust_pattern 
 ## voting_pattern:
 #  * voter_model_pattern
 #  * voter_model_with_limiter_pattern
 #  * majority_rule_pattern
 #
 # number_robots num_robots
-# robot: burger | waffle_pi | jackal
+# robot: burger | waffle_pi | jackal | thymio 
