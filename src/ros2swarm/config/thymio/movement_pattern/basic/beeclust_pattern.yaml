@@ -1,0 +1,17 @@
+/**:
+  ros__parameters:
+    beeclust_max_range: 1.5
+    beeclust_min_range: 0.05
+    beeclust_max_luminance: 5000.0
+    beeclust_min_luminance: 1.0
+    beeclust_max_timer_period: 4500.0
+    beeclust_scale_constant: 100.0
+    beeclust_front_attraction: 0.1
+    beeclust_object_reduction: 'MEAN' # MEAN, NEAREST
+    beeclust_object_threshold: 0.0
+    beeclust_object_min_width: 1
+    beeclust_object_max_width: 7
+    max_translational_velocity: 0.12
+    max_rotational_velocity: 3.5714285714285716
+
+    

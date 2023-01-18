@@ -1,0 +1,10 @@
+/**:
+  ros__parameters:
+    attraction2_max_range: 0.15 # 0.8 on turtle
+    attraction2_min_range: 0.05
+    attraction2_front_attraction: 0.1
+    attraction2_threshold: 0
+    attraction2_linear_if_alone: 0.0
+    attraction2_angular_if_alone: 0.2
+    max_translational_velocity: 0.2
+    max_rotational_velocity: 2.0 #3.5714285714285716

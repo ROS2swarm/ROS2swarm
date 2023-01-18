@@ -1,0 +1,29 @@
+/**:
+  ros__parameters:
+    # global params
+    max_translational_velocity: 0.22
+    max_rotational_velocity: 2.84
+    # params dispersion node
+    dispersion_max_range: 0.6 # 3.5 in simulation
+    dispersion_min_range: 0.12
+    dispersion_front_attraction: 1.0
+    dispersion_threshold: 1
+    dispersion_stop_if_alone: True
+    # params attraction node
+    attraction_max_range: 1.2 # 3.5 in simulation
+    attraction_min_range: 1.0 # 2.12 in simulation
+    attraction_front_attraction: 1.0
+    attraction_threshold: 1
+    attraction_stop_if_alone: True
+    # param attraction2 node
+    attraction2_max_range: 1.0 # 2.5 in simulation
+    attraction2_min_range: 0.12
+    attraction2_front_attraction: 1.0
+    attraction2_threshold: 1
+    attraction2_stop_if_alone: False
+    # params magnetometer node
+    magnetometer_target_direction_x: 140.0 # degree
+    magnetometer_front_attraction: 0.0
+    magnetometer_stop_when_target_direction_reached: true
+    magnetometer_allowed_delta_in_target_direction: 12.0 # degree
+    magnetometer_rotational_velocity: 0.6  # rad/s

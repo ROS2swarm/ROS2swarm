@@ -1,0 +1,21 @@
+/**:
+  ros__parameters:
+    rat_search_max_range: 3.5
+    rat_search_timer_period: 0.1 # every 100ms
+    rat_search_color_red: 230.0 # set to 256 to inactivate
+    rat_search_color_green: 256.0 # set to 256 to inactivate
+    rat_search_color_blue: 256.0 # set to 256 to inactivate
+    rat_search_right_distance: 0.54 #0.48
+    rat_search_left_distance: 1.5
+    rat_search_distance_buffer: 0.125 # 12.5cm
+    rat_search_wall_right_degree: 270
+    rat_search_wall_degree: 100 # 100
+    rat_search_wall_batch_size: 2
+
+    #dispersion_max_range: 3.5 # 1.2 on turtle,  # max range: 3500mm
+    #dispersion_min_range: 0.12                  # min range: 120mm
+    #dispersion_front_attraction: 1.0
+    #dispersion_threshold: 1
+    #dispersion_stop_if_alone: True
+    max_translational_velocity: 0.26 # max: 0.26 m/s
+    max_rotational_velocity: 1.82    # max: 1.82 rad/s

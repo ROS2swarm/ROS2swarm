@@ -45,8 +45,8 @@ def generate_launch_description():
         else:
             if arg not in ['/opt/ros/foxy/bin/ros2',
                            'launch',
-                           'launch_turtlebot_gazebo',
-                           'add_turtlebot.launch.py']:
+                           'launch_gazebo',
+                           'add_robot.launch.py']:
                 print("Argument not known: '", arg, "'")
 
     print("number of robots :", number_robots)
@@ -64,10 +64,10 @@ def generate_launch_description():
         num = i + start_index
         # add gazebo node
         gazebo_node = launch_ros.actions.Node(
-            package='launch_turtlebot_gazebo',
+            package='launch_gazebo',
             executable='add_bot_node',
             namespace=['namespace_', str(num)],
-            name=['gazeboTurtleBotNode_', str(num)],
+            name=['gazeboRobotNode_', str(num)],
             output='screen',
             arguments=[
                 '--robot_name', ['robot_name_', str(num)],

@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://playerstage.sourceforge.net/gazebo/xmlschema/#xacro">
+
+  <xacro:macro name="imu" params="ns:='' tf_prefix:=''">
+
+    <gazebo reference="${tf_prefix}base_link">
+      <sensor name="imu_sensor" type="imu">
+        <always_on>true</always_on>
+        <update_rate>16</update_rate>
+        <visualize>true</visualize>
+        <pose>0 0 0 0 0 0</pose>
+        <!-- There is a bug somewhere that make it ignore the next block, altough it passes formatting test
+          `gz sdf -v 1.5 -k ...`   -->
+          <!-- [ERROR] [launch]: Caught exception in launch (see debug for traceback): Unused block "linear_acceleration" -->
+        <imu>
+          <linear_acceleration>
+            <x>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>0.2646</stddev>
+              </noise>
+            </x>
+            <y>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>0.2646</stddev>
+              </noise>
+            </y>
+            <z>
+              <noise>
+                <type>gaussian</type>
+                <mean>0.0</mean>
+                <stddev>0.2646</stddev>
+              </noise>
+            </z>
+          </linear_acceleration>
+        </imu>
+
+        <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+          <topic_name>${tf_prefix}imu</topic_name>
+          <body_name>${tf_prefix}base_link</body_name>
+          <frame_name>${tf_prefix}base_link</frame_name>
+          <ros>
+            <argument>~/out:=${tf_prefix}imu</argument>
+          </ros>
+        </plugin>
+
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+</robot>

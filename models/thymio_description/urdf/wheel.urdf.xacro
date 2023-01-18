@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://playerstage.sourceforge.net/gazebo/xmlschema/#xacro">
+
+  <xacro:macro name="wheel" params="name position tf_prefix='' mass:=0.024 mu:=100 radius:=0.022 width=0.015 max_speed=7.757">
+
+    <link name="${tf_prefix}${name}_wheel_link">
+      <inertial>
+        <mass value="${mass}"/>
+        <inertia ixx="${1 / 12.0 * mass * (3 * radius **2 + width ** 2)}" ixy="0" ixz="0"
+         iyy="${0.5 * mass * (radius ** 2)}" iyz="0" izz="${1 / 12.0 * mass * (3 * radius **2 + width ** 2)}"/>
+      </inertial>
+      <collision>
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+        <geometry>
+          <cylinder radius="${radius}" length="${width}"/>
+        </geometry>
+      </collision>
+      <visual>
+        <origin xyz="0 0 0" rpy="${pi/2 if name == 'left' else -pi/2} 0 0"/>
+        <geometry>
+          <mesh filename="package://thymio_description/meshes/wheel.dae"/>
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name="${tf_prefix}${name}_wheel_joint" type="continuous">
+      <parent link="${tf_prefix}base_link"/>
+      <child link="${tf_prefix}${name}_wheel_link"/>
+      <axis xyz="0 1 0"/>
+      <origin xyz="0 ${position} ${radius}"/>
+      <limit velocity="${max_speed}" effort="0"/>
+      <dynamics damping="0.1" friction="0.1"/>
+    </joint>
+
+    <gazebo reference="${tf_prefix}${name}_wheel_link">
+      <mu1>${mu}</mu1>
+      <mu2>${mu / 2.0}</mu2>
+    </gazebo>
+
+  </xacro:macro>
+
+</robot>

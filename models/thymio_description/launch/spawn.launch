@@ -1,0 +1,15 @@
+<launch>
+  <arg name="name" default="thymio"/>
+  <arg name="x" default="0.0"/>
+  <arg name="y" default="0.0"/>
+
+  <push-ros-namespace namespace="$(var name)"/>
+
+  <node name="spawn_thymio" exec="spawn_entity.py" pkg="gazebo_ros" output="screen"
+    args="-entity $(var name) -topic robot_description -x $(var x) -y $(var y) -z 0"/>
+
+  <include file="$(find-pkg-share thymio_description)/launch/model.launch.py">
+    <arg name="name" value="$(var name)"/>
+    <arg name="publish_ground_truth" value="true"/>
+  </include>
+</launch>

@@ -1,0 +1,517 @@
+<sdf version='1.7'>
+  <model name='epuck2'>
+    <link name='base_link'>
+      <inertial>
+        <pose>0.000417 9e-05 0.019845 0 -0 0</pose>
+        <mass>0.063515</mass>
+        <inertia>
+          <ixx>2.4227e-05</ixx>
+          <ixy>2.691e-07</ixy>
+          <ixz>1.2861e-06</ixz>
+          <iyy>3.2227e-05</iyy>
+          <iyz>4.7122e-08</iyz>
+          <izz>3.3868e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='base_link_fixed_joint_lump__main_body_collision'>
+        <pose>0 0 0 0 -0 1.5708</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://e_puck/meshes/main_body.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='base_link_fixed_joint_lump__main_body_visual'>
+        <pose>0 0 0 0 -0 1.5708</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://e_puck/meshes/main_body.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <sensor name='proximity_0_sensor' type='ray'>
+        <visualize>1</visualize>
+        <update_rate>10</update_rate>
+        <always_on>1</always_on>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>-0</min_angle>
+              <max_angle>-0</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>-0</min_angle>
+              <max_angle>-0</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0</min>
+            <max>1</max>
+            <resolution>0.005</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.0025</stddev>
+          </noise>
+        </ray>
+        <plugin name='proximity_0_controller' filename='libgazebo_ros_ray_sensor.so'>
+          <radiation_type>infrared</radiation_type>
+          <ros>
+            <namespace>my_namespace</namespace>
+            <argument>~/out:=proximity_0</argument>
+          </ros>
+          <output_type>sensor_msgs/Range</output_type>
+        </plugin>
+        <pose>0.04 -0.011 0.035 0 0 -0.261799</pose>
+        <frame name='proximity_0_link'/>
+      </sensor>
+      <sensor name='proximity_1_sensor' type='ray'>
+        <visualize>1</visualize>
+        <update_rate>10</update_rate>
+        <always_on>1</always_on>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>-0</min_angle>
+              <max_angle>-0</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>-0</min_angle>
+              <max_angle>-0</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0</min>
+            <max>1</max>
+            <resolution>0.005</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.0025</stddev>
+          </noise>
+        </ray>
+        <plugin name='proximity_1_controller' filename='libgazebo_ros_ray_sensor.so'>
+          <radiation_type>infrared</radiation_type>
+          <ros>
+            <namespace>my_namespace</namespace>
+            <argument>~/out:=proximity_1</argument>
+          </ros>
+          <output_type>sensor_msgs/Range</output_type>
+        </plugin>
+        <pose>0.026 -0.026 0.035 0 0 -0.785398</pose>
+        <frame name='proximity_1_link'/>
+      </sensor>
+      <sensor name='proximity_2_sensor' type='ray'>
+        <visualize>1</visualize>
+        <update_rate>10</update_rate>
+        <always_on>1</always_on>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>-0</min_angle>
+              <max_angle>-0</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>-0</min_angle>
+              <max_angle>-0</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0</min>
+            <max>1</max>
+            <resolution>0.005</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.0025</stddev>
+          </noise>
+        </ray>
+        <plugin name='proximity_2_controller' filename='libgazebo_ros_ray_sensor.so'>
+          <radiation_type>infrared</radiation_type>
+          <ros>
+            <namespace>my_namespace</namespace>
+            <argument>~/out:=proximity_2</argument>
+          </ros>
+          <output_type>sensor_msgs/Range</output_type>
+        </plugin>
+        <pose>0.001 -0.037 0.035 0 0 -1.5708</pose>
+        <frame name='proximity_2_link'/>
+      </sensor>
+      <sensor name='proximity_3_sensor' type='ray'>
+        <visualize>1</visualize>
+        <update_rate>10</update_rate>
+        <always_on>1</always_on>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>-0</min_angle>
+              <max_angle>-0</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>-0</min_angle>
+              <max_angle>-0</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0</min>
+            <max>1</max>
+            <resolution>0.005</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.0025</stddev>
+          </noise>
+        </ray>
+        <plugin name='proximity_3_controller' filename='libgazebo_ros_ray_sensor.so'>
+          <radiation_type>infrared</radiation_type>
+          <ros>
+            <namespace>my_namespace</namespace>
+            <argument>~/out:=proximity_3</argument>
+          </ros>
+          <output_type>sensor_msgs/Range</output_type>
+        </plugin>
+        <pose>-0.032 -0.019 0.035 0 0 -2.61799</pose>
+        <frame name='proximity_3_link'/>
+      </sensor>
+      <sensor name='proximity_4_sensor' type='ray'>
+        <visualize>1</visualize>
+        <update_rate>10</update_rate>
+        <always_on>1</always_on>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>-0</min_angle>
+              <max_angle>-0</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>-0</min_angle>
+              <max_angle>-0</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0</min>
+            <max>1</max>
+            <resolution>0.005</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.0025</stddev>
+          </noise>
+        </ray>
+        <plugin name='proximity_4_controller' filename='libgazebo_ros_ray_sensor.so'>
+          <radiation_type>infrared</radiation_type>
+          <ros>
+            <namespace>my_namespace</namespace>
+            <argument>~/out:=proximity_4</argument>
+          </ros>
+          <output_type>sensor_msgs/Range</output_type>
+        </plugin>
+        <pose>-0.032 0.019 0.035 0 -0 2.61799</pose>
+        <frame name='proximity_4_link'/>
+      </sensor>
+      <sensor name='proximity_5_sensor' type='ray'>
+        <visualize>1</visualize>
+        <update_rate>10</update_rate>
+        <always_on>1</always_on>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>-0</min_angle>
+              <max_angle>-0</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>-0</min_angle>
+              <max_angle>-0</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0</min>
+            <max>1</max>
+            <resolution>0.005</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.0025</stddev>
+          </noise>
+        </ray>
+        <plugin name='proximity_5_controller' filename='libgazebo_ros_ray_sensor.so'>
+          <radiation_type>infrared</radiation_type>
+          <ros>
+            <namespace>my_namespace</namespace>
+            <argument>~/out:=proximity_5</argument>
+          </ros>
+          <output_type>sensor_msgs/Range</output_type>
+        </plugin>
+        <pose>0.001 0.037 0.035 0 -0 1.5708</pose>
+        <frame name='proximity_5_link'/>
+      </sensor>
+      <sensor name='proximity_6_sensor' type='ray'>
+        <visualize>1</visualize>
+        <update_rate>10</update_rate>
+        <always_on>1</always_on>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>-0</min_angle>
+              <max_angle>-0</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>-0</min_angle>
+              <max_angle>-0</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0</min>
+            <max>1</max>
+            <resolution>0.005</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.0025</stddev>
+          </noise>
+        </ray>
+        <plugin name='proximity_6_controller' filename='libgazebo_ros_ray_sensor.so'>
+          <radiation_type>infrared</radiation_type>
+          <ros>
+            <namespace>my_namespace</namespace>
+            <argument>~/out:=proximity_6</argument>
+          </ros>
+          <output_type>sensor_msgs/Range</output_type>
+        </plugin>
+        <pose>0.026 0.026 0.035 0 -0 0.785398</pose>
+        <frame name='proximity_6_link'/>
+      </sensor>
+      <sensor name='proximity_7_sensor' type='ray'>
+        <visualize>1</visualize>
+        <update_rate>10</update_rate>
+        <always_on>1</always_on>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>-0</min_angle>
+              <max_angle>-0</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>-0</min_angle>
+              <max_angle>-0</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0</min>
+            <max>1</max>
+            <resolution>0.005</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.0025</stddev>
+          </noise>
+        </ray>
+        <plugin name='proximity_7_controller' filename='libgazebo_ros_ray_sensor.so'>
+          <radiation_type>infrared</radiation_type>
+          <ros>
+            <namespace>my_namespace</namespace>
+            <argument>~/out:=proximity_7</argument>
+          </ros>
+          <output_type>sensor_msgs/Range</output_type>
+        </plugin>
+        <pose>0.04 0.011 0.035 0 -0 0.261799</pose>
+        <frame name='proximity_7_link'/>
+      </sensor>
+    </link>
+    <joint name='left_joint' type='revolute'>
+      <pose relative_to='base_link'>-0 0.0278 0.02 0 -0 1.5708</pose>
+      <parent>base_link</parent>
+      <child>left_wheel</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <effort>0.001</effort>
+          <velocity>10</velocity>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='left_wheel'>
+      <pose relative_to='left_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>-0.000487 -0 0 0 -0 0</pose>
+        <mass>0.0040981</mass>
+        <inertia>
+          <ixx>8.267e-07</ixx>
+          <ixy>-9.8761e-23</ixy>
+          <ixz>-8.6429e-13</ixz>
+          <iyy>4.304e-07</iyy>
+          <iyz>-2.3376e-22</iyz>
+          <izz>4.304e-07</izz>
+        </inertia>
+      </inertial>
+      <collision name='left_wheel_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://e_puck/meshes/left_wheel.STL</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode>
+              <mu>10</mu>
+              <mu2>10</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='left_wheel_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://e_puck/meshes/left_wheel.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <self_collide>1</self_collide>
+    </link>
+    <joint name='right_joint' type='revolute'>
+      <pose relative_to='base_link'>0 -0.0278 0.02 0 -0 1.5708</pose>
+      <parent>base_link</parent>
+      <child>right_wheel</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <effort>0.001</effort>
+          <velocity>10</velocity>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='right_wheel'>
+      <pose relative_to='right_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0.000651 0 0 0 -0 0</pose>
+        <mass>0.0038059</mass>
+        <inertia>
+          <ixx>8.2274e-07</ixx>
+          <ixy>-1.0753e-22</ixy>
+          <ixz>8.6429e-13</ixz>
+          <iyy>4.2585e-07</iyy>
+          <iyz>2.3307e-22</iyz>
+          <izz>4.2585e-07</izz>
+        </inertia>
+      </inertial>
+      <collision name='right_wheel_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://e_puck/meshes/right_wheel.STL</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode>
+              <mu>10</mu>
+              <mu2>10</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='right_wheel_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://e_puck/meshes/right_wheel.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <self_collide>1</self_collide>
+    </link>
+    <static>0</static>
+    <plugin name='differential_drive_controller' filename='libgazebo_ros_diff_drive.so'>
+      <alwaysOn>1</alwaysOn>
+      <legacyMode>0</legacyMode>
+      <updateRate>20</updateRate>
+      <left_joint>left_joint</left_joint>
+      <right_joint>right_joint</right_joint>
+      <wheel_separation>0.05398</wheel_separation>
+      <wheel_diameter>0.040</wheel_diameter>
+      <torque>2</torque>
+      <odometryFrame>odom</odometryFrame>
+      <publishWheelTF>1</publishWheelTF>
+      <wheelAcceleration>0</wheelAcceleration>
+      <wheelTorque>0.0020</wheelTorque>
+      <publishTf>1</publishTf>
+      <odometrySource>1</odometrySource>
+      <publishWheelJointState>1</publishWheelJointState>
+      <robotMainFrame>footprint</robotMainFrame>
+      <robotBaseFrame>base_link</robotBaseFrame>
+      <namespace>my_namespace</namespace>
+    </plugin>
+    <plugin name='joint_states' filename='libgazebo_ros_joint_state_publisher.so'>
+      <joint_name>right_joint</joint_name>
+      <joint_name>left_joint</joint_name>
+      <update_rate>20.0</update_rate>
+      <namespace>my_namespace</namespace>
+    </plugin>
+  </model>
+</sdf>

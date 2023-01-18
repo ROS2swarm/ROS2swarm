@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+
+<package format="3">
+
+  <name>thymio_description</name>
+  <version>0.1.0</version>
+  <description>
+    Urdf model for Thymio II robot
+  </description>
+  <maintainer email="jerome@idsia.ch">Jérôme Guzzi</maintainer>
+  <license>BSD</license>
+  <url type="website">http://jeguzzi.github.io/ros-aseba</url>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <exec_depend>urdf</exec_depend>
+  <exec_depend>xacro</exec_depend>
+  <export>
+    <build_type>ament_cmake</build_type>
+    <!-- <gazebo_ros gazebo_media_path="${prefix}/meshes"/> -->
+    <gazebo_ros gazebo_model_path="${prefix}/.."/>
+  </export>
+
+  <!-- To automatically export GAZEBO_MODEL_PATH -->
+
+  <!-- <export>
+    <gazebo_ros gazebo_model_path="${prefix}/.."/>
+  </export> -->
+
+  <!-- !!!!!! Only works if -->
+  <!-- <run_depend>gazebo_ros</run_depend> -->
+
+</package>

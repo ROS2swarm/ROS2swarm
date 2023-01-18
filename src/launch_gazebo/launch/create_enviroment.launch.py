@@ -25,7 +25,7 @@ from ament_index_python.packages import get_package_share_directory
 def generate_launch_description():
     """Creates the environment with gazebo, add robots and starts their behaviour"""
 
-    launch_file_dir = os.path.join(get_package_share_directory('launch_turtlebot_gazebo'))
+    launch_file_dir = os.path.join(get_package_share_directory('launch_gazebo'))
     launch_pattern_dir = os.path.join(get_package_share_directory('ros2swarm'), 'launch', 'pattern')
     launch_bringup_dir = os.path.join(get_package_share_directory('ros2swarm'))
 
@@ -43,7 +43,7 @@ def generate_launch_description():
         else:
             if arg not in ['/opt/ros/foxy/bin/ros2',
                            'launch',
-                           'launch_turtlebot_gazebo',
+                           'launch_gazebo',
                            'create_enviroment.launch.py']:
                 print("Argument not known: '", arg, "'")
 
@@ -68,6 +68,8 @@ def generate_launch_description():
         robot_type = "burger"
     elif robot_type.startswith('waffle_pi'):
         robot_type = "waffle_pi"
+    elif robot_type.startswith('thymio'):
+        robot_type = "thymio"
     elif robot_type.startswith('jackal'):
         robot_type = "jackal"
         gazebo_flag = False
@@ -98,10 +100,10 @@ def generate_launch_description():
         for i in range(number_robots):
             # add gazebo node
             gazebo_node = launch_ros.actions.Node(
-                package='launch_turtlebot_gazebo',
+                package='launch_gazebo',
                 executable='add_bot_node',
                 namespace=['namespace_', str(i)],
-                name=['gazeboTurtleBotNode_', str(i)],
+                name=['gazeboRobotNode_', str(i)],
                 output='screen',
                 arguments=[
                     '--robot_name', ['robot_name_', str(i)],

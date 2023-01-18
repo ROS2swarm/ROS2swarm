@@ -54,7 +54,7 @@ def generate_launch_description():
             if arg not in ['/opt/ros/foxy/bin/ros2',
                            'launch',
                            'ros2swarm',
-                           'launch_turtlebot_gazebo',
+                           'launch_gazebo',
                            'bringup_robot.launch.py']:
                 print("Argument not known: '", arg, "'")
 
@@ -74,6 +74,8 @@ def generate_launch_description():
         robot_type = "burger"
     elif robot_type.startswith('waffle_pi'):
         robot_type = "waffle_pi"
+    elif robot_type.startswith('thymio'):
+        robot_type = "thymio"
     elif robot_type.startswith('jackal'):
         robot_type = "jackal"
         robot_node = False

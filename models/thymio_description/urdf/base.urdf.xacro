@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://playerstage.sourceforge.net/gazebo/xmlschema/#xacro" name="thymio">
+
+  <xacro:include filename="wheel.urdf.xacro"/>
+  <xacro:include filename="proximity_sensor.urdf.xacro"/>
+  <xacro:include filename="imu.urdf.xacro"/>
+
+  <xacro:arg name="name" default=""/>
+  <xacro:arg name="left_wheel_mu" default="100.0"/>
+  <xacro:arg name="right_wheel_mu" default="100.0"/>
+  <xacro:property name="wheel_axis" value="0.0935"/>
+  <xacro:property name="wheel_radius" value="0.022"/>
+  <xacro:property name="wheel_torque" value="10.0"/>
+  <xacro:property name="body_mass" value="0.2"/>
+  <xacro:property name="wheel_mass" value="0.024"/>
+  <xacro:arg name="proximity_max_range" default="0.12"/>
+  <xacro:arg name="proximity_resolution" default="0.005"/>
+  <xacro:arg name="proximity_fov" default="0.3"/>
+  <xacro:arg name="publish_ground_truth" default="false"/>
+  <xacro:arg name="ground_truth_frame_id" default="/world"/>
+  <xacro:arg name="ground_truth_update_rate" default="10.0"/>
+  <xacro:arg name="odom_rate" default="20.0"/>
+  <xacro:property name="_name" value="$(arg name)"/>
+
+  <xacro:if value="${_name != ''}">
+    <xacro:property name="tf_prefix" value="${_name}/"/>
+  </xacro:if>
+  <xacro:if value="${_name == ''}">
+    <xacro:property name="tf_prefix" value=""/>
+  </xacro:if>
+
+  <xacro:macro name="thymio">
+    <link name="${tf_prefix}base_link">
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://thymio_description/meshes/base_collision.dae"/>
+        </geometry>
+      </collision>
+      <collision>
+        <origin xyz="0.06 0 0.009"/>
+        <geometry>
+          <sphere radius="0.009"/>
+        </geometry>
+      </collision>
+      <visual>
+        <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://thymio_description/meshes/base_simple.dae"/>
+        </geometry>
+      </visual>
+    </link>
+
+    <link name="${tf_prefix}body_link">
+      <inertial>
+        <origin xyz="0.0243 0 0.0315"/>
+        <mass value="${body_mass}"/>
+        <inertia ixx="${0.002199 * body_mass}" ixy="0" ixz="${-0.000760 * body_mass}" iyy="${0.002639 * body_mass}" iyz="0" izz="${0.002526 * body_mass}"/>
+      </inertial>
+    </link>
+
+    <joint name="${tf_prefix}body_joint" type="fixed">
+      <parent link="${tf_prefix}base_link"/>
+      <child link="${tf_prefix}body_link"/>
+      <origin xyz="0 0 0"/>
+    </joint>
+
+    <gazebo reference="${tf_prefix}base_link">
+      <selfCollide>false</selfCollide>
+      <mu1>0.1</mu1>
+      <mu2>0.1</mu2>
+    </gazebo>
+
+    <xacro:wheel tf_prefix="${tf_prefix}" name="left" position="${wheel_axis * 0.5}" radius="${wheel_radius}" mass="${wheel_mass}" mu="$(arg left_wheel_mu)"/>
+    <xacro:wheel tf_prefix="${tf_prefix}" name="right" position="${-wheel_axis * 0.5}" radius="${wheel_radius}" mass="${wheel_mass}" mu="$(arg right_wheel_mu)"/>
+
+    <xacro:proximity_sensor ns="${_name}" tf_prefix="${tf_prefix}" group="proximity" range_max="$(arg proximity_max_range)" resolution="$(arg proximity_resolution)" fov="$(arg proximity_fov)" name="center" xyz="0.08 0 0.035" rpy="0 0 0"/>
+    <xacro:proximity_sensor ns="${_name}" tf_prefix="${tf_prefix}" group="proximity" range_max="$(arg proximity_max_range)" resolution="$(arg proximity_resolution)" fov="$(arg proximity_fov)" name="center_left" xyz="0.0756 0.0261 0.035" rpy="0 0 0.33161"/>
+    <xacro:proximity_sensor ns="${_name}" tf_prefix="${tf_prefix}" group="proximity" range_max="$(arg proximity_max_range)" resolution="$(arg proximity_resolution)" fov="$(arg proximity_fov)" name="center_right" xyz="0.0756 -0.0261 0.035" rpy="0 0 -0.33161"/>
+    <xacro:proximity_sensor ns="${_name}" tf_prefix="${tf_prefix}" group="proximity" range_max="$(arg proximity_max_range)" resolution="$(arg proximity_resolution)" fov="$(arg proximity_fov)" name="left" xyz="0.063 0.0493 0.035" rpy="0 0 0.66323"/>
+    <xacro:proximity_sensor ns="${_name}" tf_prefix="${tf_prefix}" group="proximity" range_max="$(arg proximity_max_range)" resolution="$(arg proximity_resolution)" fov="$(arg proximity_fov)" name="right" xyz="0.063 -0.0493 0.035" rpy="0 0 -0.66323"/>
+    <xacro:proximity_sensor ns="${_name}" tf_prefix="${tf_prefix}" group="proximity" range_max="$(arg proximity_max_range)" resolution="$(arg proximity_resolution)" fov="$(arg proximity_fov)" name="rear_left" xyz="-0.03 0.0305 0.035" rpy="0 0 3.14159"/>
+    <xacro:proximity_sensor ns="${_name}" tf_prefix="${tf_prefix}" group="proximity" range_max="$(arg proximity_max_range)" resolution="$(arg proximity_resolution)" fov="$(arg proximity_fov)" name="rear_right" xyz="-0.03 -0.0305 0.035" rpy="0 0 3.14159"/>
+    <xacro:proximity_sensor ns="${_name}" tf_prefix="${tf_prefix}" group="ground" range_max="0.03" name="left" xyz="0.07157 0.01155 0.009" rpy="0 1.5708 0.24311"/>
+    <xacro:proximity_sensor ns="${_name}" tf_prefix="${tf_prefix}" group="ground" range_max="0.03" name="right" xyz="0.07157 -0.01155 0.009" rpy="0 1.5708 -0.24311"/>
+
+    <link name="${tf_prefix}laser_link"/>
+    <joint name="${tf_prefix}base_laser_joint" type="fixed">
+      <parent link="${tf_prefix}base_link"/>
+      <child link="${tf_prefix}laser_link"/>
+      <origin xyz="0 0 0.035"/>
+    </joint>
+
+
+    <!-- We have a problem with xacro -->
+    <!-- <xacro:imu ns="$(arg name)"/> -->
+
+    <!-- see https://github.com/ros-simulation/gazebo_ros_pkgs/blob/kinetic-devel/gazebo_plugins/src/gazebo_ros_diff_drive.cpp -->
+
+    <gazebo>
+      <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
+        <odometry_source>0</odometry_source>
+        <always_on>true</always_on>
+        <update_rate>$(arg odom_rate)</update_rate>
+        <left_joint>${tf_prefix}left_wheel_joint</left_joint>
+        <right_joint>${tf_prefix}right_wheel_joint</right_joint>
+        <wheel_separation>${wheel_axis}</wheel_separation>
+        <wheel_diameter>${2 * wheel_radius}</wheel_diameter>
+        <max_wheel_torque>${wheel_torque}</max_wheel_torque>
+        <max_wheel_acceleration>0</max_wheel_acceleration>
+        <publish_odom>true</publish_odom>
+        <odometry_frame>${tf_prefix}odom</odometry_frame>
+        <publish_wheel_tf>true</publish_wheel_tf>
+        <publish_odom_tf>true</publish_odom_tf>
+        <robot_base_frame>${tf_prefix}base_link</robot_base_frame>
+        <namespace>${_name}</namespace>
+      </plugin>
+      <plugin name="joint_states" filename="libgazebo_ros_joint_state_publisher.so">
+        <joint_name>${tf_prefix}right_wheel_joint</joint_name>
+        <joint_name>${tf_prefix}left_wheel_joint</joint_name>
+        <update_rate>$(arg odom_rate)</update_rate>
+        <namespace>${_name}</namespace>
+      </plugin>
+    </gazebo>
+
+    <!-- NOTE: The current version of the gazebo p3d plugin has a bug:
+    the field child_frame_id is set to the name of the link (bodyName)
+    and not to the frame name (frameName). -->
+
+
+    <xacro:if value="$(arg publish_ground_truth)">
+      <gazebo>
+        <plugin name="ground_truth" filename="libgazebo_ros_p3d.so">
+
+          <ros>
+            <!-- Add namespace and remap the default topic -->
+            <!-- TODO namespace is ignored! -->
+            <namespace>${_name}</namespace>
+            <argument>odom:=ground_truth/odom</argument>
+          </ros>
+
+          <frame_name>$(arg ground_truth_frame_id)</frame_name>
+          <body_name>${tf_prefix}base_link</body_name>
+          <update_rate>$(arg ground_truth_update_rate)</update_rate>
+        </plugin>
+
+      </gazebo>
+     </xacro:if>
+
+  </xacro:macro>
+</robot>

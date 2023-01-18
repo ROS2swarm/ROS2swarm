@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://playerstage.sourceforge.net/gazebo/xmlschema/#xacro">
+
+  <xacro:macro name="proximity_sensor" params="group name xyz rpy ns='' tf_prefix='' update_rate:=10 range_min:=0.00 range_max:=0.12 resolution:=0.005 fov:=0.3">
+    <link name="${tf_prefix}${group}_${name}_link"/>
+    <joint name="${tf_prefix}${group}_${name}_joint" type="fixed">
+      <origin xyz="${xyz}" rpy="${rpy}"/>
+      <parent link="${tf_prefix}base_link"/>
+      <child link="${tf_prefix}${group}_${name}_link"/>
+    </joint>
+    <gazebo reference="${tf_prefix}${group}_${name}_link">
+      <sensor name="${group}_${name}_sensor" type="ray">
+        <frame name="${tf_prefix}${group}_${name}_link"/>
+        <visualize>true</visualize>
+        <update_rate>${update_rate}</update_rate>
+        <always_on>true</always_on>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>-${fov / 2}</min_angle>
+              <max_angle>-${fov / 2}</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>-${fov / 2}</min_angle>
+              <max_angle>-${fov / 2}</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>${range_min}</min>
+            <max>${range_max}</max>
+            <resolution>${resolution}</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>${resolution / 2}</stddev>
+          </noise>
+        </ray>
+        <plugin name="${group}_${name}_controller" filename="libgazebo_ros_ray_sensor.so">
+          <!-- TODO: check if field `radiation` is still valid-->
+          <radiation_type>infrared</radiation_type>
+          <ros>
+            <namespace>${ns}</namespace>
+            <argument>~/out:=${group}/${name}</argument>
+          </ros>
+          <output_type>sensor_msgs/Range</output_type>
+        </plugin>
+      </sensor>
+      <material>Gazebo/DarkGrey</material>
+    </gazebo>
+  </xacro:macro>
+
+</robot>
