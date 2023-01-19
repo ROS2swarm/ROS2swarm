@@ -16,7 +16,7 @@ colcon build --symlink-install --allow-overriding communication_interfaces launc
  source ./install/setup.bash &&
  ROS_DOMAIN_ID=42 ros2 launch launch_gazebo create_enviroment.launch.py \
  gazebo_world:=arena_large.world \
- pattern:=aggregation_pattern \
+ pattern:=dispersion_pattern \
  number_robots:=9 \
  log_level:=info \
  robot:=waffle_pi \
