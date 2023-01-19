@@ -41,7 +41,8 @@ class DispersionPattern(MovementPattern):
                 ('dispersion_min_range', None),
                 ('dispersion_front_attraction', None),
                 ('dispersion_threshold', None),
-                ('dispersion_stop_if_alone', None),
+                ('dispersion_linear_if_alone', None),
+                ('dispersion_angular_if_alone', None),
                 ('dispersion_allow_dynamic_max_range_setting', False),
                 ('max_translational_velocity', None),
                 ('max_rotational_velocity', None)
@@ -69,14 +70,20 @@ class DispersionPattern(MovementPattern):
             "dispersion_front_attraction").get_parameter_value().double_value
         self.param_threshold = self.get_parameter(
             "dispersion_threshold").get_parameter_value().integer_value
-        self.param_stop_if_alone = self.get_parameter(
-            "dispersion_stop_if_alone").get_parameter_value().bool_value
+        self.param_linear_if_alone = self.get_parameter(
+            "dispersion_linear_if_alone").get_parameter_value().double_value
+        self.param_angular_if_alone = self.get_parameter(
+            "dispersion_angular_if_alone").get_parameter_value().double_value
         self.param_allow_dynamic_max_range_setting = self.get_parameter(
             "dispersion_allow_dynamic_max_range_setting").get_parameter_value().bool_value
         self.param_max_translational_velocity = self.get_parameter(
             "max_translational_velocity").get_parameter_value().double_value
         self.param_max_rotational_velocity = self.get_parameter(
             "max_rotational_velocity").get_parameter_value().double_value
+            
+        self.direction_if_alone = Twist()
+        self.direction_if_alone.linear.x = self.param_linear_if_alone
+        self.direction_if_alone.angular.z = self.param_angular_if_alone
 
 
     def range_data_callback(self, incoming_msg):
@@ -94,15 +101,15 @@ class DispersionPattern(MovementPattern):
         if ranges is None:
             return Twist()
 
-        direction, stop = ScanCalculationFunctions.potential_field(self.param_front_attraction,
+        direction, alone = ScanCalculationFunctions.potential_field(self.param_front_attraction,
                                                                    self.param_max_range,
                                                                    self.param_max_rotational_velocity,
                                                                    self.param_max_translational_velocity,
                                                                    self.param_min_range,
                                                                    self.param_threshold,
                                                                    ranges, angles)
-        if self.param_stop_if_alone:
-            direction = Twist() if stop else direction
+                                                                   
+        direction = self.direction_if_alone if alone else direction
             
         return direction
 
