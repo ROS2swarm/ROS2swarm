@@ -80,6 +80,11 @@ setup(
         'console_scripts': [
             # hardware protection
             'hardware_protection_layer = ros2swarm.hardware_protection_layer:main',
+            
+            # sensor layer 
+            'ir_layer = ros2swarm.sensor_layer.ir_layer:main',
+            'ir_tf_layer = ros2swarm.sensor_layer.ir_tf_layer:main',
+            'lidar_layer = ros2swarm.sensor_layer.lidar_layer:main',
 
             # movement_pattern.basic
             'drive_pattern = ros2swarm.movement_pattern.basic.drive_pattern:main',

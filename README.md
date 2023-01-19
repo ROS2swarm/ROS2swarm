@@ -186,7 +186,7 @@ To use the TurtleBot3 Burger, replace "waffle_pi" with "burger" in the following
 
 1) copy
 ```
-WaffelPi_Model_Extension/turtlebot3_waffle_pi_invisible_sensors
+models/turtlebot3_waffle_pi_invisible_sensors
 ```
 to
 ```
@@ -194,7 +194,7 @@ turtlebot3_ws/src/turtlebot3_simulations/turtlebot3_gazebo/models
 ```
 2) copy
 ```
-WaffelPi_Model_Extension/turtlebot3_waffle_pi_invisible_sensors.urdf
+models/turtlebot3_waffle_pi_invisible_sensors.urdf
 ```
 to
 ```
