@@ -49,6 +49,7 @@ class DiscussedDispersion(MovementPattern):
             self.get_namespace() + '/drive_command_dispersion_pattern',
             self.command_callback_dispersion,
             10)
+            
         self.majority_rule_subpattern = self.create_subscription(
             OpinionMessage,
             self.get_namespace() + '/opinion',
