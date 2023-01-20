@@ -18,7 +18,7 @@ import rclpy
 from rclpy.node import Node
 from ros2swarm.utils import setup_node
 from sensor_msgs.msg import Range
-from communication_interfaces.msg import RangeData, RayArray, RobotArray, Ray
+from communication_interfaces.msg import RangeData
 from rclpy.qos import qos_profile_sensor_data
 
 class IRLayer(Node):
@@ -78,12 +78,6 @@ class IRLayer(Node):
             RangeData,
             self.get_namespace() + '/range_data',
             100)
-        
-        # publisher for obstacles
-        self.robot_publisher = self.create_publisher(
-            RobotArray,
-            self.get_namespace() + '/robots',
-            100)
 
     def range_callback(self, range_msg, index):
         """
@@ -108,38 +102,7 @@ class IRLayer(Node):
             msg.ranges = self.current_ranges
             msg.angles = self.angles
             self.range_data_publisher.publish(msg)
-            self.publish_robots(msg.header)
             self.current_ranges = [None] * len(self.range_topics)
-            
-    def publish_robots(self, header):
-        """Identify all ranges that contain robots, based on the
-        settings in the pattern parameters.
-
-        :return: return the list of all found robots and a list in
-        which each robot is represented by a single ray. In case of the
-        IR Layer, they are the same.
-        """
-        
-        # array of robots defined by the rays of the sensors that 
-        # detect them
-        robots_msg = RobotArray()  
-        robots_msg.header = header
-        # assume a robot in the direction of each ray that detects
-        # an object
-        for i in range(len(self.current_ranges)):
-            if self.param_min_range < self.current_ranges[i] < self.param_max_range:
-                temp_robot = RayArray()
-                temp_robot.header = header
-                temp_ray = Ray()
-                temp_ray.header = header
-                temp_ray.length = self.current_ranges[i]
-                temp_ray.angle = self.angles[i]
-                temp_robot.rays.append(temp_ray)
-                robots_msg.robots.append(temp_robot)
-                robots_msg.rays.append(temp_ray)
-        # send response
-        self.robot_publisher.publish(robots_msg)
-        self.get_logger().error('Found "{}" robots'.format(len(robots_msg.robots)))
 
 def main(args=None):
     """

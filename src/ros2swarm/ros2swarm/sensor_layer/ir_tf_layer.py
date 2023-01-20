@@ -19,7 +19,7 @@ from rclpy.node import Node
 from ros2swarm.utils import setup_node
 from sensor_msgs.msg import Range
 from geometry_msgs.msg import Pose
-from communication_interfaces.msg import RangeData, RayArray, RobotArray, Ray
+from communication_interfaces.msg import RangeData
 from std_msgs.msg import Header
 from rclpy.qos import qos_profile_sensor_data
 from tf2_ros import TransformException
@@ -85,12 +85,6 @@ class IRTFLayer(Node):
             RangeData,
             self.get_namespace() + '/range_data',
             10)
-        
-        # publisher for obstacles
-        self.robot_publisher = self.create_publisher(
-            RobotArray,
-            self.get_namespace() + '/robots',
-            10)
             
         # variables for getting information from the tf tree
         self.tf_buffer = Buffer()
@@ -142,7 +136,8 @@ class IRTFLayer(Node):
             self.angles[index] = angle
         except TransformException as ex:
             self.get_logger().info(
-                f'Could not transform {to_frame_rel} to {from_frame_rel}: {ex}')  
+                f'Could not transform {to_frame_rel} to {from_frame_rel}: {ex}')
+                
         # publishes a range data and detects the robots in the ranges
         if not (None in self.current_ranges or None in self.angles):
             msg = RangeData()
@@ -151,39 +146,8 @@ class IRTFLayer(Node):
             msg.ranges = self.current_ranges
             msg.angles = self.angles
             self.range_data_publisher.publish(msg)
-            self.publish_robots(msg.header)
             self.current_ranges = [None] * len(self.range_topics)
-            
-    def publish_robots(self, header):
-        """Identify all ranges that contain robots, based on the
-        settings in the pattern parameters.
 
-        :return: return the list of all found robots and a list in
-        which each robot is represented by a single ray. In case of the
-        IR Layer, they are the same.
-        """
-        # array of robots defined by the rays of the sensors that 
-        # detect them
-        robots_msg = RobotArray()  
-        robots_msg.header = header
-        # assume a robot in the direction of each ray that detects
-        # an object
-        for i in range(len(self.current_ranges)):
-            if self.param_min_range < self.current_ranges[i] < self.param_max_range:
-                temp_robot = RayArray()
-                temp_robot.header = header
-                temp_ray = Ray()
-                temp_ray.header = header
-                temp_ray.length = self.current_ranges[i]
-                temp_ray.angle = self.angles[i]
-                temp_robot.rays.append(temp_ray)
-                robots_msg.robots.append(temp_robot)
-                robots_msg.rays.append(temp_ray)
-        # send response
-        self.robots_publisher.publish(robots_msg)
-        self.get_logger().error('Found "{}" robots'.format(len(robots_msg.robots)))
-
-                 
 
 def main(args=None):
     """

@@ -16,7 +16,7 @@
 from rclpy.node import Node
 from ros2swarm.utils import setup_node
 from sensor_msgs.msg import LaserScan
-from communication_interfaces.msg import RangeData, RayArray, RobotArray, Ray
+from communication_interfaces.msg import RangeData
 from rclpy.qos import qos_profile_sensor_data
 from ros2swarm.utils.scan_calculation_functions import ScanCalculationFunctions, ReductionOption
 
@@ -80,12 +80,6 @@ class LidarLayer(Node):
             self.get_namespace() + '/range_data',
             10)
 
-        # publisher for obstacles
-        self.robot_publisher = self.create_publisher(
-            RobotArray,
-            self.get_namespace() + '/robots',
-            10)
-
     def scan_callback(self, scan_msg):
         """
         Save the received scan.
@@ -107,60 +101,6 @@ class LidarLayer(Node):
         msg.ranges = scan_msg.ranges
         msg.angles = angles
         self.range_data_publisher.publish(msg)
-        
-        # get the obstacles in the scan and for each robot a ray that
-        # represents it and publish it
-        self.publish_robots(scan_msg.header)
-        
-    def publish_robots(self, header):
-        """Identify the robots in a scan, based on the
-        settings in the pattern parameters.
-
-        :return: return the list of all found robots and a list in
-        which each robot is represented by a single ray based on the
-        chosen reduction method
-        """
-        robots = []
-        robots_center = []
-        
-        # array of robots defined by the rays of the scan that 
-        # detect them and the array of rays that represent them
-        robots_msg = RobotArray()  
-        robots_msg.header = header
-        
-        # get the robots in the scan and for each robot a ray that
-        # represents it
-        robots, robots_center = ScanCalculationFunctions.identify_robots(
-            laser_scan=self.scan,
-            min_range=self.param_min_range,
-            max_range=self.param_max_range,
-            threshold=self.param_object_threshold,
-            reduction=ReductionOption[self.param_reduction],
-            min_width=self.param_object_min_width,
-            max_width=self.param_object_max_width)
-            
-        # reformat the robots to the format of the robots message
-        if robots:
-            for robot in robots:
-                temp_robot = RayArray()
-                temp_robot.header = header
-                for ray in robot:
-                    temp_ray = Ray()
-                    temp_ray.header = header
-                    temp_ray.length = ray[0]
-                    temp_ray.angle = ray[1]
-                    temp_robot.rays.append(temp_ray)
-                robots_msg.robots.append(temp_robot)
-            for center in robots_center:
-                    temp_ray = Ray()
-                    temp_ray.header = header
-                    temp_ray.length = center[0]
-                    temp_ray.angle = center[1]
-                    robots_msg.rays.append(temp_ray)
-                    
-        self.robot_publisher.publish(robots_msg)
-        self.get_logger().debug('Found "{}" robots'.format(len(robots)))
-
 
 def main(args=None):
     """
