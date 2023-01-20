@@ -1,12 +1,13 @@
-## **Manual ROS2swarm Version 1.1.0**
+## **Manual ROS2swarm Version 1.2.0**
 
 ROS2swarm is a ROS 2 (Dashing, Foxy) package that provides swarm behavior patterns. 
-It was developed by the **Institute of Computer Engineering** with support from the Institute of Robotics and the Institute for Electrical Engineering in Medicine of the **University of Lübeck, Germany**. 
+The initial version was developed by the **Institute of Computer Engineering** with support from the Institute of Robotics and the Institute for Electrical Engineering in Medicine of the **University of Lübeck, Germany**. 
 Currently, it is mainly developed by the **Cyber-Physical Systems Group** of the **University Konstanz, Germany**. 
 
 A list of all project contributors can be found [here](CONTRIBUTORS.md)
 
-The current ROS2swarm version is 1.1.0. 
+The current ROS2swarm version is 1.2.0.
+ 
 The ICRA 2022 paper "ROS2swarm - A ROS 2 Package for Swarm Robot Behaviors" refers to version 1.0.0 (Dashing), which can be found [here](https://github.com/ROS2swarm/ROS2swarm/tree/ICRA22). 
 
 <a name="about-ros2swarm"></a>
@@ -69,17 +70,19 @@ The following table gives an overview the current implemented patterns.
 The patterns are separated into movement and voting patterns. 
 Every pattern can either be a basic pattern or a combined one, which make use of one or more other patterns to create more complex behaviors.
 
-| Pattern                  | Domain   | Type     | Simulation          | Robot  |
-| ------                   | ------   | ------   | ------              | ------ |
-| drive                    | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
-| dispersion               | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
-| attraction               | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
-| magnetometer             | Movement | Basic    | :x:                 | :heavy_check_mark: |
-| minimalist flocking      | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
-| random walk      | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
-| discussed dispersion pattern                 | Movement | Combined | :heavy_check_mark:  | :heavy_check_mark: |
-| voter model              | Voting   | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
-| majority rule            | Voting   | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
+| Pattern                       | Domain   | Type     | Simulation          | Robot              | Sensor Requirements             |
+| ------                        | ------   | ------   | ------              | ------             | ------                          |
+| attraction                    | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: | LiDAR or IR                     |
+| attraction 2                  | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: | LiDAR or IR                     |
+| beeclust                      | Movement | Basic    | :x:                 | :heavy_check_mark: | ground IR sensor, light sensor  |
+| drive                         | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: |                                 |
+| dispersion                    | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: | LiDAR or IR                     |
+| magnetometer                  | Movement | Basic    | :x:                 | :heavy_check_mark: |                                 |
+| minimalist flocking           | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: | LiDAR or IR                     |
+| random walk                   | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: |                                 |
+| discussed dispersion pattern  | Movement | Combined | :heavy_check_mark:  | :heavy_check_mark: | LiDAR or IR                     |
+| voter model                   | Voting   | Basic    | :heavy_check_mark:  | :heavy_check_mark: |                                 |
+| majority rule                 | Voting   | Basic    | :heavy_check_mark:  | :heavy_check_mark: |                                 |
 
 In addition, a hardware protection layer is started to prevent collisions.
 
@@ -93,10 +96,10 @@ We give a short overview of the pattern components, the launch scripts and the p
 
 A pattern consists of the behavior implementation itself, as well as configuration and launch files. 
 
-| File                                                            | Function                                                                            |
-|-----------------------------------------------------------------|-------------------------------------------------------------------------------------|
-| ros2swarm/pattern_domain/pattern_type/pattern_name.py           | The behavior logic of the pattern.                                                  |
-| config/robot_type/pattern_domain/pattern_type/pattern_name.yaml | The parameter configuration for the pattern. There is one file for each robot type. |
+| File                                                            | Function                                                                                 |
+|-----------------------------------------------------------------|------------------------------------------------------------------------------------------|
+| ros2swarm/pattern_domain/pattern_type/pattern_name.py           | The behavior logic of the pattern.                                                       |
+| config/robot_type/pattern_domain/pattern_type/pattern_name.yaml | The parameter configuration for the pattern. There is one file for each robot type.      |
 | launch/pattern_domain/pattern_type/pattern_name.launch.py       | The launch file starting the ROS node with the parameters specified in pattern_name.yaml.|
 
 To add a new pattern, copy the files from any existing pattern, e.g. the drive pattern, and implement the desired behavior. 
@@ -140,7 +143,7 @@ For robot types TurtleBot3 Waffle Pi and TurtleBot3 Burger:
 
 * start_robot.sh - shell script to start up ROS2swarm on a single robot
   * ros2swarm/bringup_robot.launch.py - central robot launch script which adds the other launch scripts to the launch description
-    * ros2swarm/turtlebot3_bringup.launch.py - starts the TurtleBot3 robot nodes and launch files
+  * ros2swarm/turtlebot3_bringup.launch.py - starts the TurtleBot3 robot nodes and launch files
 
 For robot type Jackal:
 * start_robot.sh - shell script to start up ROS2swarm on a single robot with robot:=jackal
