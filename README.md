@@ -4,7 +4,7 @@ ROS2swarm is a ROS 2 (Dashing, Foxy) package that provides swarm behavior patter
 It was developed by the **Institute of Computer Engineering** with support from the Institute of Robotics and the Institute for Electrical Engineering in Medicine of the **University of Lübeck, Germany**. 
 Currently, it is mainly developed by the **Cyber-Physical Systems Group** of the **University Konstanz, Germany**. 
 
-Project contributors: Tanja Katharina Kaiser, Marian Johannes Begemann, Tavia Plattenteich, Lars Schilling, Georg Schildbach, Heiko Hamann, Vincent Jansen, Daniel Tidde, Steffen Fleischmann  
+A list of all project contributors can be found [here](CONTRIBUTORS.md)
 
 The current ROS2swarm version is 1.1.0. 
 The ICRA 2022 paper "ROS2swarm - A ROS 2 Package for Swarm Robot Behaviors" refers to version 1.0.0 (Dashing), which can be found [here](https://github.com/ROS2swarm/ROS2swarm/tree/ICRA22). 
