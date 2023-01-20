@@ -33,9 +33,6 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Int8Message.msg"
   "msg/RangeData.msg"
   "msg/FloatArray.msg"
-  "msg/Ray.msg"
-  "msg/RayArray.msg"
-  "msg/RobotArray.msg"
   DEPENDENCIES builtin_interfaces std_msgs
 )
 
