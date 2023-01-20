@@ -16,7 +16,7 @@ import math
 
 from geometry_msgs.msg import Twist
 from ros2swarm.utils import setup_node
-from sensor_msgs.msg import LaserScan
+from communication_interfaces.msg import RangeData
 from rclpy.qos import qos_profile_sensor_data
 from ros2swarm.movement_pattern.movement_pattern import MovementPattern
 from ros2swarm.utils.state import State
@@ -52,18 +52,18 @@ class AggregationPattern(MovementPattern):
                 ('aggregation_object_max_width', None),
                 ('aggregation_stay_in_growing_groups', None),
                 ('max_translational_velocity', None),
-                ('max_rotational_velocity', None),
-                ('lidar_config', None)
+                ('max_rotational_velocity', None)
             ])
+            
         self.state = State.INIT
         self.stay_counter_needs_init = True
         self.stay_counter = 0
         self.num_robots = 0
 
-        self.scan_subscription = self.create_subscription(
-            LaserScan,
-            self.get_namespace() + '/scan',
-            self.swarm_command_controlled(self.scan_callback),
+        self.range_data_subscription = self.create_subscription(
+            RangeData,
+            self.get_namespace() + '/range_data',
+            self.swarm_command_controlled(self.range_data_callback),
             qos_profile=qos_profile_sensor_data
         )
 
@@ -95,23 +95,19 @@ class AggregationPattern(MovementPattern):
             "max_translational_velocity").get_parameter_value().double_value
         self.param_max_rotational_velocity = self.get_parameter(
             "max_rotational_velocity").get_parameter_value().double_value
-        # TODO replace magic number '3'
-        self.lidar_config = self.get_parameter(
-            "lidar_config").get_parameter_value().double_value if self.get_parameter(
-            "lidar_config").get_parameter_value().type == 3 else None
 
-    def scan_callback(self, incoming_msg):
+    def range_data_callback(self, incoming_msg):
         """Call back if a new scan msg is available."""
         direction = self.vector_calc(incoming_msg)
         self.command_publisher.publish(direction)
 
-    def identify_robots(self, scan):
+    def identify_robots(self, msg):
         """Identifies if a scan contains robots, based on the settings in the pattern parameters.
 
         :return: return the list of all found robots and a list in which each robot is represented by a single ray
          based on the chosen reduction method
         """
-        robots, robots_center = ScanCalculationFunctions.identify_robots(laser_scan=scan,
+        robots, robots_center = ScanCalculationFunctions.identify_robots(range_data=msg,
                                                                          min_range=self.param_min_range,
                                                                          max_range=self.param_max_range,
                                                                          threshold=self.param_object_threshold,
@@ -121,9 +117,9 @@ class AggregationPattern(MovementPattern):
         self.get_logger().debug('Found "{}" robots'.format(len(robots)))
         return robots, robots_center
 
-    def explore(self, scan):
+    def explore(self, range_data):
         """Explore State: Search for other robots by driving around."""
-        robots, _ = self.identify_robots(scan)
+        robots, _ = self.identify_robots(range_data)
         result = Twist()
         if robots:
             state = State.JOIN_GROUP
@@ -132,7 +128,7 @@ class AggregationPattern(MovementPattern):
             result.linear.x = self.param_max_translational_velocity
         return result, state
 
-    def join_group(self, scan):
+    def join_group(self, range_data):
         """Move towards a found group.
         JOIN_GROUP
         -> EXPLORE : no robots found anymore
@@ -140,7 +136,7 @@ class AggregationPattern(MovementPattern):
         -> JOIN_GROUP : else, moving towards group.
         """
 
-        robots, robots_center = self.identify_robots(scan)
+        robots, robots_center = self.identify_robots(range_data)
         result = Twist()
         if not robots:
             state = State.EXPLORE
@@ -159,7 +155,7 @@ class AggregationPattern(MovementPattern):
             state = State.JOIN_GROUP
         return result, state
 
-    def stay_in_group(self, scan):
+    def stay_in_group(self, range_data):
         """The robot stay in a group by not moving.
         In the first iteration a counter calculates how long to stay in place depending on the pattern parameters and
         the number of found robots.
@@ -168,7 +164,7 @@ class AggregationPattern(MovementPattern):
         -> LEAVE_GROUP : else / if param_stay_in_growing_groups is true and more robots than before,
                          reset counter instead
         """
-        robots, _ = self.identify_robots(scan)
+        robots, _ = self.identify_robots(range_data)
         result = Twist()
         self.get_logger().debug('Turtle "{}" counter {} {}'.format(self.get_namespace(), self.stay_counter, len(robots)))
         if self.stay_counter_needs_init:
@@ -191,12 +187,12 @@ class AggregationPattern(MovementPattern):
 
         return result, state
 
-    def leave_group(self, scan):
+    def leave_group(self, range_data):
         """The robot leaves a group by moving away from the robots in range.
         LEAVE_GROUP
         -> LEAVE_GROUP : at least one robot still in range
         -> EXPLORE : else """
-        robots, robots_center = self.identify_robots(scan)
+        robots, robots_center = self.identify_robots(range_data)
         result = Twist()
         if robots:
             # As log as robots are within detection range move way from them
@@ -212,7 +208,7 @@ class AggregationPattern(MovementPattern):
             state = State.EXPLORE
         return result, state
 
-    def vector_calc(self, current_scan):
+    def vector_calc(self, current_range):
         """Calculate the direction vector for the current scan.
 
         # INIT: determine if next state is EXPLORE or JOIN_GROUP
@@ -221,26 +217,26 @@ class AggregationPattern(MovementPattern):
         # JOIN_GROUP: -> robot moves towards center of mass [?? to nearest]
         # LEAVE_GROUP: -> robot moves away from center of mass # also has timer OR until no bots detected
         """
-        if current_scan is None:
+        if current_range is None:
             return Twist()
 
-        self.get_logger().debug('Turtle "{}" is in state "{}"'.format(self.get_namespace(), self.state))
+        self.get_logger().debug('Robot "{}" is in state "{}"'.format(self.get_namespace(), self.state))
         result = Twist()
 
         if self.state is State.INIT:
-            robots, _ = self.identify_robots(current_scan)
+            robots, _ = self.identify_robots(current_range)
             if robots:
                 self.state = State.JOIN_GROUP
             else:
                 self.state = State.EXPLORE
         elif self.state is State.EXPLORE:
-            result, self.state = self.explore(current_scan)
+            result, self.state = self.explore(current_range)
         elif self.state is State.JOIN_GROUP:
-            result, self.state = self.join_group(current_scan)
+            result, self.state = self.join_group(current_range)
         elif self.state is State.STAY_IN_GROUP:
-            result, self.state = self.stay_in_group(current_scan)
+            result, self.state = self.stay_in_group(current_range)
         elif self.state is State.LEAVE_GROUP:
-            result, self.state = self.leave_group(current_scan)
+            result, self.state = self.leave_group(current_range)
 
         return result
 

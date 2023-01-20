@@ -18,7 +18,7 @@ import numpy as np
 from geometry_msgs.msg import Twist
 from rclpy import logging
 
-from sensor_msgs.msg import LaserScan
+from communication_interfaces.msg import RangeData
 from typing import List
 
 from enum import Enum, unique
@@ -303,7 +303,7 @@ class ScanCalculationFunctions:
         return result
 
     @staticmethod
-    def identify_objects(laser_scan: LaserScan, min_range: float, max_range: float, threshold: float):
+    def identify_objects(range_data: RangeData, min_range: float, max_range: float, threshold: float):
         """Identifies objects from the scan. Returns a list of all identified objects,
         which are represented by a list of their rays as [range,angle].
         :param laser_scan: scan of the environment
@@ -315,12 +315,11 @@ class ScanCalculationFunctions:
         """
 
         # Adjust the ranges
-        adj_ranges = ScanCalculationFunctions.adjust_ranges(laser_scan.ranges, min_range, max_range)
+        adj_ranges = ScanCalculationFunctions.adjust_ranges(range_data.ranges, min_range, max_range)
 
         # enrich matrix [distance, angle]
         ranges = np.asarray(adj_ranges)
-        angle = (np.arange(ranges.size) * laser_scan.angle_increment) + laser_scan.angle_min
-        ranges_to_angle = np.vstack((adj_ranges, angle)).T
+        ranges_to_angle = np.vstack((adj_ranges, np.asarray(range_data.angles))).T
 
         current_object = []
         object_list = []
@@ -366,10 +365,11 @@ class ScanCalculationFunctions:
 
         if current_object:
             object_list.append(list(current_object))
+            
         return cleanup(object_list)
 
     @staticmethod
-    def identify_robots(laser_scan: LaserScan, min_range: float, max_range: float, threshold: float, min_width: int,
+    def identify_robots(range_data: RangeData, min_range: float, max_range: float, threshold: float, min_width: int,
                         max_width: int, reduction: ReductionOption = ReductionOption.NEAREST):
         """Identify robots from scan within given range. Objects are defined by rays that are beside each other and
         within the threshold of the last ray of the current object. An object is identified as robots if the object size
@@ -384,7 +384,7 @@ class ScanCalculationFunctions:
         :return: return the list of all found robots and a list in which each robot is represented by a single ray
          based on the chosen reduction method
         """
-        objects = ScanCalculationFunctions.identify_objects(laser_scan, min_range, max_range, threshold)
+        objects = ScanCalculationFunctions.identify_objects(range_data, min_range, max_range, threshold)
         # TODO allow the differ how wide a object is if it is near or far
         robots = ScanCalculationFunctions.select_objects(objects, min_width, max_width)
 

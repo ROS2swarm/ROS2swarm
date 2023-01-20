@@ -9,8 +9,8 @@
     aggregation_object_reduction: 'MEAN' # MEAN, NEAREST
     aggregation_group_reference_selection: 'MEAN' # MEAN, NEAREST, FARTHEST
     aggregation_object_threshold: 0.0
-    aggregation_object_min_width: 0
-    aggregation_object_max_width: 0
+    aggregation_object_min_width: 1
+    aggregation_object_max_width: 1
     aggregation_stay_in_growing_groups: true
     max_translational_velocity: 0.12
     max_rotational_velocity: 3.5714285714285716
