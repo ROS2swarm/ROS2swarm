@@ -7,10 +7,46 @@
 ##### Aggregation (aggregation_pattern.yaml)
 
 ##### Attraction (attraction_pattern.yaml)
+    
+| Parameter             | Value       | Description |
+| -----------           | ----------- | ----------- |
+| attraction_max_range    | float     | maximum distance of obstacles to be considered for dispersion |
+| attraction_min_range | float | minimum distance of obstacles to be considered for dispersion |               
+| attraction_front_attraction | float | constant linear speed added to repulsive vector | 
+| attraction_threshold | int | number of sensor measurements within [min_range, max_range] to trigger behavior | 
+| attraction_linear_if_alone | float | linear speed of robot when no other robots are detected within [min_range, max_range] | 
+| attraction_angular_if_alone | float | angular speed of robot when no other robots are detected within [min_range, max_range] | 
+| max_translational_velocity | float | maximum allowed linear speed of robot |  
+| max_rotational_velocity | float | maximum allowed angular speed of robot | 
 
-##### Attraction (attraction_pattern2.yaml)
+
+##### Attraction 2 (attraction_pattern2.yaml)
+
+| Parameter             | Value       | Description |
+| -----------           | ----------- | ----------- |
+| attraction2_max_range    | float     | maximum distance of obstacles to be considered for dispersion |
+| attraction2_min_range | float | minimum distance of obstacles to be considered for dispersion |               
+| attraction2_front_attraction | float | constant linear speed added to repulsive vector | 
+| attraction2_threshold | int | number of sensor measurements within [min_range, max_range] to trigger behavior | 
+| attraction2_linear_if_alone | float | linear speed of robot when no other robots are detected within [min_range, max_range] | 
+| attraction2_angular_if_alone | float | angular speed of robot when no other robots are detected within [min_range, max_range] | 
+| max_translational_velocity | float | maximum allowed linear speed of robot |  
+| max_rotational_velocity | float | maximum allowed angular speed of robot | 
+
 
 ##### Dispersion (dispersion_pattern.yaml)
+
+| Parameter             | Value       | Description |
+| -----------           | ----------- | ----------- |
+| dispersion_max_range    | float     | maximum distance of obstacles to be considered for dispersion |
+| dispersion_min_range | float | minimum distance of obstacles to be considered for dispersion |               
+| dispersion_front_attraction | float | constant linear speed added to repulsive vector | 
+| dispersion_threshold | int | number of sensor measurements within [min_range, max_range] to trigger behavior | 
+| dispersion_linear_if_alone | float | linear speed of robot when no other robots are detected within [min_range, max_range] | 
+| dispersion_angular_if_alone | float | angular speed of robot when no other robots are detected within [min_range, max_range] | 
+| dispersion_allow_dynamic_max_range_setting | true, false | if true parameter max_range can be set via topic max_distance | 
+| max_translational_velocity | float | maximum allowed linear speed of robot |  
+| max_rotational_velocity | float | maximum allowed angular speed of robot | 
 
 
 ##### Drive (drive_pattern.yaml)
