@@ -10,7 +10,6 @@
     minimalist_flocking_zone4_threshold: 0.08
     minimalist_flocking_zone2_robot_threshold: 7
     minimalist_flocking_robot_threshold: 7
-    minimalist_flocking_min_robot_threshold: 1
     minimalist_flocking_zone_borders: [0.01745329, 2.35619449, 3.92699082, 6.26573201]
     # global params
     max_range: 0.15
