@@ -4,10 +4,10 @@
 
 #### Basic 
 
-##### Aggregation (aggregation_pattern.yaml)
+##### Aggregation (*aggregation_pattern.yaml*)
 
 | Parameter                             | Value                   | Description                                                                                                             |
-| -----------                           | -----------             | -----------                                                                                                             |
+| :-----------                          | :----------             | :----------                                                                                                             |
 | aggregation_max_range                 | float                   | maximum distance of obstacles to be considered for aggregation                                                          |
 | aggregation_min_range                 | float                   | minimum distance of obstacles to be considered for aggregation                                                          |
 | aggregation_front_attraction          | float                   | linear forward component added to direction vector for robot movement                                                   |
@@ -24,10 +24,10 @@
 | max_rotational_velocity               | float                   | maximum allowed angular speed of robot                                                                                  |     
 
 
-##### Attraction (attraction_pattern.yaml)
+##### Attraction (*attraction_pattern.yaml*)
     
 | Parameter                   | Value       | Description                                                                            |
-| -----------                 | ----------- | -----------                                                                            |
+| :----------                 | :---------- | :----------                                                                            |
 | attraction_max_range        | float       | maximum distance of obstacles to be considered for dispersion                          |
 | attraction_min_range        | float       | minimum distance of obstacles to be considered for dispersion                          |               
 | attraction_front_attraction | float       | constant linear speed added to repulsive vector                                        | 
@@ -38,10 +38,10 @@
 | max_rotational_velocity     | float       | maximum allowed angular speed of robot                                                 | 
 
 
-##### Attraction 2 (attraction_pattern2.yaml)
+##### Attraction 2 (*attraction_pattern2.yaml*)
 
 | Parameter                    | Value       | Description                                                                            |
-| -----------                  | ----------- | -----------                                                                            |
+| :----------                  | :---------- | :----------                                                                            |
 | attraction2_max_range        | float       | maximum distance of obstacles to be considered for dispersion                          |
 | attraction2_min_range        | float       | minimum distance of obstacles to be considered for dispersion                          |               
 | attraction2_front_attraction | float       | constant linear speed added to repulsive vector                                        | 
@@ -52,10 +52,10 @@
 | max_rotational_velocity      | float       | maximum allowed angular speed of robot                                                 | 
 
 
-##### Dispersion (dispersion_pattern.yaml)
+##### Dispersion (*dispersion_pattern.yaml*)
 
 | Parameter                                  | Value       | Description                                                                            |
-| -----------                                | ----------- | -----------                                                                            |
+| :----------                                | :---------- | :----------                                                                            |
 | dispersion_max_range                       | float       | maximum distance of obstacles to be considered for dispersion                          |
 | dispersion_min_range                       | float       | minimum distance of obstacles to be considered for dispersion                          |               
 | dispersion_front_attraction                | float       | constant linear speed added to repulsive vector                                        | 
@@ -67,19 +67,19 @@
 | max_rotational_velocity                    | float       | maximum allowed angular speed of robot                                                 | 
 
 
-##### Drive (drive_pattern.yaml)
+##### Drive (*drive_pattern.yaml*)
 
 | Parameter             | Value       | Description                                                           |
-| -----------           | ----------- | -----------                                                           |
+| :----------           | :---------- | :----------                                                           |
 | drive_timer_period    | float       | time in seconds between publishing current Twist() message to cmd_vel |
 | drive_linear          | float       | linear velocity of robot                                              |
 | drive_angular         | float       | angular velocity of robot                                             |
 
 
-##### Minimalist Flocking (minimalist_flocking_pattern.yaml)
+##### Minimalist Flocking (*minimalist_flocking_pattern.yaml*)
 
 | Parameter                                     | Value                        | Description                                                                 |
-| -----------                                   | -----------                  | -----------                                                                 |
+| :----------                                   | :----------                  | :----------                                                                 |
 | minimalist_flocking_translational_velocity    | float                        | translational velocity of robots when moving forward                        |
 | minimalist_flocking_rotational_left_velocity  | float                        | rotational velocity of robots when turning left                             |
 | minimalist_flocking_rotational_right_velocity | float                        | rotational velocity of robots when turning right                            |
@@ -95,10 +95,10 @@
 | min_range                                     | float                        | min. sensor range                                                           | 
 
 
-##### Random Walk (random_walk_pattern.yaml)
+##### Random Walk (*random_walk_pattern.yaml*)
 
 | Parameter                                                  | Value       | Description                                                                   |
-| -----------                                                | ----------- | -----------                                                                   |
+| :----------                                                | :---------- | :----------                                                                   |
 | random_walk_timer_period                                   | float       | time in seconds between publishing current Twist() message to cmd_vel         |
 | random_walk_linear                                         | float       | linear velocity of robot                                                      |
 | random_walk_angular                                        | float       | maximum angular speed of robot                                                |
@@ -109,10 +109,10 @@
 
 #### Combined 
 
-##### Discussed Dispersion (discussed_dispersion_pattern.yaml)
+##### Discussed Dispersion (*discussed_dispersion_pattern.yaml*)
 
 | Parameter                                        | Value       | Description                                                                                      |
-| -----------                                      | ----------- | -----------                                                                                      |
+| :----------                                      | :---------- | :----------                                                                                      |
 | discussed_dispersion_timer_period                | float       | time in seconds between updating opinion and publishing current Twist() message to cmd_vel       |
 | discussed_dispersion_discussion_time             | float       |  initial time in seconds in which only majority rule is executed (no robot movement)             |
 | discussed_dispersion_discussion_opinion_multiply | float       | value to map opinion (int) to distance in meters                                                 |
@@ -126,20 +126,20 @@
 
 #### Basic 
 
-##### Majority Rule (majority_rule_pattern.yaml)
+##### Majority Rule (*majority_rule_pattern.yaml*)
 
 | Parameter                                            | Value       | Description                                                                                  |
-| -----------                                          | ----------- | -----------                                                                                  |
+| :----------                                          | :---------- | :----------                                                                                  |
 | majority_rule_choose_start_value_at_random           | true, false | initialize robot start value randomly within min/max opinion value                           |
 | majority_rule_initial_value                          | int         | if majority_rule_choose_start_value_at_random is False, this value is set as initial opinion |
 | majority_rule_min_opinion, majority_rule_max_opinion | int         | if majority_rule_choose_start_value_at_random is True, the initial value is initalized randomly in [majority_rule_min_opinion, majority_rule_max_opinion] |
 | majority_rule_timer_period                           | float       | time in seconds between opinion updates                                                      |
 
 
-##### Voter Model (voter_model_pattern.yaml)
+##### Voter Model (*voter_model_pattern.yaml*)
 
 | Parameter                                        | Value       | Description                                                                                  |
-| -----------                                      | ----------- | -----------                                                                                  |
+| :----------                                      | :---------- | :----------                                                                                  |
 | voter_model_choose_start_value_at_random         | true, false | initialize robot start value randomly within min/max opinion value                           |
 | voter_model_initial_value                        | int         | if majority_rule_choose_start_value_at_random is False, this value is set as initial opinion |
 | voter_model_min_opinion, voter_model_max_opinion | int         | if majority_rule_choose_start_value_at_random is True, the initial value is initalized randomly in [voter_model_min_opinion, voter_model_max_opinion] |
