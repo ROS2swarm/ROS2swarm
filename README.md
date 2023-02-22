@@ -58,10 +58,10 @@ scripts.
 <a name="supported-robots"></a>
 ### **Supported robot platforms**
 ROS2swarm currently supports the following robot platforms out of the box:
-* TurtleBot3 Waffle Pi
-* TurtleBot3 Burger
-* Jackal UGV 
-* Thymio II 
+* TurtleBot3 Waffle Pi (robot:=waffle\_pi; sensor\_type:=lidar)
+* TurtleBot3 Burger (robot:=burger; sensor\_type:=lidar)
+* Jackal UGV (robot:=jackal; sensor\_type:=lidar)
+* Thymio II (robot:=waffle\_pi; sensor\_type:=ir)
 
 <a name="existing-patterns"></a>
 ### **Existing patterns**
@@ -113,20 +113,20 @@ The provided launch scripts help the user to start ROS2swarm and to execute the 
 <a name="simulation"></a>
 ##### **Simulation**
 
-For robot types TurtleBot3 Waffle Pi and TurtleBot3 Burger:
+For robot types Thymio, TurtleBot3 Waffle Pi and TurtleBot3 Burger:
 
 * start_simulation.sh - shell script to start up the Gazebo simulator and ROS2swarm 
-  * launch_turtlebot_gazebo/launch/create_environment.launch.py - central simulation launch script which calls the other launch scripts 
-    * launch_turtlebot_gazebo/launch/start_gazebo.launch.py - start the Gazebo simulator
-    * launch_turtlebot_gazebo/launch_turtlebot_gazebo/add_bot_node.py - adds a Gazebo robot node for each robot
+  * launch_gazebo/launch/create_environment.launch.py - central simulation launch script which calls the other launch scripts 
+    * launch_gazebo/launch/start_gazebo.launch.py - start the Gazebo simulator
+    * launch_gazebo/launch_gazebo/add_bot_node.py - adds a Gazebo robot node for each robot
     * ros2swarm/launch/bringup_patterns.launch.py - manage the start of the pattern for each robot with its own namespace
       * ros2swarm/hardware_protection_layer.py - hardware protection layer node
       * ros2swarm/pattern_domain/pattern_type/pattern_name.launch.py - launch script for the pattern node
       * robot_state_publisher package - robot_state_publisher node
 
 * scripts/add_robots_to_simulation.sh - shell script to add more robots to simulation
-  * launch_turtlebot_gazebo/launch/add_turtlebot.launch.py - allows adding additional robots to a simulation started by the create environment script (see above)
-    * launch_turtlebot_gazebo/launch_turtlebot_gazebo/add_bot_node.py - adds a Gazebo robot node for each robot
+  * launch_gazebo/launch/add_robot.launch.py - allows adding additional robots to a simulation started by the create environment script (see above)
+    * launch_gazebo/launch_gazebo/add_bot_node.py - adds a Gazebo robot node for each robot
     * ros2swarm/launch/bringup_patterns.launch.py - manage the start of the pattern for each robot with its own namespace
       * etc. as above
 

@@ -76,6 +76,7 @@ def generate_launch_description():
         robot_type = "waffle_pi"
     elif robot_type.startswith('thymio'):
         robot_type = "thymio"
+        robot_node = False 
     elif robot_type.startswith('jackal'):
         robot_type = "jackal"
         robot_node = False
@@ -108,7 +109,7 @@ def generate_launch_description():
 
     config_dir = os.path.join(get_package_share_directory('ros2swarm'), 'config', robot_type)
 
-    # find out exact path of the patter launch file
+    # find out exact path of the pattern launch file
     pattern_launch_file_name = pattern + '.launch.py'
     for root, dirs, files in os.walk(launch_pattern_dir):
         for name in files:
