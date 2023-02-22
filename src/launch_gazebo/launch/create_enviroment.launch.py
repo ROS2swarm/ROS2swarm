@@ -118,8 +118,12 @@ def generate_launch_description():
 
     config_dir = os.path.join(get_package_share_directory('ros2swarm'), 'config', robot_type)
 
-    urdf_file_name = 'turtlebot3_' + robot + '.urdf'
-    urdf_file = os.path.join(get_package_share_directory('turtlebot3_description'), 'urdf', urdf_file_name)
+    if robot_type.startswith('burger') or robot_type.startswith('waffle_pi'):
+        urdf_file_name = 'turtlebot3_' + robot + '.urdf'
+        urdf_file = os.path.join(get_package_share_directory('turtlebot3_description'), 'urdf', urdf_file_name)
+    elif robot_type.startswith('thymio'):
+        urdf_file_name = 'thymio.urdf'
+        urdf_file = os.path.join(get_package_share_directory('thymio_description'), 'urdf', urdf_file_name)
 
     # find out exact path of the patter launch file
     for i in range(number_robots):

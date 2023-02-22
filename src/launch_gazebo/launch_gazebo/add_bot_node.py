@@ -65,10 +65,15 @@ def main():
         node.get_logger().debug("...connected!")
 
     # Get path to the turtlebot3
-    sdf_file_path = os.path.join(
-        get_package_share_directory("turtlebot3_gazebo"), "models",
-        "turtlebot3_"+args.type_of_robot,
-        "model.sdf")
+    if args.type_of_robot == "burger" or args.type_of_robot == "waffle_pi":
+        sdf_file_path = os.path.join(
+            get_package_share_directory("turtlebot3_gazebo"), "models",
+            "turtlebot3_"+args.type_of_robot,
+            "model.sdf")
+    elif args.type_of_robot == "thymio":
+        sdf_file_path = os.path.join(
+            get_package_share_directory("thymio_description"), "urdf",
+            "thymio.sdf")
 
     print("sdf_file_path: ", sdf_file_path)
 

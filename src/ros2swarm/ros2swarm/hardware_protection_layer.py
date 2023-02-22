@@ -55,7 +55,8 @@ class HardwareProtectionLayer(AbstractPattern):
 
         self.current_angles = None
         self.current_ranges = None
-        self.scan_subscription = self.create_subscription(
+        
+        self.range_data_subscription = self.create_subscription(
             RangeData,
             self.get_namespace() + '/range_data',
             self.swarm_command_controlled(self.range_data_callback),
@@ -135,6 +136,8 @@ class HardwareProtectionLayer(AbstractPattern):
         self.current_ranges = msg.ranges
         self.angles = msg.angles
         
+        self.get_logger().debug('heard: "%s"' % msg)
+
         [adjust, direction] = self.vector_calc()
         
         if adjust:

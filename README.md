@@ -25,7 +25,7 @@ The ICRA 2022 paper "ROS2swarm - A ROS 2 Package for Swarm Robot Behaviors" refe
     - [Robot](#robot)
   - [Package structure](#contained_packages)
 - [Required software](#required_software)
-- [Using the modified TurtleBot3 models](#modified-models)
+- [Using the Thymio model and the modified TurtleBot3 models](#modified-models)
 
 ROS2swarm is available for the ROS 2 Versions 
 [Dashing (dashing-dev)](https://github.com/ROS2swarm/ROS2swarm/tree/dashing-dev) and 
@@ -179,17 +179,46 @@ ROS2swarm consists of three ROS packages:
 * Gazebo 11 for simulation
 
 <a name="modified-models"></a>
-### **Using the modified TurtleBot3 models**
+### **Using the Thymio model and the modified TurtleBot3 models**
 
-ROS2swarm provides meshes for modified Turtlebot3 models. To use them they have to be copied to the workspace of the turtlebot3 package as described in the following. To select the standard Turtlebot3 Waffle Pi robot, use "waffle_pi" in the start scripts. To select a modified Turtlebot3 Waffle Pi version, use "waffle_pi_name_of_modification" in the start scripts. The mesh for Gazebo is then automatically selected when using the provided launch scripts. The same applies for the TurtleBot3 "burger" model.
-In the following the steps to use the modified models are described.
+A Gazebo model for the Thymio~II robot is provided by us here: https://github.com/ROS2swarm/thymio_description 
 
-#### TurtleBot3 with no sensor visualisation in Gazebo
+In addition, ROS2swarm includes meshes for modified Turtlebot3 models. 
+
+In the following the steps to use the models in Gazebo are described.
+
+
+#### Thymio~II in Gazebo
+
+1) download the thymio\_description package 
+to
+```
+colcon_ws/src/
+```
+2) build colcon\_ws
+```
+cd ~/colcon_ws && colcon build --symlink-install
+```
+3) use robot selection parameter in start_*.sh 
+```
+robots:=thymio
+sensor_type:=ir
+```
+4)
+```
+source ~/colcon_ws/install/setup.bash
+```
+
+
+#### Modified TurtleBot3 in Gazebo
+
+To use the modified TurtleBot3 models, the models have to be copied to the workspace of the turtlebot3 package as described in the following. To select the standard Turtlebot3 Waffle Pi robot, use "waffle_pi" in the start scripts. To select a modified Turtlebot3 Waffle Pi version, use "waffle_pi_name_of_modification" in the start scripts. The mesh for Gazebo is then automatically selected when using the provided launch scripts. The same applies for the TurtleBot3 "burger" model.
+
 To use the TurtleBot3 Burger, replace "waffle_pi" with "burger" in the following.
 
 1) copy
 ```
-models/turtlebot3_waffle_pi_invisible_sensors
+models/turtlebot3_waffle_pi_name_of_modification
 ```
 to
 ```
@@ -209,7 +238,7 @@ cd ~/turtlebot3_ws && colcon build --symlink-install
 ```
 4) use robot selection parameter in start_*.sh 
 ```
-robots:=waffle_pi_invisible_sensors
+robots:=waffle_pi_name_of_modification
 ```
 5)
 ```
