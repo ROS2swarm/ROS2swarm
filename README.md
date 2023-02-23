@@ -1,7 +1,7 @@
 ## **Manual ROS2swarm Version 1.2.0**
 
 ROS2swarm is a ROS 2 (Dashing, Foxy) package that provides swarm behavior patterns. 
-The initial version was developed by the **Institute of Computer Engineering** with support from the Institute of Robotics and the Institute for Electrical Engineering in Medicine of the **University of Lübeck, Germany**. 
+The project started at the **Institute of Computer Engineering** with support from the Institute of Robotics and the Institute for Electrical Engineering in Medicine of the **University of Lübeck, Germany**. 
 Currently, it is mainly developed by the **Cyber-Physical Systems Group** of the **University Konstanz, Germany**. 
 
 A list of all project contributors can be found [here](CONTRIBUTORS.md)
@@ -18,6 +18,7 @@ The ICRA 2022 paper "ROS2swarm - A ROS 2 Package for Swarm Robot Behaviors" refe
 - [How to use ROS2swarm](#how-to-use)
 - [Supported robot platforms](#supported-robots)
 - [Existing patterns](#existing-patterns)
+- [Sensor Layer](#sensor-layer)
 - [Architecture](#architecture)
   - [Components of a pattern](#components_of_a_pattern)
   - [Launch script overview](#launch_script_overview)
@@ -31,10 +32,8 @@ ROS2swarm is available for the ROS 2 Versions
 [Dashing (dashing-dev)](https://github.com/ROS2swarm/ROS2swarm/tree/dashing-dev) and 
 [Foxy (foxy-dev)](https://github.com/ROS2swarm/ROS2swarm/tree/foxy-dev). 
 
-The swarm behavior pattern consists of movement and voting 
-based [patterns](#existing-patterns). 
-Basic patterns can be used by combined patterns to create more complex behaviors out of basic 
-components. The behaviors are available for simulation and out of the box for several [supported robot platforms](#supported-robots). We provide [launch scripts](#launch_script_overview) and shell [scripts to start](#how-to-use) ROS2swarm.
+The included swarm behavior patterns consist of movement and voting based [patterns](#existing-patterns). 
+Basic patterns can be used by combined patterns to create more complex behaviors out of basic components. The behaviors are available for simulation and out of the box for several [supported robot platforms](#supported-robots). We provide [launch scripts](#launch_script_overview) and shell [scripts to start](#how-to-use) ROS2swarm.
 
 <a name="installation_guide"></a>
 ### **Installation guide**
@@ -45,8 +44,7 @@ To see a full installation guide for the ROS2swarm package please see the [insta
 ### **How to use ROS2swarm**
 
 ROS2swarm provides launch scripts to start the patterns in a simulation or on real robots.
-The parameters of the launch scripts, such as the robot type, can be set by editing the parameter sections of the following
-scripts. 
+The parameters of the launch scripts, such as the robot type, can be set by editing the parameter sections of the following scripts. 
 
 | Script                              | Function                                                                                                                                                                   |
 |-------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -72,11 +70,11 @@ Every pattern can either be a basic pattern or a combined one, which make use of
 
 | Pattern                       | Domain   | Type     | Simulation          | Robot              | Sensor Requirements             |
 | ------                        | ------   | ------   | ------              | ------             | ------                          |
+| aggregation                   | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: | LiDAR or IR                     |
 | attraction                    | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: | LiDAR or IR                     |
 | attraction 2                  | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: | LiDAR or IR                     |
-| beeclust                      | Movement | Basic    | :x:                 | :heavy_check_mark: | ground IR sensor, light sensor  |
-| drive                         | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: |                                 |
 | dispersion                    | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: | LiDAR or IR                     |
+| drive                         | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: |                                 |
 | magnetometer                  | Movement | Basic    | :x:                 | :heavy_check_mark: |                                 |
 | minimalist flocking           | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: | LiDAR or IR                     |
 | random walk                   | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: |                                 |
@@ -85,6 +83,27 @@ Every pattern can either be a basic pattern or a combined one, which make use of
 | majority rule                 | Voting   | Basic    | :heavy_check_mark:  | :heavy_check_mark: |                                 |
 
 In addition, a hardware protection layer is started to prevent collisions.
+
+<a name="sensor-layer"></a>
+### **Sensor Layer**
+
+ROS2swarm provides several sensor layers to enable the use of robots with different sensor setups: 
+
+* lidar\_layer
+* ir\_layer
+* ir\_tf\_layer 
+
+The sensor layer receives the sensor data from the respective sensors and transforms it to a RangeData message. 
+
+```
+std_msgs/Header header
+float32[] ranges
+float64[] angles
+```
+
+The RangeData message contains two arrays: (i) the measured distances or ranges and (ii) the angle of the measurement (e.g., position of IR sensor). 
+The parameters of the sensor layer can be specified in the config file sensor\_specification.yaml. 
+New sensor layers can be easily integrated. 
 
 <a name="architecture"></a>
 ### **Architecture**
@@ -102,13 +121,13 @@ A pattern consists of the behavior implementation itself, as well as configurati
 | config/robot_type/pattern_domain/pattern_type/pattern_name.yaml | The parameter configuration for the pattern. There is one file for each robot type.      |
 | launch/pattern_domain/pattern_type/pattern_name.launch.py       | The launch file starting the ROS node with the parameters specified in pattern_name.yaml.|
 
-To add a new pattern, copy the files from any existing pattern, e.g. the drive pattern, and implement the desired behavior. 
+To add a new pattern, copy the files from any existing pattern, e.g., the drive pattern, and implement the desired behavior. 
 Also remember to add the files of the new pattern to the setup.py and to register the main function of the new pattern there. 
 The new pattern can be started via the start_*.sh scripts with the name defined in the setup.py.
 
 <a name="launch_script_overview"></a>
 #### **Launch script overview**
-The provided launch scripts help the user to start ROS2swarm and to execute the desired behaviors. There are several scripts which are chained. In this section we explain their purpose and internal call order. We provide scripts both for starting desired swarm behaviors in simulation and on the real robot. 
+The provided launch scripts help the user to start ROS2swarm and to execute the desired behaviors. There are several scripts which are chained. In this section we explain their purpose and internal call order. We provide scripts both for starting desired swarm behaviors in simulation and on the real robots. 
 
 <a name="simulation"></a>
 ##### **Simulation**
@@ -156,7 +175,7 @@ ROS2swarm consists of three ROS packages:
 
 * ros2swarm
     * The main package containing the behavior patterns and their configuration and launch files.
-* launch_turtlebot_gazebo
+* launch_gazebo
     * Scripts to start the Gazebo simulation
 * communication_interfaces
     * Interfaces for special ROS messages used by the patterns
@@ -167,7 +186,7 @@ ROS2swarm consists of three ROS packages:
 **Dashing Version**
 * Ubuntu 18.04 LTS
 * ROS 2 Dashing Diademata
-* ROS 2 TurtleBot3 package 
+* ROS 2 TurtleBot3 package
 * Python 3.6
 * Gazebo 9 for simulation
 
@@ -175,6 +194,7 @@ ROS2swarm consists of three ROS packages:
 * Ubuntu 20.04 LTS
 * ROS 2 Foxy Fitzroy
 * ROS 2 TurtleBot3 package 
+* [ROS 2 Thymio package](http://jeguzzi.github.io/ros-aseba/) 
 * Python 3.8.10
 * Gazebo 11 for simulation
 

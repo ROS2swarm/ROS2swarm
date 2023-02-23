@@ -23,7 +23,8 @@ colcon build --symlink-install --allow-overriding communication_interfaces launc
  sensor_type:=ir
  
 # gazebo_world arena_large.world | arena.world | empty.world | turtle.world | 560x540m.world | Ymaze.world | Ymaze_camber.world | Ymaze_camber_top.world
-# pattern pattern_name
+
+# pattern: pattern_name
 ## movement pattern:
 #  * drive_pattern
 #  * dispersion_pattern
@@ -37,11 +38,12 @@ colcon build --symlink-install --allow-overriding communication_interfaces launc
 #  * flocking_pattern2
 #  * random_walk_pattern
 #  * discussed_dispersion_pattern
-#  * beeclust_pattern 
 ## voting_pattern:
 #  * voter_model_pattern
 #  * voter_model_with_limiter_pattern
 #  * majority_rule_pattern
-#
-# number_robots num_robots
-# robot: burger | waffle_pi | jackal | thymio 
+
+# number_robots: num_robots
+# log_level: info | DEBUG
+# robot: burger | waffle_pi | jackal | thymio
+# sensor_type: lidar | ir | ir_tf
