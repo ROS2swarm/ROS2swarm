@@ -2,7 +2,7 @@ import os
 from glob import glob
 from setuptools import setup
 
-package_name = 'launch_turtlebot_gazebo'
+package_name = 'launch_gazebo'
 
 setup(
     name=package_name,
@@ -26,7 +26,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-                    'add_bot_node = launch_turtlebot_gazebo.add_bot_node:main'
+                    'add_bot_node = launch_gazebo.add_bot_node:main'
         ],
     },
 )

@@ -18,9 +18,12 @@ colcon build --symlink-install &&
  pattern:=dispersion_pattern \
  log_level:=info \
  robot:=waffle_pi \
+ sensor_type:=lidar \
  robot_number:=NUM_CHANGE_ME
+
 # pattern_name:
-## movement pattern: drive_pattern | dispersion_pattern | aggregation_pattern | flocking_pattern | flocking_pattern2 | attraction_pattern | attraction_pattern2 | magnetometer_pattern | minimalist_flocking_pattern | discussed_dispersion_pattern
-## voting_pattern voter_model_pattern | voter_model_with_limiter_pattern | majority_rule_pattern
+## movement pattern: drive_pattern | dispersion_pattern | aggregation_pattern | flocking_pattern | flocking_pattern2 | attraction_pattern | attraction_pattern2 | magnetometer_pattern | minimalist_flocking_pattern | discussed_dispersion_pattern | beeclust_pattern
+## voting_pattern: voter_model_pattern | voter_model_with_limiter_pattern | majority_rule_pattern
 # robot_nummer: num_robots
-# robot: waffle_pi | burger | jackal
+# robot: waffle_pi | burger | jackal | thymio
+# sensor_type: lidar | ir | ir_tf 

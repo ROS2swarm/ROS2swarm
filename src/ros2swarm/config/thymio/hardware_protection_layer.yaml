@@ -1,0 +1,8 @@
+/**:
+  ros__parameters:
+    hardware_protection_layer_max_range: 0.05 # max range as given by the range topic = 0.12
+    hardware_protection_layer_min_range: 0.0 # min range as given by the range topic = 0.0
+    hardware_protection_layer_front_attraction: 0.1
+    hardware_protection_layer_threshold: 0
+    max_translational_velocity: 0.2 # 20cm/s as specified in https://www.thymio.org/docs/aseba-studio/programming-interface/
+    max_rotational_velocity: 3.5714285714285716  #20cm/s on a circle with a radius of about 0.056m correspond to 3.5714285714285716rad/s

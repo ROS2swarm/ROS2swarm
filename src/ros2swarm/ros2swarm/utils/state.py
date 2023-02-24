@@ -37,3 +37,4 @@ class State(Enum):
     START_CHAMBER = 15
     SEARCH_WALL = 16
     TUNNEL_CORNER = 17
+    TURN_AWAY = 18 

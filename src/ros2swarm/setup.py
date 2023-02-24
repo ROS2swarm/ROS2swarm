@@ -35,6 +35,7 @@ setup(
          glob('config/burger/movement_pattern/combined/*.yaml')),
         (os.path.join('share', package_name, 'config', 'burger', 'voting_pattern', 'basic'),
          glob('config/burger/voting_pattern/basic/*.yaml')),
+         
         (os.path.join('share', package_name, 'config', 'waffle_pi'), glob('config/waffle_pi/*.yaml')),
         (os.path.join('share', package_name, 'config', 'waffle_pi', 'movement_pattern'),
          glob('config/waffle_pi/movement_pattern/*.yaml')),
@@ -56,6 +57,16 @@ setup(
          glob('config/jackal/voting_pattern/basic/*.yaml')),
         # (os.path.join('share', package_name, 'config', 'voting_pattern', 'combined'),
         # glob('config/voting_pattern/combined/*.yaml')),
+        
+        (os.path.join('share', package_name, 'config', 'thymio'), glob('config/thymio/*.yaml')),
+        (os.path.join('share', package_name, 'config', 'thymio', 'movement_pattern'),
+         glob('config/thymio/movement_pattern/*.yaml')),
+        (os.path.join('share', package_name, 'config', 'thymio', 'movement_pattern', 'basic'),
+         glob('config/thymio/movement_pattern/basic/*.yaml')),
+        (os.path.join('thymio', package_name, 'config', 'thymio', 'movement_pattern', 'combined'),
+         glob('config/thymio/movement_pattern/combined/*.yaml')),
+        (os.path.join('share', package_name, 'config', 'thymio', 'voting_pattern', 'basic'),
+         glob('config/thymio/voting_pattern/basic/*.yaml')),
 
         (os.path.join('share', package_name, 'param'), glob('param/*.yaml')),
     ],
@@ -80,6 +91,11 @@ setup(
         'console_scripts': [
             # hardware protection
             'hardware_protection_layer = ros2swarm.hardware_protection_layer:main',
+            
+            # sensor layer 
+            'ir_layer = ros2swarm.sensor_layer.ir_layer:main',
+            'ir_tf_layer = ros2swarm.sensor_layer.ir_tf_layer:main',
+            'lidar_layer = ros2swarm.sensor_layer.lidar_layer:main',
 
             # movement_pattern.basic
             'drive_pattern = ros2swarm.movement_pattern.basic.drive_pattern:main',

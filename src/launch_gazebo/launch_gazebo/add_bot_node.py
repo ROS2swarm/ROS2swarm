@@ -18,9 +18,7 @@
 
 
 """
-spawn_turtlebot.py
-
-Script used to spawn a turtlebot in a generic position
+Script used to spawn a robot in a generic position
 """
 import os
 import rclpy
@@ -30,7 +28,7 @@ from gazebo_msgs.srv import SpawnEntity
 
 
 def main():
-    """ Main for spawning turtlebot node """
+    """ Main for spawning robot node """
     # Get input arguments from user
     # argv = sys.argv[1:]
 
@@ -67,12 +65,15 @@ def main():
         node.get_logger().debug("...connected!")
 
     # Get path to the turtlebot3
-    sdf_file_path = os.path.join(
-        get_package_share_directory("turtlebot3_gazebo"), "models",
-        "turtlebot3_"+args.type_of_robot,
-        #"turtlebot3_"+TURTLEBOT3_MODEL,
-        "model.sdf")
-    # TODO add here exportvariable!
+    if args.type_of_robot == "burger" or args.type_of_robot == "waffle_pi":
+        sdf_file_path = os.path.join(
+            get_package_share_directory("turtlebot3_gazebo"), "models",
+            "turtlebot3_"+args.type_of_robot,
+            "model.sdf")
+    elif args.type_of_robot == "thymio":
+        sdf_file_path = os.path.join(
+            get_package_share_directory("thymio_description"), "urdf",
+            "thymio.sdf")
 
     print("sdf_file_path: ", sdf_file_path)
 

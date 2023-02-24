@@ -1,12 +1,13 @@
-## **Manual ROS2swarm Version 1.1.0**
+## **Manual ROS2swarm Version 1.2.0**
 
 ROS2swarm is a ROS 2 (Dashing, Foxy) package that provides swarm behavior patterns. 
-It was developed by the **Institute of Computer Engineering** with support from the Institute of Robotics and the Institute for Electrical Engineering in Medicine of the **University of Lübeck, Germany**. 
+The project started at the **Institute of Computer Engineering** with support from the Institute of Robotics and the Institute for Electrical Engineering in Medicine of the **University of Lübeck, Germany**. 
 Currently, it is mainly developed by the **Cyber-Physical Systems Group** of the **University Konstanz, Germany**. 
 
-Project contributors: Tanja Katharina Kaiser, Marian Johannes Begemann, Tavia Plattenteich, Lars Schilling, Georg Schildbach, Heiko Hamann, Vincent Jansen, Daniel Tidde, Steffen Fleischmann  
+A list of all project contributors can be found [here](CONTRIBUTORS.md)
 
-The current ROS2swarm version is 1.1.0. 
+The current ROS2swarm version is 1.2.0.
+ 
 The ICRA 2022 paper "ROS2swarm - A ROS 2 Package for Swarm Robot Behaviors" refers to version 1.0.0 (Dashing), which can be found [here](https://github.com/ROS2swarm/ROS2swarm/tree/ICRA22). 
 
 <a name="about-ros2swarm"></a>
@@ -17,6 +18,7 @@ The ICRA 2022 paper "ROS2swarm - A ROS 2 Package for Swarm Robot Behaviors" refe
 - [How to use ROS2swarm](#how-to-use)
 - [Supported robot platforms](#supported-robots)
 - [Existing patterns](#existing-patterns)
+- [Sensor Layer](#sensor-layer)
 - [Architecture](#architecture)
   - [Components of a pattern](#components_of_a_pattern)
   - [Launch script overview](#launch_script_overview)
@@ -24,16 +26,14 @@ The ICRA 2022 paper "ROS2swarm - A ROS 2 Package for Swarm Robot Behaviors" refe
     - [Robot](#robot)
   - [Package structure](#contained_packages)
 - [Required software](#required_software)
-- [Using the modified TurtleBot3 models](#modified-models)
+- [Using the Thymio model and the modified TurtleBot3 models](#modified-models)
 
 ROS2swarm is available for the ROS 2 Versions 
 [Dashing (dashing-dev)](https://github.com/ROS2swarm/ROS2swarm/tree/dashing-dev) and 
 [Foxy (foxy-dev)](https://github.com/ROS2swarm/ROS2swarm/tree/foxy-dev). 
 
-The swarm behavior pattern consists of movement and voting 
-based [patterns](#existing-patterns). 
-Basic patterns can be used by combined patterns to create more complex behaviors out of basic 
-components. The behaviors are available for simulation and out of the box for several [supported robot platforms](#supported-robots). We provide [launch scripts](#launch_script_overview) and shell [scripts to start](#how-to-use) ROS2swarm.
+The included swarm behavior patterns consist of movement and voting based [patterns](#existing-patterns). 
+Basic patterns can be used by combined patterns to create more complex behaviors out of basic components. The behaviors are available for simulation and out of the box for several [supported robot platforms](#supported-robots). We provide [launch scripts](#launch_script_overview) and shell [scripts to start](#how-to-use) ROS2swarm.
 
 <a name="installation_guide"></a>
 ### **Installation guide**
@@ -44,8 +44,7 @@ To see a full installation guide for the ROS2swarm package please see the [insta
 ### **How to use ROS2swarm**
 
 ROS2swarm provides launch scripts to start the patterns in a simulation or on real robots.
-The parameters of the launch scripts, such as the robot type, can be set by editing the parameter sections of the following
-scripts. 
+The parameters of the launch scripts, such as the robot type, can be set by editing the parameter sections of the following scripts. 
 
 | Script                              | Function                                                                                                                                                                   |
 |-------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -57,9 +56,10 @@ scripts.
 <a name="supported-robots"></a>
 ### **Supported robot platforms**
 ROS2swarm currently supports the following robot platforms out of the box:
-* TurtleBot3 Waffle Pi
-* TurtleBot3 Burger
-* Jackal UGV 
+* TurtleBot3 Waffle Pi (robot:=waffle\_pi; sensor\_type:=lidar)
+* TurtleBot3 Burger (robot:=burger; sensor\_type:=lidar)
+* Jackal UGV (robot:=jackal; sensor\_type:=lidar)
+* Thymio II (robot:=waffle\_pi; sensor\_type:=ir)
 
 <a name="existing-patterns"></a>
 ### **Existing patterns**
@@ -68,19 +68,42 @@ The following table gives an overview the current implemented patterns.
 The patterns are separated into movement and voting patterns. 
 Every pattern can either be a basic pattern or a combined one, which make use of one or more other patterns to create more complex behaviors.
 
-| Pattern                  | Domain   | Type     | Simulation          | Robot  |
-| ------                   | ------   | ------   | ------              | ------ |
-| drive                    | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
-| dispersion               | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
-| attraction               | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
-| magnetometer             | Movement | Basic    | :x:                 | :heavy_check_mark: |
-| minimalist flocking      | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
-| random walk      | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
-| discussed dispersion pattern                 | Movement | Combined | :heavy_check_mark:  | :heavy_check_mark: |
-| voter model              | Voting   | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
-| majority rule            | Voting   | Basic    | :heavy_check_mark:  | :heavy_check_mark: |
+| Pattern                       | Domain   | Type     | Simulation          | Robot              | Sensor Requirements             |
+| ------                        | ------   | ------   | ------              | ------             | ------                          |
+| aggregation                   | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: | LiDAR or IR                     |
+| attraction                    | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: | LiDAR or IR                     |
+| attraction 2                  | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: | LiDAR or IR                     |
+| dispersion                    | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: | LiDAR or IR                     |
+| drive                         | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: |                                 |
+| magnetometer                  | Movement | Basic    | :x:                 | :heavy_check_mark: |                                 |
+| minimalist flocking           | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: | LiDAR or IR                     |
+| random walk                   | Movement | Basic    | :heavy_check_mark:  | :heavy_check_mark: |                                 |
+| discussed dispersion pattern  | Movement | Combined | :heavy_check_mark:  | :heavy_check_mark: | LiDAR or IR                     |
+| voter model                   | Voting   | Basic    | :heavy_check_mark:  | :heavy_check_mark: |                                 |
+| majority rule                 | Voting   | Basic    | :heavy_check_mark:  | :heavy_check_mark: |                                 |
 
 In addition, a hardware protection layer is started to prevent collisions.
+
+<a name="sensor-layer"></a>
+### **Sensor Layer**
+
+ROS2swarm provides several sensor layers to enable the use of robots with different sensor setups: 
+
+* lidar\_layer
+* ir\_layer
+* ir\_tf\_layer 
+
+The sensor layer receives the sensor data from the respective sensors and transforms it to a RangeData message. 
+
+```
+std_msgs/Header header
+float32[] ranges
+float64[] angles
+```
+
+The RangeData message contains two arrays: (i) the measured distances or ranges and (ii) the angle of the measurement (e.g., position of IR sensor). 
+The parameters of the sensor layer can be specified in the config file sensor\_specification.yaml. 
+New sensor layers can be easily integrated. 
 
 <a name="architecture"></a>
 ### **Architecture**
@@ -92,37 +115,37 @@ We give a short overview of the pattern components, the launch scripts and the p
 
 A pattern consists of the behavior implementation itself, as well as configuration and launch files. 
 
-| File                                                            | Function                                                                            |
-|-----------------------------------------------------------------|-------------------------------------------------------------------------------------|
-| ros2swarm/pattern_domain/pattern_type/pattern_name.py           | The behavior logic of the pattern.                                                  |
-| config/robot_type/pattern_domain/pattern_type/pattern_name.yaml | The parameter configuration for the pattern. There is one file for each robot type. |
+| File                                                            | Function                                                                                 |
+|-----------------------------------------------------------------|------------------------------------------------------------------------------------------|
+| ros2swarm/pattern_domain/pattern_type/pattern_name.py           | The behavior logic of the pattern.                                                       |
+| config/robot_type/pattern_domain/pattern_type/pattern_name.yaml | The parameter configuration for the pattern. There is one file for each robot type.      |
 | launch/pattern_domain/pattern_type/pattern_name.launch.py       | The launch file starting the ROS node with the parameters specified in pattern_name.yaml.|
 
-To add a new pattern, copy the files from any existing pattern, e.g. the drive pattern, and implement the desired behavior. 
+To add a new pattern, copy the files from any existing pattern, e.g., the drive pattern, and implement the desired behavior. 
 Also remember to add the files of the new pattern to the setup.py and to register the main function of the new pattern there. 
 The new pattern can be started via the start_*.sh scripts with the name defined in the setup.py.
 
 <a name="launch_script_overview"></a>
 #### **Launch script overview**
-The provided launch scripts help the user to start ROS2swarm and to execute the desired behaviors. There are several scripts which are chained. In this section we explain their purpose and internal call order. We provide scripts both for starting desired swarm behaviors in simulation and on the real robot. 
+The provided launch scripts help the user to start ROS2swarm and to execute the desired behaviors. There are several scripts which are chained. In this section we explain their purpose and internal call order. We provide scripts both for starting desired swarm behaviors in simulation and on the real robots. 
 
 <a name="simulation"></a>
 ##### **Simulation**
 
-For robot types TurtleBot3 Waffle Pi and TurtleBot3 Burger:
+For robot types Thymio, TurtleBot3 Waffle Pi and TurtleBot3 Burger:
 
 * start_simulation.sh - shell script to start up the Gazebo simulator and ROS2swarm 
-  * launch_turtlebot_gazebo/launch/create_environment.launch.py - central simulation launch script which calls the other launch scripts 
-    * launch_turtlebot_gazebo/launch/start_gazebo.launch.py - start the Gazebo simulator
-    * launch_turtlebot_gazebo/launch_turtlebot_gazebo/add_bot_node.py - adds a Gazebo robot node for each robot
+  * launch_gazebo/launch/create_environment.launch.py - central simulation launch script which calls the other launch scripts 
+    * launch_gazebo/launch/start_gazebo.launch.py - start the Gazebo simulator
+    * launch_gazebo/launch_gazebo/add_bot_node.py - adds a Gazebo robot node for each robot
     * ros2swarm/launch/bringup_patterns.launch.py - manage the start of the pattern for each robot with its own namespace
       * ros2swarm/hardware_protection_layer.py - hardware protection layer node
       * ros2swarm/pattern_domain/pattern_type/pattern_name.launch.py - launch script for the pattern node
       * robot_state_publisher package - robot_state_publisher node
 
 * scripts/add_robots_to_simulation.sh - shell script to add more robots to simulation
-  * launch_turtlebot_gazebo/launch/add_turtlebot.launch.py - allows adding additional robots to a simulation started by the create environment script (see above)
-    * launch_turtlebot_gazebo/launch_turtlebot_gazebo/add_bot_node.py - adds a Gazebo robot node for each robot
+  * launch_gazebo/launch/add_robot.launch.py - allows adding additional robots to a simulation started by the create environment script (see above)
+    * launch_gazebo/launch_gazebo/add_bot_node.py - adds a Gazebo robot node for each robot
     * ros2swarm/launch/bringup_patterns.launch.py - manage the start of the pattern for each robot with its own namespace
       * etc. as above
 
@@ -139,7 +162,7 @@ For robot types TurtleBot3 Waffle Pi and TurtleBot3 Burger:
 
 * start_robot.sh - shell script to start up ROS2swarm on a single robot
   * ros2swarm/bringup_robot.launch.py - central robot launch script which adds the other launch scripts to the launch description
-    * ros2swarm/turtlebot3_bringup.launch.py - starts the TurtleBot3 robot nodes and launch files
+  * ros2swarm/turtlebot3_bringup.launch.py - starts the TurtleBot3 robot nodes and launch files
 
 For robot type Jackal:
 * start_robot.sh - shell script to start up ROS2swarm on a single robot with robot:=jackal
@@ -152,7 +175,7 @@ ROS2swarm consists of three ROS packages:
 
 * ros2swarm
     * The main package containing the behavior patterns and their configuration and launch files.
-* launch_turtlebot_gazebo
+* launch_gazebo
     * Scripts to start the Gazebo simulation
 * communication_interfaces
     * Interfaces for special ROS messages used by the patterns
@@ -163,7 +186,7 @@ ROS2swarm consists of three ROS packages:
 **Dashing Version**
 * Ubuntu 18.04 LTS
 * ROS 2 Dashing Diademata
-* ROS 2 TurtleBot3 package 
+* ROS 2 TurtleBot3 package
 * Python 3.6
 * Gazebo 9 for simulation
 
@@ -171,21 +194,51 @@ ROS2swarm consists of three ROS packages:
 * Ubuntu 20.04 LTS
 * ROS 2 Foxy Fitzroy
 * ROS 2 TurtleBot3 package 
+* [ROS 2 Thymio package](http://jeguzzi.github.io/ros-aseba/) 
 * Python 3.8.10
 * Gazebo 11 for simulation
 
 <a name="modified-models"></a>
-### **Using the modified TurtleBot3 models**
+### **Using the Thymio model and the modified TurtleBot3 models**
 
-ROS2swarm provides meshes for modified Turtlebot3 models. To use them they have to be copied to the workspace of the turtlebot3 package as described in the following. To select the standard Turtlebot3 Waffle Pi robot, use "waffle_pi" in the start scripts. To select a modified Turtlebot3 Waffle Pi version, use "waffle_pi_name_of_modification" in the start scripts. The mesh for Gazebo is then automatically selected when using the provided launch scripts. The same applies for the TurtleBot3 "burger" model.
-In the following the steps to use the modified models are described.
+A Gazebo model for the Thymio~II robot is provided by us here: https://github.com/ROS2swarm/thymio_description 
 
-#### TurtleBot3 with no sensor visualisation in Gazebo
+In addition, ROS2swarm includes meshes for modified Turtlebot3 models. 
+
+In the following the steps to use the models in Gazebo are described.
+
+
+#### Thymio~II in Gazebo
+
+1) download the thymio\_description package 
+to
+```
+colcon_ws/src/
+```
+2) build colcon\_ws
+```
+cd ~/colcon_ws && colcon build --symlink-install
+```
+3) use robot selection parameter in start_*.sh 
+```
+robots:=thymio
+sensor_type:=ir
+```
+4)
+```
+source ~/colcon_ws/install/setup.bash
+```
+
+
+#### Modified TurtleBot3 in Gazebo
+
+To use the modified TurtleBot3 models, the models have to be copied to the workspace of the turtlebot3 package as described in the following. To select the standard Turtlebot3 Waffle Pi robot, use "waffle_pi" in the start scripts. To select a modified Turtlebot3 Waffle Pi version, use "waffle_pi_name_of_modification" in the start scripts. The mesh for Gazebo is then automatically selected when using the provided launch scripts. The same applies for the TurtleBot3 "burger" model.
+
 To use the TurtleBot3 Burger, replace "waffle_pi" with "burger" in the following.
 
 1) copy
 ```
-WaffelPi_Model_Extension/turtlebot3_waffle_pi_invisible_sensors
+models/turtlebot3_waffle_pi_name_of_modification
 ```
 to
 ```
@@ -193,7 +246,7 @@ turtlebot3_ws/src/turtlebot3_simulations/turtlebot3_gazebo/models
 ```
 2) copy
 ```
-WaffelPi_Model_Extension/turtlebot3_waffle_pi_invisible_sensors.urdf
+models/turtlebot3_waffle_pi_invisible_sensors.urdf
 ```
 to
 ```
@@ -205,7 +258,7 @@ cd ~/turtlebot3_ws && colcon build --symlink-install
 ```
 4) use robot selection parameter in start_*.sh 
 ```
-robots:=waffle_pi_invisible_sensors
+robots:=waffle_pi_name_of_modification
 ```
 5)
 ```

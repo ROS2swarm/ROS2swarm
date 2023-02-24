@@ -17,7 +17,7 @@ import random
 
 from geometry_msgs.msg import Twist
 from ros2swarm.utils import setup_node
-from sensor_msgs.msg import LaserScan
+from communication_interfaces.msg import RangeData
 from rclpy.qos import qos_profile_sensor_data
 from ros2swarm.movement_pattern.movement_pattern import MovementPattern
 from ros2swarm.utils.state import State
@@ -25,12 +25,9 @@ from ros2swarm.utils.scan_calculation_functions import ScanCalculationFunctions
 from enum import IntEnum, unique
 
 
-degree_45 = 45
-
-
-def check_robot(max_range, min_range, current_scan, threshold):
+def check_robot(max_range, min_range, current_ranges, threshold):
     """Check if there is a robot in the area"""
-    count = sum([1 if min_range < y < max_range else 0 for y in current_scan])
+    count = sum([1 if min_range < y < max_range else 0 for y in current_ranges])
     return count if count < threshold else 0
 
 
@@ -69,22 +66,21 @@ class MinimalistFlockingPattern(MovementPattern):
                 ('minimalist_flocking_zone4_threshold', None),
                 ('minimalist_flocking_zone2_robot_threshold', None),
                 ('minimalist_flocking_robot_threshold', None),
+                ('minimalist_flocking_zone_borders', None),
                 ('max_range', None),
-                ('min_range', None),
-                ('lidar_config', None)
+                ('min_range', None)
             ])
 
         self.state = State.INIT
         self.counter = 0
-        self.current_scan = None
         self.direction = Twist()
         self.ranges = []
 
         # sensor subscription
-        self.scan_subscription = self.create_subscription(
-            LaserScan,
-            self.get_namespace() + '/scan',
-            self.swarm_command_controlled(self.scan_callback),
+        self.range_data_subscription = self.create_subscription(
+            RangeData,
+            self.get_namespace() + '/range_data',
+            self.swarm_command_controlled(self.range_data_callback),
             qos_profile=qos_profile_sensor_data
         )
 
@@ -109,14 +105,12 @@ class MinimalistFlockingPattern(MovementPattern):
             "minimalist_flocking_zone2_robot_threshold").get_parameter_value().integer_value
         self.param_robot_threshold = self.get_parameter(
             "minimalist_flocking_robot_threshold").get_parameter_value().integer_value
+        self.param_zone_borders = self.get_parameter(
+            "minimalist_flocking_zone_borders").get_parameter_value().double_array_value
         self.param_max_range = self.get_parameter(
             "max_range").get_parameter_value().double_value
         self.param_min_range = self.get_parameter(
             "min_range").get_parameter_value().double_value
-        # TODO replace magic number '3'
-        self.lidar_config = self.get_parameter(
-            "lidar_config").get_parameter_value().double_value if self.get_parameter(
-            "lidar_config").get_parameter_value().type == 3 else None
 
         self.turn_right = Twist()
         self.turn_right.angular.z = self.param_rotational_right_velocity
@@ -125,28 +119,32 @@ class MinimalistFlockingPattern(MovementPattern):
         self.move = Twist()
         self.move.linear.x = self.param_translational_velocity
 
-    def scan_callback(self, incoming_msg):
+    def range_data_callback(self, incoming_msg):
         """Publish the message to the sub pattern topic and resets the _latest variables."""
-        self.current_scan = incoming_msg
-        self.ranges = []
-
+        self.ranges = [[], [], [], []]
+        
         adj_ranges = ScanCalculationFunctions.adjust_ranges(incoming_msg.ranges,
                                                             self.param_min_range,
                                                             self.param_max_range)
 
         # Divide the ranges of the scan in 4 parts:
         # [0] = front, [1] = left, [2] = behind, [3] = right
-        param = len(adj_ranges) / 360
-        angle_min = incoming_msg.angle_min if self.lidar_config is None else self.lidar_config
-        adj_ranges = [adj_ranges[(i - (degree_45 - int(math.degrees(angle_min)*param)))] for i in
-                      range(0, len(adj_ranges))]
-
-        self.ranges = [adj_ranges[i:i + int(len(adj_ranges) / 4)] for i in
-                       range(0, len(adj_ranges), int(len(adj_ranges) / 4))]
+        for i in range(len(incoming_msg.ranges)):
+            #right
+            if  self.param_zone_borders[2] < incoming_msg.angles[i] <= self.param_zone_borders[3]:
+                self.ranges[Directions.RIGHT].append(incoming_msg.ranges[i])
+            #front
+            elif self.param_zone_borders[3] < incoming_msg.angles[i] or incoming_msg.angles[i] <= self.param_zone_borders[0]:
+                self.ranges[Directions.FRONT].append(incoming_msg.ranges[i])
+            #left
+            elif self.param_zone_borders[0] < incoming_msg.angles[i] <= self.param_zone_borders[1]:
+                self.ranges[Directions.LEFT].append(incoming_msg.ranges[i])
+            #rear
+            elif self.param_zone_borders[1] < incoming_msg.angles[i] <= self.param_zone_borders[2]:
+                self.ranges[Directions.BEHIND].append(incoming_msg.ranges[i])
+              
         self.direction = self.vector_calc()
         self.command_publisher.publish(self.direction)
-
-
 
     def vector_calc(self):
         """State machine for the minimalist flocking behavior.
@@ -207,11 +205,11 @@ class MinimalistFlockingPattern(MovementPattern):
     def collision_avoid(self):
         """zone 1: avoid the obstacle in front"""
         min_range = min(self.ranges[Directions.FRONT])
-        direction = self.turn_right
+        direction = self.turn_left
         if self.direction.angular.z == 0.0:
-            for i in range(0, degree_45):
+            for i in range(0, int(len(self.ranges[Directions.FRONT])/2)):
                 if self.ranges[Directions.FRONT][i] == min_range:
-                    direction = self.turn_left
+                    direction = self.turn_right
                     break
         else:
             direction = self.direction
@@ -281,7 +279,7 @@ class MinimalistFlockingPattern(MovementPattern):
         min_range = min(self.ranges[Directions.BEHIND])
         direction = self.turn_right
         if self.direction.angular.z == 0.0:
-            for i in range(0, degree_45):
+            for i in range(0, int(len(self.ranges[Directions.BEHIND])/2)):
                 if self.ranges[Directions.BEHIND][i] == min_range:
                     direction = self.turn_left
             return direction

@@ -18,7 +18,7 @@ import numpy as np
 from geometry_msgs.msg import Twist
 from rclpy import logging
 
-from sensor_msgs.msg import LaserScan
+from communication_interfaces.msg import RangeData
 from typing import List
 
 from enum import Enum, unique
@@ -84,16 +84,14 @@ class ScanCalculationFunctions:
         return [(x / max_range) for x in ranges]
 
     @staticmethod
-    def calculate_vectors_from_normed_ranges(ranges, sensor_msgs_laserscan: LaserScan):
+    def calculate_vectors_from_normed_ranges(ranges, angles):
         """Calculate a vector for each measured range in ranges.
         Before this function is called the values need to be normed to [0.0,1.0]"""
         result_ranges = []
         for i, e in enumerate(ranges):
             if e < 1.0:
                 result_ranges.append(
-                    pol2cart(e, i * sensor_msgs_laserscan.angle_increment + sensor_msgs_laserscan.angle_min)
-                    # (e * math.cos(i * sensor_msgs_laserscan.angle_increment + sensor_msgs_laserscan.angle_min),
-                    # e * math.sin(i * sensor_msgs_laserscan.angle_increment + sensor_msgs_laserscan.angle_min))
+                    pol2cart(e, angles[i])
                 )
         return result_ranges
 
@@ -150,21 +148,19 @@ class ScanCalculationFunctions:
     @staticmethod
     def potential_field(front_attraction, max_range, max_rotational_velocity,
                         max_translational_velocity,
-                        min_range, sensor_msgs_laserscan, threshold, angle_min=None):
+                        min_range, threshold, sensor_ranges, angles):
         """
-        Create a potential field based on the given LaserScan message and the other parameters.
+        Create a potential field based on the given range data message and the other parameters.
 
         The second return value is true if no obstacle within the max range is detected.
         threshold is the number of scans below the max_range which is needed to detect obstacles.
         """
-        ranges = ScanCalculationFunctions.adjust_ranges(sensor_msgs_laserscan.ranges, min_range,
-                                                        max_range)
+        ranges = ScanCalculationFunctions.adjust_ranges(sensor_ranges, min_range, max_range)
         obstacle_free = ScanCalculationFunctions.is_obstacle_free(max_range, ranges, threshold)
 
         ranges = ScanCalculationFunctions.linear_rating(ranges, max_range)
 
-        vector = ScanCalculationFunctions.calculate_vector_normed(front_attraction, ranges,
-                                                                  sensor_msgs_laserscan, angle_min)
+        vector = ScanCalculationFunctions.calculate_vector_normed(front_attraction, ranges, angles)
         direction = ScanCalculationFunctions.create_normed_twist_message(
             vector,
             max_translational_velocity,
@@ -180,19 +176,16 @@ class ScanCalculationFunctions:
         return direction, obstacle_free
 
     @staticmethod
-    def calculate_vector_normed(front_attraction, ranges, sensor_msgs_laserscan, angle_min):
+    def calculate_vector_normed(front_attraction, ranges, angles):
         """
-        Calculate a vector from laser scan.
+        Calculate a vector from range data.
 
         Calculate a combined and rotated vector from the normed ranges and
         apply the given front attraction to it
         """
-
-        angle_min = sensor_msgs_laserscan.angle_min if angle_min is None else angle_min
-        vectors = ScanCalculationFunctions.calculate_vectors_from_normed_ranges(ranges, sensor_msgs_laserscan)
+        vectors = ScanCalculationFunctions.calculate_vectors_from_normed_ranges(ranges, angles)
         vector = ScanCalculationFunctions.combine_vectors(vectors)
         vector = ScanCalculationFunctions.flip_vector(vector)
-        vector = ScanCalculationFunctions.rotate_vector(vector, angle_min)
         vector = ScanCalculationFunctions.add_attraction(vector, front_attraction)
         return vector
 
@@ -207,48 +200,45 @@ class ScanCalculationFunctions:
         return sum([1 if 0 < y < max_range else 0 for y in ranges])
 
     @staticmethod
-    def sum_adjusted_ranges(max_range, min_range, scan):
+    def sum_adjusted_ranges(max_range, min_range, ranges):
         """Adjust the ranges from the scan and sum up the ones between min and max range."""
-        adjusted_ranges = ScanCalculationFunctions.adjust_ranges(scan.ranges, min_range, max_range)
+        adjusted_ranges = ScanCalculationFunctions.adjust_ranges(ranges, min_range, max_range)
         return ScanCalculationFunctions.sum_ranges(max_range, adjusted_ranges)
 
     @staticmethod
-    def is_adjusted_obstacle_free(max_range, min_range, scan, threshold):
+    def is_adjusted_obstacle_free(max_range, min_range, ranges, threshold):
         """
         Adjust the scan and check if it is obstacle free.
 
         Returns true if there is no number of ranges greater than the threshold between min and
         max range.
         """
-        adjusted_ranges = ScanCalculationFunctions.adjust_ranges(scan.ranges, min_range, max_range)
+        adjusted_ranges = ScanCalculationFunctions.adjust_ranges(ranges, min_range, max_range)
         return ScanCalculationFunctions.is_obstacle_free(max_range, adjusted_ranges, threshold)
 
     @staticmethod
-    def adjusted_sum(max_range, min_range, scan):
+    def adjusted_sum(max_range, min_range, ranges):
         """Returns the sum of the ranges of the scan. Adjust the ranges of the scan to the
         interval given by max_range and min_range."""
-        adjusted_ranges = ScanCalculationFunctions.adjust_ranges(scan.ranges, min_range, max_range)
+        adjusted_ranges = ScanCalculationFunctions.adjust_ranges(ranges, min_range, max_range)
         return ScanCalculationFunctions.sum_ranges(max_range, adjusted_ranges)
 
     @staticmethod
     def attraction_field(front_attraction, max_range, max_rotational_velocity,
-                         max_translational_velocity,
-                         min_range, sensor_msgs_laserscan, threshold, angle_min):
+                         max_translational_velocity, min_range, threshold, sensor_ranges, angles):
         """
-        Create a potential field based on the given LaserScan message and the other parameters.
+        Create a potential field based on the given range data message and the other parameters.
 
         The second return value is true if no obstacle within the max range is detected.
         threshold is the number of scans below the max_range which is needed to detect obstacles.
         The nearest range is __most__ important.
         """
-        ranges = ScanCalculationFunctions.adjust_ranges(sensor_msgs_laserscan.ranges, min_range,
-                                                        max_range)
+        ranges = ScanCalculationFunctions.adjust_ranges(sensor_ranges, min_range, max_range)
         obstacle_free = ScanCalculationFunctions.is_obstacle_free(max_range, ranges, threshold)
 
         ranges = ScanCalculationFunctions.linear_rating(ranges, max_range)
 
-        vector = ScanCalculationFunctions.calculate_vector_normed(front_attraction, ranges,
-                                                                  sensor_msgs_laserscan, angle_min)
+        vector = ScanCalculationFunctions.calculate_vector_normed(front_attraction, ranges, angles)
         vector = ScanCalculationFunctions.flip_vector(vector)
         direction = ScanCalculationFunctions.create_normed_twist_message(
             vector,
@@ -266,17 +256,15 @@ class ScanCalculationFunctions:
 
     @staticmethod
     def repulsion_field(front_attraction, max_range, max_rotational_velocity,
-                        max_translational_velocity,
-                        min_range, sensor_msgs_laserscan, threshold, angle_min):
+                        max_translational_velocity, min_range, threshold, sensor_ranges, angles):
         """
-        Create a potential field based on the given LaserScan message and the other parameters.
+        Create a potential field based on the given range data message and the other parameters.
 
         The second return value is true if no obstacle within the max range is detected.
         threshold is the number of scans below the max_range which is needed to detect obstacles.
         The nearest range is __least__ important.
         """
-        ranges = ScanCalculationFunctions.adjust_ranges(sensor_msgs_laserscan.ranges, min_range,
-                                                        max_range)
+        ranges = ScanCalculationFunctions.adjust_ranges(sensor_ranges, min_range, max_range)
         obstacle_free = ScanCalculationFunctions.is_obstacle_free(max_range, ranges, threshold)
 
         ranges = ScanCalculationFunctions.linear_rating2(ranges, max_range)
@@ -284,7 +272,7 @@ class ScanCalculationFunctions:
         # ensures that the front attraction does not become a back attraction in the next step
         flipped_front_attraction = front_attraction * -1
         vector = ScanCalculationFunctions.calculate_vector_normed(flipped_front_attraction, ranges,
-                                                                  sensor_msgs_laserscan, angle_min)
+                                                                  angles)
         vector = ScanCalculationFunctions.flip_vector(vector)
         direction = ScanCalculationFunctions.create_normed_twist_message(
             vector,
@@ -315,7 +303,7 @@ class ScanCalculationFunctions:
         return result
 
     @staticmethod
-    def identify_objects(laser_scan: LaserScan, min_range: float, max_range: float, threshold: float):
+    def identify_objects(range_data: RangeData, min_range: float, max_range: float, threshold: float):
         """Identifies objects from the scan. Returns a list of all identified objects,
         which are represented by a list of their rays as [range,angle].
         :param laser_scan: scan of the environment
@@ -327,12 +315,11 @@ class ScanCalculationFunctions:
         """
 
         # Adjust the ranges
-        adj_ranges = ScanCalculationFunctions.adjust_ranges(laser_scan.ranges, min_range, max_range)
+        adj_ranges = ScanCalculationFunctions.adjust_ranges(range_data.ranges, min_range, max_range)
 
         # enrich matrix [distance, angle]
         ranges = np.asarray(adj_ranges)
-        angle = (np.arange(ranges.size) * laser_scan.angle_increment) + laser_scan.angle_min
-        ranges_to_angle = np.vstack((adj_ranges, angle)).T
+        ranges_to_angle = np.vstack((adj_ranges, np.asarray(range_data.angles))).T
 
         current_object = []
         object_list = []
@@ -378,10 +365,11 @@ class ScanCalculationFunctions:
 
         if current_object:
             object_list.append(list(current_object))
+            
         return cleanup(object_list)
 
     @staticmethod
-    def identify_robots(laser_scan: LaserScan, min_range: float, max_range: float, threshold: float, min_width: int,
+    def identify_robots(range_data: RangeData, min_range: float, max_range: float, threshold: float, min_width: int,
                         max_width: int, reduction: ReductionOption = ReductionOption.NEAREST):
         """Identify robots from scan within given range. Objects are defined by rays that are beside each other and
         within the threshold of the last ray of the current object. An object is identified as robots if the object size
@@ -396,7 +384,7 @@ class ScanCalculationFunctions:
         :return: return the list of all found robots and a list in which each robot is represented by a single ray
          based on the chosen reduction method
         """
-        objects = ScanCalculationFunctions.identify_objects(laser_scan, min_range, max_range, threshold)
+        objects = ScanCalculationFunctions.identify_objects(range_data, min_range, max_range, threshold)
         # TODO allow the differ how wide a object is if it is near or far
         robots = ScanCalculationFunctions.select_objects(objects, min_width, max_width)
 

@@ -10,6 +10,7 @@
     minimalist_flocking_zone4_threshold: 1.2 # sim 2.5
     minimalist_flocking_zone2_robot_threshold: 18
     minimalist_flocking_robot_threshold: 4
+    minimalist_flocking_zone_borders: [0.7853981634 , 2.3561944902 , 3.926990817, 5.4977871438]
     # global params
     max_range: 1.4 # sim 3.5
     min_range: 0.12

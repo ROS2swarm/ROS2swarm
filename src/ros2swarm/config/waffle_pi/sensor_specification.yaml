@@ -1,0 +1,8 @@
+/**:
+  ros__parameters:
+    max_range: 3.5
+    min_range: 0.12
+    object_reduction: 'MEAN' # MEAN, NEAREST
+    object_threshold: 0.2
+    object_min_width: 2
+    object_max_width: 8

@@ -15,12 +15,11 @@
 
 from geometry_msgs.msg import Twist
 from ros2swarm.utils import setup_node
-from sensor_msgs.msg import LaserScan
 from rclpy.qos import qos_profile_sensor_data
 from ros2swarm.movement_pattern.movement_pattern import MovementPattern
 
 from ros2swarm.utils.scan_calculation_functions import ScanCalculationFunctions
-from communication_interfaces.msg import DoubleMessage
+from communication_interfaces.msg import DoubleMessage, RangeData
 
 
 class DispersionPattern(MovementPattern):
@@ -42,17 +41,17 @@ class DispersionPattern(MovementPattern):
                 ('dispersion_min_range', None),
                 ('dispersion_front_attraction', None),
                 ('dispersion_threshold', None),
-                ('dispersion_stop_if_alone', None),
+                ('dispersion_linear_if_alone', None),
+                ('dispersion_angular_if_alone', None),
                 ('dispersion_allow_dynamic_max_range_setting', False),
                 ('max_translational_velocity', None),
-                ('max_rotational_velocity', None),
-                ('lidar_config', None)
+                ('max_rotational_velocity', None)
             ])
 
-        self.scan_subscription = self.create_subscription(
-            LaserScan,
-            self.get_namespace() + '/scan',
-            self.swarm_command_controlled(self.scan_callback),
+        self.range_data_subscription = self.create_subscription(
+            RangeData,
+            self.get_namespace() + '/range_data',
+            self.swarm_command_controlled(self.range_data_callback),
             qos_profile=qos_profile_sensor_data
         )
 
@@ -71,22 +70,25 @@ class DispersionPattern(MovementPattern):
             "dispersion_front_attraction").get_parameter_value().double_value
         self.param_threshold = self.get_parameter(
             "dispersion_threshold").get_parameter_value().integer_value
-        self.param_stop_if_alone = self.get_parameter(
-            "dispersion_stop_if_alone").get_parameter_value().bool_value
+        self.param_linear_if_alone = self.get_parameter(
+            "dispersion_linear_if_alone").get_parameter_value().double_value
+        self.param_angular_if_alone = self.get_parameter(
+            "dispersion_angular_if_alone").get_parameter_value().double_value
         self.param_allow_dynamic_max_range_setting = self.get_parameter(
             "dispersion_allow_dynamic_max_range_setting").get_parameter_value().bool_value
         self.param_max_translational_velocity = self.get_parameter(
             "max_translational_velocity").get_parameter_value().double_value
         self.param_max_rotational_velocity = self.get_parameter(
             "max_rotational_velocity").get_parameter_value().double_value
-        # TODO replace magic number '3'
-        self.lidar_config = self.get_parameter(
-            "lidar_config").get_parameter_value().double_value if self.get_parameter(
-            "lidar_config").get_parameter_value().type == 3 else None
+            
+        self.direction_if_alone = Twist()
+        self.direction_if_alone.linear.x = self.param_linear_if_alone
+        self.direction_if_alone.angular.z = self.param_angular_if_alone
 
-    def scan_callback(self, incoming_msg):
+
+    def range_data_callback(self, incoming_msg):
         """Call back if a new scan msg is available."""
-        direction = self.vector_calc(incoming_msg)
+        direction = self.vector_calc(incoming_msg.ranges, incoming_msg.angles)
         self.command_publisher.publish(direction)
 
     def max_range_callback(self, message: DoubleMessage):
@@ -94,18 +96,21 @@ class DispersionPattern(MovementPattern):
             # TODO check range is fitting
             self.param_max_range = float(message.data)
 
-    def vector_calc(self, current_scan):
+    def vector_calc(self, ranges, angles):
         """Calculate the direction vector for the current scan."""
-        if current_scan is None:
+        if ranges is None:
             return Twist()
 
-        direction, stop = ScanCalculationFunctions.potential_field(self.param_front_attraction, self.param_max_range,
+        direction, alone = ScanCalculationFunctions.potential_field(self.param_front_attraction,
+                                                                   self.param_max_range,
                                                                    self.param_max_rotational_velocity,
                                                                    self.param_max_translational_velocity,
-                                                                   self.param_min_range, current_scan,
-                                                                   self.param_threshold, self.lidar_config)
-        if self.param_stop_if_alone:
-            direction = Twist() if stop else direction
+                                                                   self.param_min_range,
+                                                                   self.param_threshold,
+                                                                   ranges, angles)
+                                                                   
+        direction = self.direction_if_alone if alone else direction
+            
         return direction
 
 

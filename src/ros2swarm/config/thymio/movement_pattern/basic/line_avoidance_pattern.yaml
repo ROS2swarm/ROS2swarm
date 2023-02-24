@@ -1,0 +1,4 @@
+/**:
+  ros__parameters:
+    line_avoidance_max_timer_count: 100000
+    max_rotational_velocity: 3.5714285714285716

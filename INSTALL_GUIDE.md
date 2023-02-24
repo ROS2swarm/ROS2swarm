@@ -1,6 +1,10 @@
-# Install guide
+# Installation guide
 
-This guide is a detailed step by step instruction to install the ROS2swarm package on top of a Ubuntu 20.04 OS for the use with the TurtleBot3.
+This guide is a detailed step by step instruction to install the ROS2swarm package on top of a Ubuntu 20.04 OS for the use with 
+- the TurtleBot 3
+- the Jackal UGV or
+- the Thymio II. 
+
 It is based on the guide to set up a turtlebot3 development environment and uses the manual install of
 - https://emanual.robotis.com/docs/en/platform/turtlebot3/quick-start/
 - https://emanual.robotis.com/docs/en/platform/turtlebot3/simulation/
@@ -78,9 +82,9 @@ Install vcstool
 sudo apt install python3-vcstool
 ```
 -->
-### Install turtlebot3
+### Installation of TurtleBot3 Support 
 
-Install TurtleBOt3 Packages
+Install TurtleBot3 Packages
 <!--
 ```
 source ~/.bashrc
@@ -148,11 +152,16 @@ Test if example simulation works
 ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
 ```
 
-## Install ROS2swarm package
+### Installation of Thymio II Support 
+
+install ROS for Aseba and Thymio II following this [installation guide](http://jeguzzi.github.io/ros-aseba/installation.html). 
+
+
+## Installation of the ROS2swarm package
 
 place the project folder in your home directory (also required for using the scripts)
 ```
-git clone git@gitlab.iti.uni-luebeck.de:ROS2/ros2swarm.git
+git clone git@github.com:ROS2swarm/ROS2swarm.git
 cd ~/ROS2swarm
 colcon build --symlink-install
 echo 'source ~/ROS2swarm/install/setup.bash' >> ~/.bashrc

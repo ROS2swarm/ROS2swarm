@@ -45,8 +45,8 @@ def generate_launch_description():
         else:
             if arg not in ['/opt/ros/foxy/bin/ros2',
                            'launch',
-                           'launch_turtlebot_gazebo',
-                           'add_turtlebot.launch.py']:
+                           'launch_gazebo',
+                           'add_robot.launch.py']:
                 print("Argument not known: '", arg, "'")
 
     print("number of robots :", number_robots)
@@ -64,10 +64,10 @@ def generate_launch_description():
         num = i + start_index
         # add gazebo node
         gazebo_node = launch_ros.actions.Node(
-            package='launch_turtlebot_gazebo',
+            package='launch_gazebo',
             executable='add_bot_node',
             namespace=['namespace_', str(num)],
-            name=['gazeboTurtleBotNode_', str(num)],
+            name=['gazeboRobotNode_', str(num)],
             output='screen',
             arguments=[
                 '--robot_name', ['robot_name_', str(num)],
@@ -84,15 +84,23 @@ def generate_launch_description():
     robot_type = robot
     if robot_type.startswith('burger'):
         robot_type = "burger"
+        urdf_file_name = 'turtlebot3_' + robot + '.urdf'
+        urdf_file = os.path.join(get_package_share_directory('turtlebot3_description'), 'urdf', urdf_file_name)
     elif robot_type.startswith('waffle_pi'):
         robot_type = "waffle_pi"
+        urdf_file_name = 'turtlebot3_' + robot + '.urdf'
+        urdf_file = os.path.join(get_package_share_directory('turtlebot3_description'), 'urdf', urdf_file_name)
+    elif robot_type.startswith('thymio'):
+        urdf_file_name = 'thymio.urdf'
+        urdf_file = os.path.join(get_package_share_directory('thymio_description'), 'urdf', urdf_file_name)
+
 
     print("robot configuration:", robot_type)
 
     config_dir = os.path.join(get_package_share_directory('ros2swarm'), 'config', robot_type)
 
-    urdf_file_name = 'turtlebot3_' + robot + '.urdf'
-    urdf_file = os.path.join(get_package_share_directory('turtlebot3_description'), 'urdf', urdf_file_name)
+    
+
     launch_pattern_dir = os.path.join(get_package_share_directory('ros2swarm'), 'launch', 'pattern')
     launch_bringup_dir = os.path.join(get_package_share_directory('ros2swarm'))
 
