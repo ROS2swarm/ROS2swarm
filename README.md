@@ -29,8 +29,9 @@ The ICRA 2022 paper "ROS2swarm - A ROS 2 Package for Swarm Robot Behaviors" refe
 - [Using the Thymio model and the modified TurtleBot3 models](#modified-models)
 
 ROS2swarm is available for the ROS 2 Versions 
-[Dashing (dashing-dev)](https://github.com/ROS2swarm/ROS2swarm/tree/dashing-dev) and 
-[Foxy (foxy-dev)](https://github.com/ROS2swarm/ROS2swarm/tree/foxy-dev). 
+[Dashing (dashing-dev)](https://github.com/ROS2swarm/ROS2swarm/tree/dashing-dev), 
+[Foxy (foxy-dev)](https://github.com/ROS2swarm/ROS2swarm/tree/foxy-dev), and 
+[Galactic (galactic-dev)](https://github.com/ROS2swarm/ROS2swarm/tree/galactic-dev). 
 
 The included swarm behavior patterns consist of movement and voting based [patterns](#existing-patterns). 
 Basic patterns can be used by combined patterns to create more complex behaviors out of basic components. The behaviors are available for simulation and out of the box for several [supported robot platforms](#supported-robots). We provide [launch scripts](#launch_script_overview) and shell [scripts to start](#how-to-use) ROS2swarm.
