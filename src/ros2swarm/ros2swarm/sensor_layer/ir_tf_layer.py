@@ -54,9 +54,9 @@ class IRTFLayer(Node):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('range_topics', None),
-                ('max_range', None),
-                ('min_range', None),
+                ('range_topics', ''),
+                ('max_range', 0.0),
+                ('min_range', 0.0),
             ])
             
         # get the value of the parameters from config file

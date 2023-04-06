@@ -27,12 +27,12 @@ class RandomWalkPattern(MovementPattern):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('random_walk_linear', None),
-                ('random_walk_angular', None),
-                ('random_walk_timer_period', None),
-                ('random_walk_rot_interval', None),
-                ('random_walk_lin_interval_min', None),
-                ('random_walk_lin_interval_max', None)
+                ('random_walk_linear', 0.0),
+                ('random_walk_angular', 0.0),
+                ('random_walk_timer_period', 0.0),
+                ('random_walk_rot_interval', 0.0),
+                ('random_walk_lin_interval_min', 0.0),
+                ('random_walk_lin_interval_max', 0.0)
             ])
 
         self.walk = self.create_timer(5, self.swarm_command_controlled_timer(self.random))

@@ -39,20 +39,20 @@ class AggregationPattern(MovementPattern):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('aggregation_max_range', None),
-                ('aggregation_min_range', None),
-                ('aggregation_front_attraction', None),
-                ('aggregation_time_scale', None),
-                ('aggregation_base_stay_time', None),
-                ('aggregation_group_distance', None),
-                ('aggregation_object_reduction', None),
-                ('aggregation_group_reference_selection', None),
-                ('aggregation_object_threshold', None),
-                ('aggregation_object_min_width', None),
-                ('aggregation_object_max_width', None),
-                ('aggregation_stay_in_growing_groups', None),
-                ('max_translational_velocity', None),
-                ('max_rotational_velocity', None)
+                ('aggregation_max_range', 0.0),
+                ('aggregation_min_range', 0.0),
+                ('aggregation_front_attraction', 0.0),
+                ('aggregation_time_scale', 0.0),
+                ('aggregation_base_stay_time', 0.0),
+                ('aggregation_group_distance', 0.0),
+                ('aggregation_object_reduction', ''),
+                ('aggregation_group_reference_selection', ''),
+                ('aggregation_object_threshold', 0.0),
+                ('aggregation_object_min_width', 0),
+                ('aggregation_object_max_width', 0),
+                ('aggregation_stay_in_growing_groups', False),
+                ('max_translational_velocity', 0.0),
+                ('max_rotational_velocity', 0.0)
             ])
             
         self.state = State.INIT

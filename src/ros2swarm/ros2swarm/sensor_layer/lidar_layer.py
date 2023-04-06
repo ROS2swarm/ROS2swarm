@@ -44,12 +44,12 @@ class LidarLayer(Node):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('max_range', None),
-                ('min_range', None),
-                ('object_reduction', None),
-                ('object_threshold', None),
-                ('object_min_width', None),
-                ('object_max_width', None),
+                ('max_range', 0.0),
+                ('min_range', 0.0),
+                ('object_reduction', ''),
+                ('object_threshold', 0.0),
+                ('object_min_width', 0),
+                ('object_max_width', 0),
             ])
             
         # gets parameter values from config file
