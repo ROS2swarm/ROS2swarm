@@ -13,14 +13,18 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 source ./install/setup.bash &&
- ros2 launch launch_gazebo add_robot.launch.py \
- start_index:=4 \
+ ROS_DOMAIN_ID=42 ros2 launch launch_gazebo add_robot.launch.py \
+ start_index:=5 \
  pattern:=random_walk_pattern \
  number_robots:=3 \
  log_level:=info \
  robot:=burger \
  sensor_type:=lidar \
- version:=2
+ version:=2 \
+ x_start:=1.0 \
+ x_dist:=0.5 \
+ y_start:=0.0 \
+ y_dist:=1.0 
  
 # -p pattern_name
 ## movement pattern:

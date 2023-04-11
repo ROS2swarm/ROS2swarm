@@ -32,7 +32,7 @@ def generate_launch_description():
     for arg in sys.argv:
         if arg.startswith("start_index:="):  # The start index for the robots number
             start_index = int(arg.split(":=")[1])
-        if arg.startswith("number_robots:="):  # The number of robots to spawn in the world
+        elif arg.startswith("number_robots:="):  # The number of robots to spawn in the world
             number_robots = int(arg.split(":=")[1])
         elif arg.startswith("pattern:="):  # The pattern executed by the robots
             pattern = arg.split(":=")[1]
@@ -40,23 +40,56 @@ def generate_launch_description():
             log_level = arg.split(":=")[1]
         elif arg.startswith("robot:="):  # The type of robot
             robot = arg.split(":=")[1]
+        elif arg.startswith("sensor_type:="):  # The type of sensor
+            sensor_type = arg.split(":=")[1]
         elif arg.startswith("version:="):  # ROS version used
-            version = int(arg.split(":=")[1])
+            ros_version = int(arg.split(":=")[1])
+        elif arg.startswith("x_start:="):  # position first robot on x-axis 
+            x_start = float(arg.split(":=")[1])
+        elif arg.startswith("x_dist:="):  # position first robot on x-axis 
+            x_dist = float(arg.split(":=")[1])
+        elif arg.startswith("y_start:="):  # position of first robot on y-axis 
+            y_start = float(arg.split(":=")[1])
+        elif arg.startswith("y_dist:="):  # increment of positions on y-axis 
+            y_dist = float(arg.split(":=")[1])
         else:
-            if arg not in ['/opt/ros/foxy/bin/ros2',
+            if arg not in ['/opt/ros/galactic/bin/ros2',
                            'launch',
                            'launch_gazebo',
                            'add_robot.launch.py']:
                 print("Argument not known: '", arg, "'")
 
-    print("number of robots :", number_robots)
-    print("pattern :", pattern)
-    print("log level :", log_level)
-    print("robot :", robot)
-    print("namespace_index :", start_index)
-    print("version :", version)
+    
+    print("number of robots |", number_robots)
+    print("---------------------------------------")
+    print("pattern          |", pattern)
+    print("---------------------------------------")
+    print("log level        |", log_level)
+    print("---------------------------------------")
+    print("robot            |", robot)
+    print("---------------------------------------")
+    print("sensor_type      |", sensor_type)
+    print("---------------------------------------")
+    print("namespace_index  |", start_index)
+    print("---------------------------------------")
+    print("version	     |", ros_version)
+    print("---------------------------------------")
+    
+    # allows to use the same configuration files for each robot type but different mesh models
+    robot_type = robot
+    gazebo_flag = True
+    if robot_type.startswith('burger'):
+        robot_type = "burger"
+    elif robot_type.startswith('waffle_pi'):
+        robot_type = "waffle_pi"
+    elif robot_type.startswith('thymio'):
+        robot_type = "thymio"
+    elif robot_type.startswith('jackal'):
+        robot_type = "jackal"
+        gazebo_flag = False
 
-    ros_version = version
+    print("robot type       |", robot_type)
+    print("---------------------------------------")
 
     ld = LaunchDescription()
 
@@ -72,39 +105,28 @@ def generate_launch_description():
             arguments=[
                 '--robot_name', ['robot_name_', str(num)],
                 '--robot_namespace', ['robot_namespace_', str(num)],
-                '-x', '1.0',
-                '-y', [str(i), '.0'],
+                '-x', str(x_start + i * x_dist),
+                '-y', str(y_start + i * y_dist),
                 '-z', '0.1',
                 '--type_of_robot', robot
             ]
         )
         ld.add_action(gazebo_node)
 
-    # allows to use the same configuration files for each robot type but different mesh models
-    robot_type = robot
-    if robot_type.startswith('burger'):
-        robot_type = "burger"
-        urdf_file_name = 'turtlebot3_' + robot + '.urdf'
-        urdf_file = os.path.join(get_package_share_directory('turtlebot3_description'), 'urdf', urdf_file_name)
-    elif robot_type.startswith('waffle_pi'):
-        robot_type = "waffle_pi"
+    config_dir = os.path.join(get_package_share_directory('ros2swarm'), 'config', robot_type)
+
+
+    if robot_type.startswith('burger') or robot_type.startswith('waffle_pi'):
         urdf_file_name = 'turtlebot3_' + robot + '.urdf'
         urdf_file = os.path.join(get_package_share_directory('turtlebot3_description'), 'urdf', urdf_file_name)
     elif robot_type.startswith('thymio'):
         urdf_file_name = 'thymio.urdf'
         urdf_file = os.path.join(get_package_share_directory('thymio_description'), 'urdf', urdf_file_name)
 
-
-    print("robot configuration:", robot_type)
-
-    config_dir = os.path.join(get_package_share_directory('ros2swarm'), 'config', robot_type)
-
-    
-
     launch_pattern_dir = os.path.join(get_package_share_directory('ros2swarm'), 'launch', 'pattern')
     launch_bringup_dir = os.path.join(get_package_share_directory('ros2swarm'))
 
-    # find out exact path of the patter launch file
+    # find out exact path of the pattern launch file
     for i in (range(number_robots)):
         num = i + start_index
         pattern_launch_file_name = pattern + '.launch.py'
@@ -119,6 +141,7 @@ def generate_launch_description():
                 [launch_bringup_dir, '/' + 'bringup_patterns.launch.py']),
             launch_arguments={'robot': robot,
                               'robot_type': robot_type,
+			       'sensor_type': sensor_type,             
                               'robot_namespace': ['robot_namespace_', str(num)],
                               'pattern': pattern_path,
                               'config_dir': config_dir,

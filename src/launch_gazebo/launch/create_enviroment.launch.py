@@ -129,7 +129,7 @@ def generate_launch_description():
         urdf_file_name = 'thymio.urdf'
         urdf_file = os.path.join(get_package_share_directory('thymio_description'), 'urdf', urdf_file_name)
 
-    # find out exact path of the patter launch file
+    # find out exact path of the pattern launch file
     for i in range(number_robots):
         pattern_launch_file_name = pattern + '.launch.py'
         for root, dirs, files in os.walk(launch_pattern_dir):
