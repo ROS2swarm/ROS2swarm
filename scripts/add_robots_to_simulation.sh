@@ -14,12 +14,14 @@
 #    limitations under the License.
 source ./install/setup.bash &&
  ros2 launch launch_gazebo add_robot.launch.py \
- start_index:=8 \
+ start_index:=4 \
  pattern:=random_walk_pattern \
  number_robots:=3 \
  log_level:=info \
- robot:=waffle_pi \
+ robot:=burger \
+ sensor_type:=lidar \
  version:=2
+ 
 # -p pattern_name
 ## movement pattern:
 #  * drive_pattern
