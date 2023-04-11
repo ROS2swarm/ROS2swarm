@@ -40,6 +40,8 @@ def generate_launch_description():
             log_level = arg.split(":=")[1]
         elif arg.startswith("robot:="):  # The type of robot
             robot = arg.split(":=")[1]
+        elif arg.startswith("sensor_type:="):  # The type of sensor
+            sensor_type = arg.split(":=")[1]
         else:
             if arg not in ['/opt/ros/foxy/bin/ros2',
                            'launch',
@@ -60,7 +62,9 @@ def generate_launch_description():
     print("---------------------------------------")
     print("robot            |", robot)
     print("---------------------------------------")
-
+    print("sensor_type      |", sensor_type)
+    print("---------------------------------------")
+    
     # allows to use the same configuration files for each robot type but different mesh models
     robot_type = robot
     gazebo_flag = True
@@ -139,6 +143,7 @@ def generate_launch_description():
                 [launch_bringup_dir, '/' + 'bringup_patterns.launch.py']),
             launch_arguments={'robot': robot,
                               'robot_type': robot_type,
+                              'sensor_type': sensor_type,
                               'robot_namespace': ['robot_namespace_', str(i)],
                               'pattern': pattern_path,
                               'config_dir': config_dir,
