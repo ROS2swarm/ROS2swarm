@@ -42,6 +42,14 @@ def generate_launch_description():
             robot = arg.split(":=")[1]
         elif arg.startswith("sensor_type:="):  # The type of sensor
             sensor_type = arg.split(":=")[1]
+        elif arg.startswith("x_start:="):  # position first robot on x-axis 
+            x_start = float(arg.split(":=")[1])
+        elif arg.startswith("x_dist:="):  # position first robot on x-axis 
+            x_dist = float(arg.split(":=")[1])
+        elif arg.startswith("y_start:="):  # position of first robot on y-axis 
+            y_start = float(arg.split(":=")[1])
+        elif arg.startswith("y_dist:="):  # increment of positions on y-axis 
+            y_dist = float(arg.split(":=")[1])
         else:
             if arg not in ['/opt/ros/galactic/bin/ros2',
                            'launch',
@@ -112,8 +120,8 @@ def generate_launch_description():
                 arguments=[
                     '--robot_name', ['robot_name_', str(i)],
                     '--robot_namespace', ['robot_namespace_', str(i)],
-                    '-x', '0.0',
-                    '-y', [str(i), '.0'],
+                    '-x', str(x_start + i * x_dist),
+                    '-y', str(y_start + i * y_dist),
                     '-z', '0.1',
                     '--type_of_robot', robot
                 ]

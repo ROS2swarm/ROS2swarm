@@ -20,7 +20,11 @@ colcon build --symlink-install --allow-overriding communication_interfaces launc
  number_robots:=2 \
  log_level:=info \
  robot:=waffle_pi \
- sensor_type:=lidar
+ sensor_type:=lidar \
+ x_start:=0.0 \
+ x_dist:=0.0 \
+ y_start:=0.0 \
+ y_dist:=1.0 
  
 # gazebo_world arena_large.world | arena.world | empty.world | turtle.world | 560x540m.world | Ymaze.world | Ymaze_camber.world | Ymaze_camber_top.world
 
