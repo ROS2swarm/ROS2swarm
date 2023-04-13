@@ -46,8 +46,8 @@ class IRLayer(Node):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('angles', 0.0),
-                ('range_topics', ''),
+                ('angles', [0.0]),
+                ('range_topics', ['']),
                 ('max_range', 0.0),
                 ('min_range', 0.0),
             ])

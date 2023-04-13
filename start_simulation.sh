@@ -19,12 +19,12 @@ source ./install/setup.bash &&
  pattern:=random_walk_pattern \
  number_robots:=2 \
  log_level:=info \
- robot:=thymio \
- sensor_type:=ir \
+ robot:=waffle_pi \
+ sensor_type:=lidar \
  x_start:=0.0 \
  x_dist:=0.0 \
  y_start:=0.0 \
- y_dist:=1.0 &
+ y_dist:=1.0 
  
 # to add heterogeneous swarm / robots  
 # bash add_robots_to_simulation.sh 
