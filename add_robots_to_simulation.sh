@@ -12,27 +12,21 @@
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
-colcon build --symlink-install --allow-overriding communication_interfaces launch_gazebo ros2swarm&&
 source ./install/setup.bash &&
- ROS_DOMAIN_ID=42 ros2 launch launch_gazebo create_enviroment.launch.py \
- gazebo_world:=arena_large.world \
+ ROS_DOMAIN_ID=42 ros2 launch launch_gazebo add_robot.launch.py \
+ start_index:=5 \
  pattern:=random_walk_pattern \
- number_robots:=2 \
+ number_robots:=3 \
  log_level:=info \
- robot:=thymio \
- sensor_type:=ir \
- x_start:=0.0 \
- x_dist:=0.0 \
+ robot:=burger \
+ sensor_type:=lidar \
+ version:=2 \
+ x_start:=1.0 \
+ x_dist:=0.5 \
  y_start:=0.0 \
- y_dist:=1.0 &
+ y_dist:=1.0 
  
-# to add heterogeneous swarm / robots  
-# bash add_robots_to_simulation.sh 
-
- 
-# gazebo_world arena_large.world | arena.world | empty.world | turtle.world | 560x540m.world | Ymaze.world | Ymaze_camber.world | Ymaze_camber_top.world
-
-# pattern: pattern_name
+# -p pattern_name
 ## movement pattern:
 #  * drive_pattern
 #  * dispersion_pattern
@@ -50,8 +44,6 @@ source ./install/setup.bash &&
 #  * voter_model_pattern
 #  * voter_model_with_limiter_pattern
 #  * majority_rule_pattern
-
-# number_robots: num_robots
-# log_level: info | DEBUG
-# robot: burger | waffle_pi | jackal | thymio
-# sensor_type: lidar | ir | ir_tf
+#
+# -n num_robots
+# -r robot: burger | waffle_pi | jackal | thymio
