@@ -1,0 +1,10 @@
+/**:
+  ros__parameters:
+    angles: [0.0, 0.34906585,  0.6981317, 2.61799388, 3.66519143, 5.58505361, 5.93411946] # the (approximated) angles between the x-axis of the robot and the direction in which an obstacle detected by sensor i lies in counter-clockwise order (should start with the smallest positive angle between x-axis and sensor in the interval [0.0, 6.26573201])
+    range_topics: ["proximity/center", "proximity/center_left", "proximity/left", "proximity/rear_left", "proximity/rear_right", "proximity/right", "proximity/center_right"] # names of the topics on which range data gets published in counter-clockwise order (should start with the smallest positive angle between x-axis and sensor in the interval [0.0, 6.26573201])
+    max_range: 1.5
+    min_range: 0.05
+    object_reduction: 'MEAN' # MEAN, NEAREST
+    object_threshold: 0.0
+    object_min_width: 0
+    object_max_width: 0

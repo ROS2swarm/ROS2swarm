@@ -15,10 +15,9 @@
 
 from geometry_msgs.msg import Twist
 from ros2swarm.utils import setup_node
-from sensor_msgs.msg import LaserScan
+from communication_interfaces.msg import RangeData
 from rclpy.qos import qos_profile_sensor_data
 from ros2swarm.movement_pattern.movement_pattern import MovementPattern
-
 from ros2swarm.utils.scan_calculation_functions import ScanCalculationFunctions
 
 
@@ -43,16 +42,16 @@ class AttractionPattern2(MovementPattern):
                 ('attraction2_min_range', None),
                 ('attraction2_front_attraction', None),
                 ('attraction2_threshold', None),
-                ('attraction2_stop_if_alone', None),
+                ('attraction2_linear_if_alone', None),
+                ('attraction2_angular_if_alone', None),
                 ('max_translational_velocity', None),
                 ('max_rotational_velocity', None),
-                ('lidar_config', None)
             ])
 
         self.scan_subscription = self.create_subscription(
-            LaserScan,
-            self.get_namespace() + '/scan',
-            self.swarm_command_controlled(self.scan_callback),
+            RangeData,
+            self.get_namespace() + '/range_data',
+            self.swarm_command_controlled(self.range_data_callback),
             qos_profile=qos_profile_sensor_data
         )
 
@@ -64,39 +63,41 @@ class AttractionPattern2(MovementPattern):
             "attraction2_front_attraction").get_parameter_value().double_value
         self.param_threshold = self.get_parameter(
             "attraction2_threshold").get_parameter_value().integer_value
-        self.param_stop_if_alone = self.get_parameter(
-            "attraction2_stop_if_alone").get_parameter_value().bool_value
+        self.param_linear_if_alone = self.get_parameter(
+            "attraction2_linear_if_alone").get_parameter_value().double_value
+        self.param_angular_if_alone = self.get_parameter(
+            "attraction2_angular_if_alone").get_parameter_value().double_value
         self.param_max_translational_velocity = self.get_parameter(
             "max_translational_velocity").get_parameter_value().double_value
         self.param_max_rotational_velocity = self.get_parameter(
             "max_rotational_velocity").get_parameter_value().double_value
-        # TODO replace magic number '3'
-        self.lidar_config = self.get_parameter(
-            "lidar_config").get_parameter_value().double_value if self.get_parameter(
-            "lidar_config").get_parameter_value().type == 3 else None
+        
+        self.direction_if_alone = Twist()
+        self.direction_if_alone.linear.x = self.param_linear_if_alone
+        self.direction_if_alone.angular.z = self.param_angular_if_alone
 
-    def scan_callback(self, incoming_msg):
+    def range_data_callback(self, incoming_msg):
         """Call back if a new scan msg is available."""
         direction = self.vector_calc(incoming_msg)
         self.command_publisher.publish(direction)
 
-    def vector_calc(self, current_scan):
+    def vector_calc(self, current_msg):
         """Calculate the direction vector for the current scan."""
-        if current_scan is None:
+        if current_msg is None:
             return Twist()
 
-        direction, stop = ScanCalculationFunctions.attraction_field(
+        direction, alone = ScanCalculationFunctions.attraction_field(
             self.param_front_attraction,
             self.param_max_range,
             self.param_max_rotational_velocity,
             self.param_max_translational_velocity,
             self.param_min_range,
-            current_scan,
             self.param_threshold,
-            self.lidar_config)
+            current_msg.ranges,
+            current_msg.angles)
 
-        if self.param_stop_if_alone:
-            direction = Twist() if stop else direction
+        direction = self.direction_if_alone if alone else direction
+
         return direction
 
 

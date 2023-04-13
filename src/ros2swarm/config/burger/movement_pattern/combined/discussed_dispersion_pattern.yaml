@@ -13,7 +13,8 @@
     dispersion_min_range: 0.12
     dispersion_front_attraction: 1.0
     dispersion_threshold: 1
-    dispersion_stop_if_alone: True
+    dispersion_linear_if_alone: 0.0
+    dispersion_angular_if_alone: 0.0
     dispersion_allow_dynamic_max_range_setting: True
     # params majority rule node
     majority_rule_choose_start_value_at_random: true

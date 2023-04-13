@@ -25,7 +25,7 @@ from ament_index_python.packages import get_package_share_directory
 def generate_launch_description():
     """Creates the environment with gazebo, add robots and starts their behaviour"""
 
-    launch_file_dir = os.path.join(get_package_share_directory('launch_turtlebot_gazebo'))
+    launch_file_dir = os.path.join(get_package_share_directory('launch_gazebo'))
     launch_pattern_dir = os.path.join(get_package_share_directory('ros2swarm'), 'launch', 'pattern')
     launch_bringup_dir = os.path.join(get_package_share_directory('ros2swarm'))
 
@@ -40,10 +40,12 @@ def generate_launch_description():
             log_level = arg.split(":=")[1]
         elif arg.startswith("robot:="):  # The type of robot
             robot = arg.split(":=")[1]
+        elif arg.startswith("sensor_type:="):  # The type of sensor
+            sensor_type = arg.split(":=")[1]
         else:
             if arg not in ['/opt/ros/foxy/bin/ros2',
                            'launch',
-                           'launch_turtlebot_gazebo',
+                           'launch_gazebo',
                            'create_enviroment.launch.py']:
                 print("Argument not known: '", arg, "'")
 
@@ -60,7 +62,9 @@ def generate_launch_description():
     print("---------------------------------------")
     print("robot            |", robot)
     print("---------------------------------------")
-
+    print("sensor_type      |", sensor_type)
+    print("---------------------------------------")
+    
     # allows to use the same configuration files for each robot type but different mesh models
     robot_type = robot
     gazebo_flag = True
@@ -68,6 +72,8 @@ def generate_launch_description():
         robot_type = "burger"
     elif robot_type.startswith('waffle_pi'):
         robot_type = "waffle_pi"
+    elif robot_type.startswith('thymio'):
+        robot_type = "thymio"
     elif robot_type.startswith('jackal'):
         robot_type = "jackal"
         gazebo_flag = False
@@ -98,10 +104,10 @@ def generate_launch_description():
         for i in range(number_robots):
             # add gazebo node
             gazebo_node = launch_ros.actions.Node(
-                package='launch_turtlebot_gazebo',
+                package='launch_gazebo',
                 executable='add_bot_node',
                 namespace=['namespace_', str(i)],
-                name=['gazeboTurtleBotNode_', str(i)],
+                name=['gazeboRobotNode_', str(i)],
                 output='screen',
                 arguments=[
                     '--robot_name', ['robot_name_', str(i)],
@@ -116,8 +122,12 @@ def generate_launch_description():
 
     config_dir = os.path.join(get_package_share_directory('ros2swarm'), 'config', robot_type)
 
-    urdf_file_name = 'turtlebot3_' + robot + '.urdf'
-    urdf_file = os.path.join(get_package_share_directory('turtlebot3_description'), 'urdf', urdf_file_name)
+    if robot_type.startswith('burger') or robot_type.startswith('waffle_pi'):
+        urdf_file_name = 'turtlebot3_' + robot + '.urdf'
+        urdf_file = os.path.join(get_package_share_directory('turtlebot3_description'), 'urdf', urdf_file_name)
+    elif robot_type.startswith('thymio'):
+        urdf_file_name = 'thymio.urdf'
+        urdf_file = os.path.join(get_package_share_directory('thymio_description'), 'urdf', urdf_file_name)
 
     # find out exact path of the patter launch file
     for i in range(number_robots):
@@ -133,6 +143,7 @@ def generate_launch_description():
                 [launch_bringup_dir, '/' + 'bringup_patterns.launch.py']),
             launch_arguments={'robot': robot,
                               'robot_type': robot_type,
+                              'sensor_type': sensor_type,
                               'robot_namespace': ['robot_namespace_', str(i)],
                               'pattern': pattern_path,
                               'config_dir': config_dir,

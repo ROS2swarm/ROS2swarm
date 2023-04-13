@@ -4,6 +4,7 @@
     attraction_min_range: 0.15
     attraction_front_attraction: -1.0
     attraction_threshold: 1
-    attraction_stop_if_alone: False
+    attraction_linear_if_alone: 0.0
+    attraction_angular_if_alone: 1.0
     max_translational_velocity: 0.22
     max_rotational_velocity: 2.84

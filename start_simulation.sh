@@ -12,16 +12,19 @@
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
-colcon build --symlink-install --allow-overriding communication_interfaces launch_turtlebot_gazebo ros2swarm&&
+colcon build --symlink-install --allow-overriding communication_interfaces launch_gazebo ros2swarm&&
  source ./install/setup.bash &&
- ROS_DOMAIN_ID=42 ros2 launch launch_turtlebot_gazebo create_enviroment.launch.py \
+ ROS_DOMAIN_ID=42 ros2 launch launch_gazebo create_enviroment.launch.py \
  gazebo_world:=arena_large.world \
- pattern:=aggregation_pattern \
- number_robots:=9 \
+ pattern:=drive_pattern \
+ number_robots:=2 \
  log_level:=info \
- robot:=waffle_pi
+ robot:=thymio \
+ sensor_type:=ir
+ 
 # gazebo_world arena_large.world | arena.world | empty.world | turtle.world | 560x540m.world | Ymaze.world | Ymaze_camber.world | Ymaze_camber_top.world
-# pattern pattern_name
+
+# pattern: pattern_name
 ## movement pattern:
 #  * drive_pattern
 #  * dispersion_pattern
@@ -39,6 +42,8 @@ colcon build --symlink-install --allow-overriding communication_interfaces launc
 #  * voter_model_pattern
 #  * voter_model_with_limiter_pattern
 #  * majority_rule_pattern
-#
-# number_robots num_robots
-# robot: burger | waffle_pi | jackal
+
+# number_robots: num_robots
+# log_level: info | DEBUG
+# robot: burger | waffle_pi | jackal | thymio
+# sensor_type: lidar | ir | ir_tf

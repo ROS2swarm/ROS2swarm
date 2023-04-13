@@ -14,11 +14,11 @@
 #    limitations under the License.
 colcon build --symlink-install &&
  source ./install/setup.bash &&
- ros2 launch launch_turtlebot_gazebo JackalTest.launch.py -r jackal
+ ros2 launch launch_gazebo JackalTest.launch.py -r jackal
 # -w arena_large.world | arena.world | empty.world | turtle.world | 560x540m.world
 # -p pattern_name
 ## movement pattern: drive_pattern | dispersion_pattern | aggregation_pattern | flocking_pattern | flocking_pattern2 | attraction_pattern | attraction_pattern2 | magnetometer_pattern | minimalist_flocking_pattern | random_walk_pattern
 ## voting_pattern:   voter_model_pattern | voter_model_with_limiter_pattern | majority_rule_pattern
 # -n num_robots
-# -r robot: burger | waffle_pi | jackal
+# -r robot: burger | waffle_pi | jackal | thymio 
 # -v ros_version: 1 | 2

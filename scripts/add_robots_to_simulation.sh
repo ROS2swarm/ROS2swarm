@@ -13,7 +13,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 source ./install/setup.bash &&
- ros2 launch launch_turtlebot_gazebo add_turtlebot.launch.py \
+ ros2 launch launch_gazebo add_robot.launch.py \
  start_index:=8 \
  pattern:=random_walk_pattern \
  number_robots:=3 \
@@ -40,4 +40,4 @@ source ./install/setup.bash &&
 #  * majority_rule_pattern
 #
 # -n num_robots
-# -r robot: burger | waffle_pi | jackal
+# -r robot: burger | waffle_pi | jackal | thymio
