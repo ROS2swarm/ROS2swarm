@@ -20,7 +20,7 @@ from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from ament_index_python.packages import get_package_share_directory
-
+from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     """Creates the environment with gazebo, add robots and starts their behaviour"""
@@ -84,7 +84,7 @@ def generate_launch_description():
         robot_type = "thymio"
     elif robot_type.startswith('jackal'):
         robot_type = "jackal"
-        gazebo_flag = False
+        gazebo_flag = True
 
     print("robot type       |", robot_type)
     print("---------------------------------------")
@@ -136,7 +136,13 @@ def generate_launch_description():
     elif robot_type.startswith('thymio'):
         urdf_file_name = 'thymio.urdf'
         urdf_file = os.path.join(get_package_share_directory('thymio_description'), 'urdf', urdf_file_name)
-
+    elif robot_type.startswith('jackal'):
+        urdf_file_name = 'jackal.urdf.xacro'
+        urdf_file = os.path.join(get_package_share_directory('jackal_description'), 'urdf', urdf_file_name)
+    elif robot_type.startswith('limo'):
+        urdf_file_name = 'limo_four_diff.xacro'
+        urdf_file = os.path.join(get_package_share_directory('limo_description'), 'urdf', urdf_file_name)
+        
     # find out exact path of the pattern launch file
     for i in range(number_robots):
         pattern_launch_file_name = pattern + '.launch.py'

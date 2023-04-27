@@ -86,7 +86,10 @@ def generate_launch_description():
         robot_type = "thymio"
     elif robot_type.startswith('jackal'):
         robot_type = "jackal"
-        gazebo_flag = False
+        #gazebo_flag = False
+    elif robot_type.startswith('limo'):
+        robot_type = "limo"
+        #gazebo_flag = False
 
     print("robot type       |", robot_type)
     print("---------------------------------------")
@@ -122,6 +125,17 @@ def generate_launch_description():
     elif robot_type.startswith('thymio'):
         urdf_file_name = 'thymio.urdf'
         urdf_file = os.path.join(get_package_share_directory('thymio_description'), 'urdf', urdf_file_name)
+    elif robot_type.startwith('jackal'):
+        
+        config_jackal_velocity_controller = PathJoinSubstitution(
+            [FindPackageShare('jackal_control'), 'config', 'control.yaml']
+            )
+        
+        urdf_file_name = 'jackal.urdf.xacro'
+        urdf_file = os.path.join(get_package_share_directory('jackal_description'), 'urdf', urdf_file_name)
+    elif robot_type.startwith('limo'):
+        urdf_file_name = 'limo_four_diff.xacro'
+        urdf_file = os.path.join(get_package_share_directory('limo_description'), 'urdf', urdf_file_name)
 
     launch_pattern_dir = os.path.join(get_package_share_directory('ros2swarm'), 'launch', 'pattern')
     launch_bringup_dir = os.path.join(get_package_share_directory('ros2swarm'))

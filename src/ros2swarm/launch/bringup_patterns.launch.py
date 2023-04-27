@@ -17,7 +17,7 @@ import launch_ros.actions
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, Command
 
 
 def generate_launch_description():
@@ -68,16 +68,27 @@ def generate_launch_description():
     ld.add_action(launch_pattern)
 
     # add state publisher
-    robot_state_publisher = launch_ros.actions.Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        namespace=robot_namespace,
-        output='screen',
-        parameters=[{'use_sim_time': use_sim_time
-                     ,#'robot_description': Command(['xacro ', urdf_file])}],
-                     }],
-        arguments=[urdf_file, '--ros-args', '--log-level', 'warn']
-    )
+    if robot_type == 'thymio':
+	    robot_state_publisher = launch_ros.actions.Node(
+		package='robot_state_publisher',
+		executable='robot_state_publisher',
+		namespace=robot_namespace,
+		output='screen',
+		parameters=[{'use_sim_time': use_sim_time,
+		             }],
+		arguments=[urdf_file, '--ros-args', '--log-level', 'warn']
+	    )
+    
+    else:
+    	robot_state_publisher = launch_ros.actions.Node(
+        	package='robot_state_publisher',
+        	executable='robot_state_publisher',
+       	namespace=robot_namespace,
+        	output='screen',
+        	parameters=[{'use_sim_time': use_sim_time,
+                    	     'robot_description': Command(['xacro ', urdf_file])}],
+  	  )
+    
     ld.add_action(robot_state_publisher)
 
     return ld

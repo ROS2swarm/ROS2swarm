@@ -19,7 +19,7 @@ source ./install/setup.bash &&
  pattern:=random_walk_pattern \
  number_robots:=2 \
  log_level:=info \
- robot:=waffle_pi \
+ robot:=limo \
  sensor_type:=lidar \
  x_start:=0.0 \
  x_dist:=0.0 \

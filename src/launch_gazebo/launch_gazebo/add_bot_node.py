@@ -23,9 +23,17 @@ Script used to spawn a robot in a generic position
 import os
 import rclpy
 import argparse
+import xacro
+from launch.substitutions import Command
 from ament_index_python.packages import get_package_share_directory
 from gazebo_msgs.srv import SpawnEntity
+from launch_ros.actions import Node
+from std_msgs.msg import String
+from rclpy.qos import QoSProfile, QoSDurabilityPolicy
 
+
+def callback(msg):
+     print('I heard: "%s"' % msg.data)
 
 def main():
     """ Main for spawning robot node """
@@ -58,6 +66,20 @@ def main():
     node.get_logger().debug(
         'Creating Service client to connect to `/spawn_entity`')
     client = node.create_client(SpawnEntity, "/spawn_entity")
+    
+    #latching_qos = QoSProfile(depth=1,
+    #        durability=QoSDurabilityPolicy.RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL)
+            
+   # subscription = node.create_subscription(
+   # 	String,
+   # 	'/' + args.robot_name + '/robot_description',
+   # 	callback,
+   # 	latching_qos
+    #)
+    
+    #rclpy.spin(node)
+ 
+
 
     node.get_logger().debug("Connecting to `/spawn_entity` service...")
     if not client.service_is_ready():
@@ -74,15 +96,32 @@ def main():
         sdf_file_path = os.path.join(
             get_package_share_directory("thymio_description"), "urdf",
             "thymio.sdf")
+    elif args.type_of_robot == "jackal":
+        sdf_file_path = os.path.join(
+            get_package_share_directory("jackal_description"), "urdf",
+            "jackal.urdf.xacro")
+    elif args.type_of_robot == "limo":
+    	 sdf_file_path = os.path.join(
+    	    get_package_share_directory('limo_description'), 'urdf', 
+    	   'limo_four_diff.urdf')
+
 
     print("sdf_file_path: ", sdf_file_path)
 
     node.get_logger().debug('spawning `{}` on namespace `{}` at {}, {}, {}'.format(
         args.robot_name, args.robot_namespace, args.x, args.y, args.z))
+   
 
     request = SpawnEntity.Request()
     request.name = args.robot_name
-    request.xml = open(sdf_file_path, 'r').read()
+    
+    xml = open(sdf_file_path, 'r').read()
+    #xml = xacro(sdf_file_path)
+    #print("xml: ", xml)
+    #xml = xml.replace('"', '\\"') 
+    request.xml = xml  #open(sdf_file_path, 'r').read()
+    #request.xml = str(Command(['xacro ', sdf_file_path]))
+    
     request.robot_namespace = args.robot_namespace
     request.initial_pose.position.x = float(args.x)
     request.initial_pose.position.y = float(args.y)
