@@ -57,8 +57,6 @@ def main():
 
     args, unknown = parser.parse_known_args()
 
-    #TURTLEBOT3_MODEL = os.environ['TURTLEBOT3_MODEL']
-
     # Start node
     rclpy.init()
     node = rclpy.create_node("entity_spawner")
@@ -66,19 +64,6 @@ def main():
     node.get_logger().debug(
         'Creating Service client to connect to `/spawn_entity`')
     client = node.create_client(SpawnEntity, "/spawn_entity")
-    
-    #latching_qos = QoSProfile(depth=1,
-    #        durability=QoSDurabilityPolicy.RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL)
-            
-   # subscription = node.create_subscription(
-   # 	String,
-   # 	'/' + args.robot_name + '/robot_description',
-   # 	callback,
-   # 	latching_qos
-    #)
-    
-    #rclpy.spin(node)
- 
 
 
     node.get_logger().debug("Connecting to `/spawn_entity` service...")
@@ -92,18 +77,24 @@ def main():
             get_package_share_directory("turtlebot3_gazebo"), "models",
             "turtlebot3_"+args.type_of_robot,
             "model.sdf")
+        robot_description = open(sdf_file_path, 'r').read()
     elif args.type_of_robot == "thymio":
         sdf_file_path = os.path.join(
             get_package_share_directory("thymio_description"), "urdf",
             "thymio.sdf")
+        robot_description = open(sdf_file_path, 'r').read()
     elif args.type_of_robot == "jackal":
         sdf_file_path = os.path.join(
             get_package_share_directory("jackal_description"), "urdf",
             "jackal.urdf.xacro")
+        xml = xacro.process_file(sdf_file_path)
+        robot_description = xml.toprettyxml(indent='  ')
     elif args.type_of_robot == "limo":
     	 sdf_file_path = os.path.join(
     	    get_package_share_directory('limo_description'), 'urdf', 
-    	   'limo_four_diff.urdf')
+    	   'limo_four_diff.xacro')  
+    	 xml = xacro.process_file(sdf_file_path)
+    	 robot_description = xml.toprettyxml(indent='  ')
 
 
     print("sdf_file_path: ", sdf_file_path)
@@ -111,17 +102,9 @@ def main():
     node.get_logger().debug('spawning `{}` on namespace `{}` at {}, {}, {}'.format(
         args.robot_name, args.robot_namespace, args.x, args.y, args.z))
    
-
     request = SpawnEntity.Request()
     request.name = args.robot_name
-    
-    xml = open(sdf_file_path, 'r').read()
-    #xml = xacro(sdf_file_path)
-    #print("xml: ", xml)
-    #xml = xml.replace('"', '\\"') 
-    request.xml = xml  #open(sdf_file_path, 'r').read()
-    #request.xml = str(Command(['xacro ', sdf_file_path]))
-    
+    request.xml = robot_description      
     request.robot_namespace = args.robot_namespace
     request.initial_pose.position.x = float(args.x)
     request.initial_pose.position.y = float(args.y)
