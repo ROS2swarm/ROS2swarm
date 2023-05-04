@@ -6,5 +6,5 @@
     attraction_threshold: 1
     attraction_linear_if_alone: 0.0
     attraction_angular_if_alone: 1.0
-    max_translational_velocity: 0.26
+    max_translational_velocity: 0.3
     max_rotational_velocity: 1.82

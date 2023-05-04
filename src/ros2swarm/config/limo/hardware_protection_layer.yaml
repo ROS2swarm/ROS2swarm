@@ -4,5 +4,5 @@
     hardware_protection_layer_min_range: 0.3 # 120 mm
     hardware_protection_layer_front_attraction: 2.0
     hardware_protection_layer_threshold: 5
-    max_translational_velocity: 1.0 # 0.26 m/s
+    max_translational_velocity: 0.9 # 0.26 m/s
     max_rotational_velocity: 1.82 # 1.82 rad/s
