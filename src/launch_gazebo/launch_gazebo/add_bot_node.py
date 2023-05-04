@@ -28,9 +28,10 @@ from launch.substitutions import Command
 from ament_index_python.packages import get_package_share_directory
 from gazebo_msgs.srv import SpawnEntity
 from launch_ros.actions import Node
+from lifecycle_msgs.srv import GetState
 from std_msgs.msg import String
 from rclpy.qos import QoSProfile, QoSDurabilityPolicy
-
+import xml.etree.ElementTree as ET
 
 def callback(msg):
      print('I heard: "%s"' % msg.data)
@@ -41,7 +42,7 @@ def main():
     # argv = sys.argv[1:]
 
     # Get input arguments from user
-    parser = argparse.ArgumentParser(description='Spawn Robot into Gazebo with navigation2')
+    parser = argparse.ArgumentParser(description='Spawn Robot into Gazebo')
     parser.add_argument('-n', '--robot_name', type=str, default='robot',
                         help='Name of the robot to spawn')
     parser.add_argument('-ns', '--robot_namespace', type=str, default='robot',
@@ -54,6 +55,8 @@ def main():
                         help='the z component of the initial position [meters]')
     parser.add_argument('-t', '--type_of_robot', type=str, default='waffle_pi',
                         help='the type of robot')
+    parser.add_argument('-ds', '--driving_swarm', type=str, default='False',
+                        help='activate data recording with driving swarm framework')                 
 
     args, unknown = parser.parse_known_args()
 
@@ -64,6 +67,10 @@ def main():
     node.get_logger().debug(
         'Creating Service client to connect to `/spawn_entity`')
     client = node.create_client(SpawnEntity, "/spawn_entity")
+    
+    if args.driving_swarm == 'True':
+        topic = f'{args.robot_namespace}/initialpose'
+        pub = node.create_publisher(PoseWithCovarianceStamped, topic, 10)
 
 
     node.get_logger().debug("Connecting to `/spawn_entity` service...")
@@ -96,6 +103,15 @@ def main():
     	 xml = xacro.process_file(sdf_file_path)
     	 robot_description = xml.toprettyxml(indent='  ')
 
+    # remapping tf topic 
+    root = ET.fromstring(robot_description)
+    for plugin in root.iter('plugin'):
+        if 'libgazebo_ros_diff_drive.so' in plugin.attrib.values():
+            break 
+
+    ros_params = plugin.find('ros')
+    ros_tf_remap = ET.SubElement(ros_params, 'remapping')
+    ros_tf_remap.text = '/tf:=/' + args.robot_namespace + '/tf'
 
     print("sdf_file_path: ", sdf_file_path)
 
@@ -104,7 +120,7 @@ def main():
    
     request = SpawnEntity.Request()
     request.name = args.robot_name
-    request.xml = robot_description      
+    request.xml = ET.tostring(root, encoding='unicode')    
     request.robot_namespace = args.robot_namespace
     request.initial_pose.position.x = float(args.x)
     request.initial_pose.position.y = float(args.y)
@@ -118,6 +134,39 @@ def main():
     else:
         raise RuntimeError(
             'exception while calling service: %r' % future.exception())
+    
+    if args.driving_swarm == "True":
+        # driving swarm launch elements 
+        request = GetState.Request()
+        topic = f'/{args.robot_name}/amcl/get_state'
+        client = node.create_client(GetState, topic)
+        if not client.service_is_ready():
+            node.get_logger().info(f'waiting for service {topic}')
+            client.wait_for_service()
+            node.get_logger().info(f'connected to state service')
+
+        while True:
+            future = client.call_async(request)
+            rclpy.spin_until_future_complete(node, future)
+            if future.result() is not None:
+                print('response: %r' % future.result())
+                node.get_logger().info(f'{future.result()}')
+                if future.result().current_state.id == 3:
+                    break
+            else:
+                raise RuntimeError(
+                    'exception while calling service: %r' % future.exception())
+
+        time.sleep(5.0)
+ 
+        # Send initial pose
+        # geometry_msgs/msg/PoseWithCovarianceStamped
+        node.get_logger().info('Sending initial pose')
+        pose = PoseWithCovarianceStamped()
+        pose.header.frame_id = "map"
+        pose.header.stamp = node.get_clock().now().to_msg()
+        pose.pose.pose = request.initial_pose
+        node.pub.publish(pose)
 
     node.get_logger().debug("Done! Shutting down add_bot_node.")
     node.destroy_node()
