@@ -28,10 +28,18 @@ def generate_launch_description():
     launch_file_dir = os.path.join(get_package_share_directory('launch_gazebo'))
     launch_pattern_dir = os.path.join(get_package_share_directory('ros2swarm'), 'launch', 'pattern')
     launch_bringup_dir = os.path.join(get_package_share_directory('ros2swarm'))
+    robot_file = os.path.join(launch_file_dir, 'params', 'ROS2swarm_sim.yaml')
 
+    ld = LaunchDescription()
+    
     for arg in sys.argv:
         if arg.startswith("gazebo_world:="):  # Name of the gazebo world
             gazebo_world = arg.split(":=")[1]
+            
+            # map file for driving swarm 
+            yaml_file = gazebo_world[:-6] + '.yaml' 
+            map_file = os.path.join(launch_file_dir, 'maps', yaml_file)
+            
         elif arg.startswith("number_robots:="):  # The number of robots to spawn in the world
             number_robots = int(arg.split(":=")[1])
         elif arg.startswith("pattern:="):  # The pattern executed by the robots
@@ -50,6 +58,9 @@ def generate_launch_description():
             y_start = float(arg.split(":=")[1])
         elif arg.startswith("y_dist:="):  # increment of positions on y-axis 
             y_dist = float(arg.split(":=")[1])
+        elif arg.startswith("driving_swarm:="):  # use driving swarm framework 
+            driving_swarm = arg.split(":=")[1]
+            print(driving_swarm)
         else:
             if arg not in ['/opt/ros/galactic/bin/ros2',
                            'launch',
@@ -85,11 +96,13 @@ def generate_launch_description():
     elif robot_type.startswith('jackal'):
         robot_type = "jackal"
         gazebo_flag = True
+    elif robot_type.startswith('limo'):
+        robot_type = "limo"
 
     print("robot type       |", robot_type)
     print("---------------------------------------")
 
-    ld = LaunchDescription()
+
 
     # Add the log level argument to the launch description
     log = LaunchDescription([
@@ -100,7 +113,7 @@ def generate_launch_description():
         )
     ])
     ld.add_action(log)
-
+    
     if gazebo_flag:
         # Add gazebo start script
         gazebo_start = IncludeLaunchDescription(
@@ -123,7 +136,8 @@ def generate_launch_description():
                     '-x', str(x_start + i * x_dist),
                     '-y', str(y_start + i * y_dist),
                     '-z', '0.1',
-                    '--type_of_robot', robot
+                    '--type_of_robot', robot,
+                    '-ds', driving_swarm, 
                 ]
             )
             ld.add_action(gazebo_node)
@@ -161,9 +175,30 @@ def generate_launch_description():
                               'robot_namespace': ['robot_namespace_', str(i)],
                               'pattern': pattern_path,
                               'config_dir': config_dir,
-                              'urdf_file': urdf_file}.items(),
-
+                              'urdf_file': urdf_file, 
+                              'map': map_file,
+                              }.items(),
         )
         ld.add_action(launch_patterns)
 
+    
+    if driving_swarm=="True":
+
+    
+        exp_measurement_dir = get_package_share_directory('experiment_measurement')
+        
+        rosbag_recording = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                os.path.join(exp_measurement_dir,
+                             'launch', 'rosbag_recording.launch.py')),
+            launch_arguments={'n_robots': number_robots, 
+                              'robots_file': robot_file,
+                             }.items()
+        )
+        
+    
+        ld.add_action(rosbag_recording)
+    
+    
+    
     return ld

@@ -77,6 +77,9 @@ def generate_launch_description():
     elif robot_type.startswith('thymio'):
         robot_type = "thymio"
         robot_node = False 
+    elif robot_type.startswith('limo'):
+        robot_type = "limo"
+        robot_node = False 
     elif robot_type.startswith('jackal'):
         robot_type = "jackal"
         robot_node = False
