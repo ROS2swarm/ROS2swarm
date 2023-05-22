@@ -102,7 +102,7 @@ def generate_launch_description():
         gazebo_node = launch_ros.actions.Node(
             package='launch_gazebo',
             executable='add_bot_node',
-            namespace=['namespace_', str(num)],
+            namespace=['robot_namespace_', str(num)],
             name=['gazeboRobotNode_', str(num)],
             output='screen',
             arguments=[

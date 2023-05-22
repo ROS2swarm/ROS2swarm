@@ -24,9 +24,11 @@ import os
 import rclpy
 import argparse
 import xacro
+import time 
 from launch.substitutions import Command
 from ament_index_python.packages import get_package_share_directory
 from gazebo_msgs.srv import SpawnEntity
+from geometry_msgs.msg import PoseWithCovarianceStamped, Pose
 from launch_ros.actions import Node
 from lifecycle_msgs.srv import GetState
 from std_msgs.msg import String
@@ -62,14 +64,14 @@ def main():
 
     # Start node
     rclpy.init()
-    node = rclpy.create_node("entity_spawner")
+    node = rclpy.create_node("entity_spawner_"+args.robot_name)
 
     node.get_logger().debug(
         'Creating Service client to connect to `/spawn_entity`')
     client = node.create_client(SpawnEntity, "/spawn_entity")
     
     if args.driving_swarm == 'True':
-        topic = f'{args.robot_namespace}/initialpose'
+        topic = f'/{args.robot_namespace}/initialpose'
         pub = node.create_publisher(PoseWithCovarianceStamped, topic, 10)
 
 
@@ -137,16 +139,17 @@ def main():
     
     if args.driving_swarm == "True":
         # driving swarm launch elements 
-        request = GetState.Request()
-        topic = f'/{args.robot_name}/amcl/get_state'
+        request_acml = GetState.Request()
+        topic = f'/{args.robot_namespace}/amcl/get_state'
         client = node.create_client(GetState, topic)
+        
         if not client.service_is_ready():
             node.get_logger().info(f'waiting for service {topic}')
             client.wait_for_service()
             node.get_logger().info(f'connected to state service')
 
         while True:
-            future = client.call_async(request)
+            future = client.call_async(request_acml)
             rclpy.spin_until_future_complete(node, future)
             if future.result() is not None:
                 print('response: %r' % future.result())
@@ -166,7 +169,7 @@ def main():
         pose.header.frame_id = "map"
         pose.header.stamp = node.get_clock().now().to_msg()
         pose.pose.pose = request.initial_pose
-        node.pub.publish(pose)
+        pub.publish(pose)
 
     node.get_logger().debug("Done! Shutting down add_bot_node.")
     node.destroy_node()

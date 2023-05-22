@@ -34,7 +34,7 @@ def generate_launch_description():
     robot_type = LaunchConfiguration('robot_type', default='robot_type_default')
     sensor_type = LaunchConfiguration('sensor_type', default='sensor_type_default')
     use_sim_time = LaunchConfiguration('use_sim_time', default='True')
-    map = LaunchConfiguration('map')
+    local_map = LaunchConfiguration('map')
     
     # driving swarm 
     tf_exchange_dir = get_package_share_directory('tf_exchange')
@@ -133,7 +133,7 @@ def generate_launch_description():
                                                        'localization_launch.py')),
                         condition=IfCondition(PythonExpression(['not ', slam])),
                         launch_arguments={'namespace': robot_namespace,
-                                          'map': map,
+                                          'map': local_map,
                                           'use_sim_time': use_sim_time,
                                           'autostart': autostart,
                                           'params_file': params_file,
