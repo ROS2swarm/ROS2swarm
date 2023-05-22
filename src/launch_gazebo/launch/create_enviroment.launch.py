@@ -73,7 +73,7 @@ def generate_launch_description():
                 print("Argument not known: '", arg, "'")
 
     world_file_name = gazebo_world
-    rviz_config_file = LaunchConfiguration('rviz_config_file', default=os.path.join(get_package_share_directory('driving_swarm_bringup'), 'rviz', 'custom.rviz'))
+
 
     print("---------------------------------------")
     print("world file name  |", world_file_name)
@@ -161,30 +161,33 @@ def generate_launch_description():
 
         for i in range(number_robots):
         
-            rviz = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource(
-                    os.path.join(get_package_share_directory('nav2_bringup'), 'launch', 'rviz_launch.py')),
-                #condition=IfCondition(LaunchConfiguration('use_rviz')),
-                launch_arguments={
-                    'namespace': ['robot_namespace_', str(i)],
-                    'use_namespace': 'true',
-                    'use_sim_time': 'true',
-                    'rviz_config': rviz_config_file
-                }.items()
-            )
-            ld.add_action(rviz)
-           
-            # DRIVING SWARM 
-            tf_exchange = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource(
-                    os.path.join(tf_exchange_dir, 'launch', 'tf_exchange.launch.py')),
-                    launch_arguments={
-                    'namespace': ['robot_namespace_', str(i)],
-                    'robot_name': ['robot_name_', str(i)],                    
-                    'base_frame': baseframe,
-                }.items()
-            )
-            ld.add_action(tf_exchange) 
+            if driving_swarm == 'True': 
+                rviz_config_file = LaunchConfiguration('rviz_config_file', default=os.path.join(get_package_share_directory('driving_swarm_bringup'), 'rviz', 'custom.rviz'))
+                
+                rviz = IncludeLaunchDescription(
+	                   PythonLaunchDescriptionSource(
+		            os.path.join(get_package_share_directory('nav2_bringup'), 'launch', 'rviz_launch.py')),
+		        #condition=IfCondition(LaunchConfiguration('use_rviz')),
+		        launch_arguments={
+		            'namespace': ['robot_namespace_', str(i)],
+		            'use_namespace': 'true',
+		            'use_sim_time': 'true',
+		            'rviz_config': rviz_config_file
+		        }.items()
+		    )
+                ld.add_action(rviz)
+                
+                # DRIVING SWARM 
+                tf_exchange = IncludeLaunchDescription(
+		        PythonLaunchDescriptionSource(
+		            os.path.join(tf_exchange_dir, 'launch', 'tf_exchange.launch.py')),
+		            launch_arguments={
+		            'namespace': ['robot_namespace_', str(i)],
+		            'robot_name': ['robot_name_', str(i)],                    
+		            'base_frame': baseframe,
+		        }.items()
+		    )
+                ld.add_action(tf_exchange) 
             
             
             # add gazebo node
@@ -241,12 +244,13 @@ def generate_launch_description():
                               'config_dir': config_dir,
                               'urdf_file': urdf_file, 
                               'map': map_file,
+                              'driving_swarm': driving_swarm, 
                               }.items(),
         )
         ld.add_action(launch_patterns)
 
     
-    if driving_swarm=="True":
+    if driving_swarm=='True':
 
     
         exp_measurement_dir = get_package_share_directory('experiment_measurement')
