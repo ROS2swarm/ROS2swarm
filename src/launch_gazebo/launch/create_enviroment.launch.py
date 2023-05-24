@@ -244,8 +244,10 @@ def generate_launch_description():
                               'config_dir': config_dir,
                               'urdf_file': urdf_file, 
                               'map': map_file,
-                              'driving_swarm': driving_swarm, 
-                              }.items(),
+                              'driving_swarm': driving_swarm,
+                              'params_file': os.path.join(
+            get_package_share_directory('launch_gazebo'), 'params', 'nav2_params_' + robot_type + '_namespaced.yaml')
+        }.items()
         )
         ld.add_action(launch_patterns)
 
@@ -266,10 +268,8 @@ def generate_launch_description():
                               'qos_override_file': os.path.join(get_package_share_directory('experiment_measurement'), 'params', 'qos_override.yaml'),
                              }.items()
         )
-        
     
         ld.add_action(rosbag_recording)
     
-    
-    
+
     return ld

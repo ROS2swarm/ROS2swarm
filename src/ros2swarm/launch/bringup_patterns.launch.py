@@ -43,7 +43,9 @@ def generate_launch_description():
     slam = LaunchConfiguration('slam', default='False')
     autostart = 'True'
     bringup_dir = get_package_share_directory('driving_swarm_bringup')
-    params_file = os.path.join(bringup_dir, 'params', 'nav2_params_namespaced.yaml') #ToDo check how different files per robot can be included; maybe as LaunchConfig argument 
+
+    params_file = LaunchConfiguration('params_file', default=os.path.join(get_package_share_directory('launch_gazebo'), 'params', 'nav2_params_waffle_pi_namespaced.yaml'))
+        #os.path.join(get_package_share_directory('launch_gazebo'), 'params', 'nav2_params_waffle_pi_namespaced.yaml') #ToDo check how different files per robot can be included; maybe as LaunchConfig argument
         
     ld = LaunchDescription()
 
