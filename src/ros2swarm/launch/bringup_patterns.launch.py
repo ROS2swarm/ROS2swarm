@@ -44,9 +44,8 @@ def generate_launch_description():
     autostart = 'True'
     bringup_dir = get_package_share_directory('driving_swarm_bringup')
 
-    params_file = LaunchConfiguration('params_file', default=os.path.join(get_package_share_directory('launch_gazebo'), 'params', 'nav2_params_waffle_pi_namespaced.yaml'))
-        #os.path.join(get_package_share_directory('launch_gazebo'), 'params', 'nav2_params_waffle_pi_namespaced.yaml') #ToDo check how different files per robot can be included; maybe as LaunchConfig argument
-        
+    params_file = LaunchConfiguration('params_file', default=os.path.join(get_package_share_directory('ros2swarm'), 'params', 'nav2_params_waffle_pi_namespaced.yaml'))
+
     ld = LaunchDescription()
 
     # Add sensor layer

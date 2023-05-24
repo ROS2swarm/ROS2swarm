@@ -33,7 +33,7 @@ def generate_launch_description():
     launch_pattern_dir = os.path.join(get_package_share_directory('ros2swarm'), 'launch', 'pattern')
     launch_bringup_dir = os.path.join(get_package_share_directory('ros2swarm'))
     # driving swarm 
-    robot_file = os.path.join(launch_file_dir, 'params', 'ROS2swarm_sim.yaml')
+    robot_file = os.path.join(get_package_share_directory('ros2swarm'), 'param', 'ROS2swarm_sim.yaml')
     map_file = os.path.join(launch_file_dir, 'maps', 'default.yaml') 
     tf_exchange_dir = get_package_share_directory('tf_exchange')
     
@@ -246,7 +246,7 @@ def generate_launch_description():
                               'map': map_file,
                               'driving_swarm': driving_swarm,
                               'params_file': os.path.join(
-            get_package_share_directory('launch_gazebo'), 'params', 'nav2_params_' + robot_type + '_namespaced.yaml')
+            get_package_share_directory('ros2swarm'), 'param', 'nav2_params_' + robot_type + '_namespaced.yaml')
         }.items()
         )
         ld.add_action(launch_patterns)
@@ -264,7 +264,7 @@ def generate_launch_description():
             launch_arguments={'n_robots': str(number_robots), 
                               'robots_file': robot_file,
                               'use_rosbag': 'True',
-                              'rosbag_topics_file': os.path.join(get_package_share_directory('trajectory_follower'), 'params', 'rosbag_topics.yaml'),
+                              'rosbag_topics_file': os.path.join(get_package_share_directory('trajectory_follower'), 'params', 'rosbag_topics.yaml'), #ToDo: include own file here for own experiments
                               'qos_override_file': os.path.join(get_package_share_directory('experiment_measurement'), 'params', 'qos_override.yaml'),
                              }.items()
         )
