@@ -1,4 +1,4 @@
-robot_namespace_NUM_CHANGE_ME:
+robot_NUM_CHANGE_ME:
   turtlebot3_node:
     ros__parameters:
 

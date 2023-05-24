@@ -17,9 +17,9 @@ source ./install/setup.bash &&
  ROS_DOMAIN_ID=42 ros2 launch launch_gazebo create_enviroment.launch.py \
  gazebo_world:=arena_large.world \
  pattern:=drive_pattern \
- number_robots:=1 \
+ number_robots:=2 \
  log_level:=info \
- robot:=waffle_pi \
+ robot:=limo \
  sensor_type:=lidar \
  x_start:=0.0 \
  x_dist:=0.0 \

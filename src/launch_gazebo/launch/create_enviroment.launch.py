@@ -110,7 +110,7 @@ def generate_launch_description():
         baseframe = 'base_link' # ToDo 
     elif robot_type.startswith('limo'):
         robot_type = "limo"
-        baseframe = 'base_link' #ToDo 
+        baseframe = 'base_link'  
 
     print("robot type       |", robot_type)
     print("---------------------------------------")
@@ -148,7 +148,7 @@ def generate_launch_description():
                            'use_sim_time': True,
                            'run_timeout': run_timeout,
                            'init_timeout': init_timeout,
-                           'robots': ['robot_name_' + str(i) for i in range(number_robots)],
+                           'robots': ['robot_' + str(i) for i in range(number_robots)],
                            }])
 
             exit_event_handler = RegisterEventHandler(event_handler=OnProcessExit(
@@ -169,7 +169,7 @@ def generate_launch_description():
 		            os.path.join(get_package_share_directory('nav2_bringup'), 'launch', 'rviz_launch.py')),
 		        #condition=IfCondition(LaunchConfiguration('use_rviz')),
 		        launch_arguments={
-		            'namespace': ['robot_namespace_', str(i)],
+		            'namespace': ['robot_', str(i)],
 		            'use_namespace': 'true',
 		            'use_sim_time': 'true',
 		            'rviz_config': rviz_config_file
@@ -182,8 +182,8 @@ def generate_launch_description():
 		        PythonLaunchDescriptionSource(
 		            os.path.join(tf_exchange_dir, 'launch', 'tf_exchange.launch.py')),
 		            launch_arguments={
-		            'namespace': ['robot_namespace_', str(i)],
-		            'robot_name': ['robot_name_', str(i)],                    
+		            'namespace': ['robot_', str(i)],
+		            'robot_name': ['robot_', str(i)],
 		            'base_frame': baseframe,
 		        }.items()
 		    )
@@ -198,8 +198,8 @@ def generate_launch_description():
                 name=['gazeboRobotNode_', str(i)],
                 output='screen',
                 arguments=[
-                    '--robot_name', ['robot_name_', str(i)],
-                    '--robot_namespace', ['robot_namespace_', str(i)],
+                    '--robot_name', ['robot_', str(i)],
+                    '--robot_namespace', ['robot_', str(i)],
                     '-x', str(x_start + i * x_dist),
                     '-y', str(y_start + i * y_dist),
                     '-z', '0.1',
@@ -238,8 +238,8 @@ def generate_launch_description():
                 [launch_bringup_dir, '/' + 'bringup_patterns.launch.py']),
                  launch_arguments={'robot': robot,
                               'robot_type': robot_type,
-			       'sensor_type': sensor_type,
-                              'robot_namespace': ['robot_namespace_', str(i)],
+			                  'sensor_type': sensor_type,
+                              'robot_namespace': ['robot_', str(i)],
                               'pattern': pattern_path,
                               'config_dir': config_dir,
                               'urdf_file': urdf_file, 
