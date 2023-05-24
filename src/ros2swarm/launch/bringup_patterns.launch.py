@@ -25,7 +25,6 @@ from launch.conditions import IfCondition, LaunchConfigurationEquals, LaunchConf
 def generate_launch_description():
     """Bring up all needed hardware protection patterns and the behaviour pattern.""" 
     
-    
     config_dir = LaunchConfiguration('config_dir', default='config_dir_default')
     urdf_file = LaunchConfiguration('urdf_file', default='urdf_file_default')
     robot_namespace = LaunchConfiguration('robot_namespace', default='robot_namespace_default')
@@ -38,19 +37,15 @@ def generate_launch_description():
     driving_swarm = LaunchConfiguration('driving_swarm', default='True')
     local_map = LaunchConfiguration('map')
     
-    print(robot_type) 
-    
     # driving swarm 
     tf_exchange_dir = get_package_share_directory('tf_exchange')
     nav2_dir = get_package_share_directory('nav2_bringup')
     slam = LaunchConfiguration('slam', default='False')
     autostart = 'True'
     bringup_dir = get_package_share_directory('driving_swarm_bringup')
-    params_file = os.path.join(bringup_dir, 'params', 'nav2_params_namespaced.yaml') #ToDo adjust for ROS2swarm?
-    
-    
+    params_file = os.path.join(bringup_dir, 'params', 'nav2_params_namespaced.yaml') #ToDo check how different files per robot can be included; maybe as LaunchConfig argument 
+        
     ld = LaunchDescription()
-
 
     # Add sensor layer
     ros2_sensor_layer_node = launch_ros.actions.Node(
@@ -92,7 +87,7 @@ def generate_launch_description():
         launch_ros.actions.Node(
             package='robot_state_publisher',
             executable='robot_state_publisher',
-       	        namespace=robot_namespace,
+       	       # namespace=robot_namespace,
         	        output='screen',
         	        condition=LaunchConfigurationNotEquals('robot_type', 'thymio'),
         	        parameters=[{'use_sim_time': use_sim_time,

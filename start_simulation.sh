@@ -16,8 +16,8 @@ colcon build --symlink-install --allow-overriding communication_interfaces launc
 source ./install/setup.bash &&
  ROS_DOMAIN_ID=42 ros2 launch launch_gazebo create_enviroment.launch.py \
  gazebo_world:=arena_large.world \
- pattern:=random_walk_pattern \
- number_robots:=2 \
+ pattern:=drive_pattern \
+ number_robots:=1 \
  log_level:=info \
  robot:=waffle_pi \
  sensor_type:=lidar \
@@ -25,7 +25,7 @@ source ./install/setup.bash &&
  x_dist:=0.0 \
  y_start:=0.0 \
  y_dist:=1.0 \
- driving_swarm:=True 
+ driving_swarm:=True
  
 # to add heterogeneous swarm / robots  
 # bash add_robots_to_simulation.sh 

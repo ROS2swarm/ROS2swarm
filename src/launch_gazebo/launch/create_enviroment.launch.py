@@ -32,18 +32,16 @@ def generate_launch_description():
     launch_file_dir = os.path.join(get_package_share_directory('launch_gazebo'))
     launch_pattern_dir = os.path.join(get_package_share_directory('ros2swarm'), 'launch', 'pattern')
     launch_bringup_dir = os.path.join(get_package_share_directory('ros2swarm'))
+    # driving swarm 
     robot_file = os.path.join(launch_file_dir, 'params', 'ROS2swarm_sim.yaml')
-
+    map_file = os.path.join(launch_file_dir, 'maps', 'default.yaml') 
+    tf_exchange_dir = get_package_share_directory('tf_exchange')
+    
     ld = LaunchDescription()
     
     for arg in sys.argv:
         if arg.startswith("gazebo_world:="):  # Name of the gazebo world
-            gazebo_world = arg.split(":=")[1]
-            
-            # map file for driving swarm 
-            yaml_file = gazebo_world[:-6] + '.yaml' 
-            map_file = os.path.join(launch_file_dir, 'maps', yaml_file)
-            
+            gazebo_world = arg.split(":=")[1]        
         elif arg.startswith("number_robots:="):  # The number of robots to spawn in the world
             number_robots = int(arg.split(":=")[1])
         elif arg.startswith("pattern:="):  # The pattern executed by the robots
@@ -64,7 +62,11 @@ def generate_launch_description():
             y_dist = float(arg.split(":=")[1])
         elif arg.startswith("driving_swarm:="):  # use driving swarm framework 
             driving_swarm = arg.split(":=")[1]
-            print(driving_swarm)
+            
+            if driving_swarm == 'True':
+                # map file for driving swarm 
+                yaml_file = gazebo_world[:-6] + '.yaml' 
+                map_file = os.path.join(launch_file_dir, 'maps', yaml_file)
         else:
             if arg not in ['/opt/ros/galactic/bin/ros2',
                            'launch',
@@ -125,9 +127,6 @@ def generate_launch_description():
     ])
     ld.add_action(log)
     
-    # driving swarm 
-    tf_exchange_dir = get_package_share_directory('tf_exchange')
-    
     
     if gazebo_flag:
         # Add gazebo start script
@@ -138,10 +137,11 @@ def generate_launch_description():
         ld.add_action(gazebo_start)
         
         # driving swarm 
-        run_timeout = LaunchConfiguration('run_timeout', default=5)
-        init_timeout = LaunchConfiguration('init_timeout', default=0)
+        if driving_swarm == 'True': 
+            run_timeout = LaunchConfiguration('run_timeout', default=5)
+            init_timeout = LaunchConfiguration('init_timeout', default=0)
         
-        command_node = Node(package="experiment_supervisor",
+            command_node = Node(package="experiment_supervisor",
                         executable="command_node",
                         output="screen",
                         parameters=[{
@@ -151,13 +151,13 @@ def generate_launch_description():
                            'robots': ['robot_name_' + str(i) for i in range(number_robots)],
                            }])
 
-        exit_event_handler = RegisterEventHandler(event_handler=OnProcessExit(
-            target_action=command_node,
-            on_exit=EmitEvent(event=Shutdown(reason="command node exited"))
-          )
-        )
-        ld.add_action(command_node)
-        ld.add_action(exit_event_handler)
+            exit_event_handler = RegisterEventHandler(event_handler=OnProcessExit(
+                                                      target_action=command_node,
+                                                      on_exit=EmitEvent(event=Shutdown(reason="command node exited"))
+                                                      )
+                                                  )
+            ld.add_action(command_node)
+            ld.add_action(exit_event_handler)
 
         for i in range(number_robots):
         
@@ -236,7 +236,7 @@ def generate_launch_description():
         launch_patterns = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 [launch_bringup_dir, '/' + 'bringup_patterns.launch.py']),
-            launch_arguments={'robot': robot,
+                 launch_arguments={'robot': robot,
                               'robot_type': robot_type,
 			       'sensor_type': sensor_type,
                               'robot_namespace': ['robot_namespace_', str(i)],

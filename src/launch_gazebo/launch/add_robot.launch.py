@@ -53,7 +53,7 @@ def generate_launch_description():
         elif arg.startswith("y_dist:="):  # increment of positions on y-axis 
             y_dist = float(arg.split(":=")[1])
         else:
-            if arg not in ['/opt/ros/galactic/bin/ros2',
+            if arg not in ['/opt/ros/foxy/bin/ros2',
                            'launch',
                            'launch_gazebo',
                            'add_robot.launch.py']:
