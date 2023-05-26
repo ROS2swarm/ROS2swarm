@@ -24,11 +24,12 @@ setup(
     maintainer='Tanja Kaiser',
     maintainer_email='kaiser(at)iti.uni-luebeck.de',
     license='apache-2.0',
-    description='Launch script for gazbeo simulation and the ros2swarm',
+    description='Launch script for gazebo simulation and the ros2swarm',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-                    'add_bot_node = launch_gazebo.add_bot_node:main'
+                    'add_bot_node = launch_gazebo.add_bot_node:main',
+                    'ground_truth_publisher = launch_gazebo.ground_truth_publisher:main',
         ],
     },
 )

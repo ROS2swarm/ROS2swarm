@@ -136,6 +136,14 @@ def generate_launch_description():
         )
         ld.add_action(gazebo_start)
         
+        state_node = Node(package="launch_gazebo",
+                          executable="ground_truth_publisher",
+                          output="screen",
+                          parameters=[{
+                          'use_sim_time': True,
+                          }])
+        ld.add_action(state_node)
+        
         # driving swarm 
         if driving_swarm == 'True': 
             run_timeout = LaunchConfiguration('run_timeout', default=5)
@@ -261,10 +269,10 @@ def generate_launch_description():
             PythonLaunchDescriptionSource(
                 os.path.join(exp_measurement_dir,
                              'launch', 'rosbag_recording.launch.py')),
-            launch_arguments={'n_robots': str(number_robots), 
+                 launch_arguments={'n_robots': str(number_robots), 
                               'robots_file': robot_file,
                               'use_rosbag': 'True',
-                              'rosbag_topics_file': os.path.join(get_package_share_directory('trajectory_follower'), 'params', 'rosbag_topics.yaml'), #ToDo: include own file here for own experiments
+                              'rosbag_topics_file': os.path.join(get_package_share_directory('ros2swarm'), 'param', 'rosbag_topics.yaml'), #ToDo: include own file here for own experiments
                               'qos_override_file': os.path.join(get_package_share_directory('experiment_measurement'), 'params', 'qos_override.yaml'),
                              }.items()
         )

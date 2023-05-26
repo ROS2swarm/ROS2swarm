@@ -34,7 +34,7 @@ def generate_launch_description():
          
         ExecuteProcess(
             # To start in paused mode add: '--pause'
-            cmd=['gazebo', [world_directory, '/', world_name], '-s', 'libgazebo_ros_factory.so'],
+            cmd=['gazebo', [world_directory, '/', world_name], '-s', 'libgazebo_ros_factory.so', '-s', 'libgazebo_ros_init.so'],
             #cmd=['gazebo', '--verbose', [world_directory, '/', world_name], '-s', 'libgazebo_ros_factory.so'],
             output='screen'
         ),
