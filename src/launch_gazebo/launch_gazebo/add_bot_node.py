@@ -105,15 +105,18 @@ def main():
     	 xml = xacro.process_file(sdf_file_path)
     	 robot_description = xml.toprettyxml(indent='  ')
 
-    # remapping tf topic 
-    root = ET.fromstring(robot_description)
-    for plugin in root.iter('plugin'):
-        if 'libgazebo_ros_diff_drive.so' in plugin.attrib.values():
-            break 
+    if args.type_of_robot != "thymio":
+        # remapping tf topic 
+        root = ET.fromstring(robot_description)
+        for plugin in root.iter('plugin'):
+            if 'libgazebo_ros_diff_drive.so' in plugin.attrib.values():
+                break 
 
-    ros_params = plugin.find('ros')
-    ros_tf_remap = ET.SubElement(ros_params, 'remapping')
-    ros_tf_remap.text = '/tf:=/' + args.robot_namespace + '/tf'
+        ros_params = plugin.find('ros')
+        ros_tf_remap = ET.SubElement(ros_params, 'remapping')
+        ros_tf_remap.text = '/tf:=/' + args.robot_namespace + '/tf'
+        
+        robot_description = ET.tostring(root, encoding='unicode') 
 
     print("sdf_file_path: ", sdf_file_path)
 
@@ -122,7 +125,7 @@ def main():
    
     request = SpawnEntity.Request()
     request.name = args.robot_name
-    request.xml = ET.tostring(root, encoding='unicode')    
+    request.xml = robot_description   
     request.robot_namespace = args.robot_namespace
     request.initial_pose.position.x = float(args.x)
     request.initial_pose.position.y = float(args.y)
