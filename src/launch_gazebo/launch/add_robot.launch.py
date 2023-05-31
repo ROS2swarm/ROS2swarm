@@ -21,6 +21,7 @@ import os
 import sys
 import launch_ros.actions
 from launch import LaunchDescription
+from launch.substitutions import LaunchConfiguration
 from ament_index_python.packages import get_package_share_directory
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -29,9 +30,19 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 def generate_launch_description():
     """Add turtlebot(s) to an already running gazebo simulation."""
 
+    launch_file_dir = os.path.join(get_package_share_directory('launch_gazebo'))
+    launch_pattern_dir = os.path.join(get_package_share_directory('ros2swarm'), 'launch', 'pattern')
+    launch_bringup_dir = os.path.join(get_package_share_directory('ros2swarm'))
+    # driving swarm 
+    robot_file = os.path.join(get_package_share_directory('ros2swarm'), 'param', 'ROS2swarm_sim.yaml')
+    map_file = os.path.join(launch_file_dir, 'maps', 'default.yaml') 
+    tf_exchange_dir = get_package_share_directory('tf_exchange')
+    
     for arg in sys.argv:
         if arg.startswith("start_index:="):  # The start index for the robots number
             start_index = int(arg.split(":=")[1])
+        elif arg.startswith("gazebo_world:="):  # Name of the gazebo world
+            gazebo_world = arg.split(":=")[1]   
         elif arg.startswith("number_robots:="):  # The number of robots to spawn in the world
             number_robots = int(arg.split(":=")[1])
         elif arg.startswith("pattern:="):  # The pattern executed by the robots
@@ -52,6 +63,13 @@ def generate_launch_description():
             y_start = float(arg.split(":=")[1])
         elif arg.startswith("y_dist:="):  # increment of positions on y-axis 
             y_dist = float(arg.split(":=")[1])
+        elif arg.startswith("driving_swarm:="):  # use driving swarm framework 
+            driving_swarm = arg.split(":=")[1]
+            
+            if driving_swarm == 'True':
+                # map file for driving swarm 
+                yaml_file = gazebo_world[:-6] + '.yaml' 
+                map_file = os.path.join(launch_file_dir, 'maps', yaml_file)
         else:
             if arg not in ['/opt/ros/foxy/bin/ros2',
                            'launch',
@@ -80,41 +98,26 @@ def generate_launch_description():
     gazebo_flag = True
     if robot_type.startswith('burger'):
         robot_type = "burger"
+        baseframe = 'base_link'  
     elif robot_type.startswith('waffle_pi'):
         robot_type = "waffle_pi"
+        baseframe = 'base_link'  
     elif robot_type.startswith('thymio'):
         robot_type = "thymio"
+        baseframe = 'base_link'  
     elif robot_type.startswith('jackal'):
         robot_type = "jackal"
+        baseframe = 'base_link'  
         #gazebo_flag = False
     elif robot_type.startswith('limo'):
         robot_type = "limo"
+        baseframe = 'base_link'  
         #gazebo_flag = False
 
     print("robot type       |", robot_type)
     print("---------------------------------------")
 
     ld = LaunchDescription()
-
-    for i in (range(number_robots)):
-        num = i + start_index
-        # add gazebo node
-        gazebo_node = launch_ros.actions.Node(
-            package='launch_gazebo',
-            executable='add_bot_node',
-            namespace=['robot_namespace_', str(num)],
-            name=['gazeboRobotNode_', str(num)],
-            output='screen',
-            arguments=[
-                '--robot_name', ['robot_', str(num)],
-                '--robot_namespace', ['robot_', str(num)],
-                '-x', str(x_start + i * x_dist),
-                '-y', str(y_start + i * y_dist),
-                '-z', '0.1',
-                '--type_of_robot', robot
-            ]
-        )
-        ld.add_action(gazebo_node)
 
     config_dir = os.path.join(get_package_share_directory('ros2swarm'), 'config', robot_type)
 
@@ -140,6 +143,60 @@ def generate_launch_description():
     launch_pattern_dir = os.path.join(get_package_share_directory('ros2swarm'), 'launch', 'pattern')
     launch_bringup_dir = os.path.join(get_package_share_directory('ros2swarm'))
 
+
+    for i in range(number_robots):
+        
+        if driving_swarm == 'True': 
+            num = i + start_index
+                
+            rviz_config_file = LaunchConfiguration('rviz_config_file', default=os.path.join(get_package_share_directory('driving_swarm_bringup'), 'rviz', 'custom.rviz'))
+                
+            rviz = IncludeLaunchDescription(
+	               PythonLaunchDescriptionSource(
+	               os.path.join(get_package_share_directory('nav2_bringup'), 'launch', 'rviz_launch.py')),
+		        #condition=IfCondition(LaunchConfiguration('use_rviz')),
+		        launch_arguments={
+		            'namespace': ['robot_', str(num)],
+		            'use_namespace': 'true',
+		            'use_sim_time': 'true',
+		            'rviz_config': rviz_config_file
+		        }.items()
+		    )
+            ld.add_action(rviz)
+                
+            # DRIVING SWARM 
+            tf_exchange = IncludeLaunchDescription(
+	                      PythonLaunchDescriptionSource(
+		                   os.path.join(tf_exchange_dir, 'launch', 'tf_exchange.launch.py')),
+		                   launch_arguments={
+		                   'namespace': ['robot_', str(num)],
+		                   'robot_name': ['robot_', str(num)],
+		                   'base_frame': baseframe,
+		                  }.items()
+		          )
+            ld.add_action(tf_exchange) 
+        
+
+        # add gazebo node
+        gazebo_node = launch_ros.actions.Node(
+            package='launch_gazebo',
+            executable='add_bot_node',
+            namespace=['robot_namespace_', str(num)],
+            name=['gazeboRobotNode_', str(num)],
+            output='screen',
+            arguments=[
+                '--robot_name', ['robot_', str(num)],
+                '--robot_namespace', ['robot_', str(num)],
+                '-x', str(x_start + i * x_dist),
+                '-y', str(y_start + i * y_dist),
+                '-z', '0.1',
+                '--type_of_robot', robot,
+                '-ds', driving_swarm, 
+            ]
+        )
+        ld.add_action(gazebo_node)
+
+
     # find out exact path of the pattern launch file
     for i in (range(number_robots)):
         num = i + start_index
@@ -153,15 +210,18 @@ def generate_launch_description():
         launch_patterns = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 [launch_bringup_dir, '/' + 'bringup_patterns.launch.py']),
-            launch_arguments={'robot': robot,
+            	  launch_arguments={'robot': robot,
                               'robot_type': robot_type,
 			       'sensor_type': sensor_type,             
                               'robot_namespace': ['robot_', str(num)],
                               'pattern': pattern_path,
                               'config_dir': config_dir,
                               'urdf_file': urdf_file,
-                              'ros_version': str(ros_version)}.items(),
-
+                              'ros_version': str(ros_version),
+                              'map': map_file,
+                              'driving_swarm': driving_swarm,
+                              'params_file': os.path.join(
+                                             get_package_share_directory('ros2swarm'), 'param', 'nav2_params_' + robot_type + '_namespaced.yaml')}.items(),
         )
         ld.add_action(launch_patterns)
 

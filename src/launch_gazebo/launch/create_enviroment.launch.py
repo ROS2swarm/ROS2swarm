@@ -44,6 +44,8 @@ def generate_launch_description():
             gazebo_world = arg.split(":=")[1]        
         elif arg.startswith("number_robots:="):  # The number of robots to spawn in the world
             number_robots = int(arg.split(":=")[1])
+        elif arg.startswith("total_robots:="):  # The number of robots to spawn in the world
+            total_robots = int(arg.split(":=")[1])
         elif arg.startswith("pattern:="):  # The pattern executed by the robots
             pattern = arg.split(":=")[1]
         elif arg.startswith("log_level:="):  # The log level used in this execution
@@ -269,10 +271,10 @@ def generate_launch_description():
             PythonLaunchDescriptionSource(
                 os.path.join(exp_measurement_dir,
                              'launch', 'rosbag_recording.launch.py')),
-                 launch_arguments={'n_robots': str(number_robots), 
+                 launch_arguments={'n_robots': str(total_robots), 
                               'robots_file': robot_file,
                               'use_rosbag': 'True',
-                              'rosbag_topics_file': os.path.join(get_package_share_directory('ros2swarm'), 'param', 'rosbag_topics.yaml'), #ToDo: include own file here for own experiments
+                              'rosbag_topics_file': os.path.join(get_package_share_directory('ros2swarm'), 'param', 'rosbag_topics.yaml'), 
                               'qos_override_file': os.path.join(get_package_share_directory('experiment_measurement'), 'params', 'qos_override.yaml'),
                              }.items()
         )

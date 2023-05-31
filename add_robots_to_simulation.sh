@@ -14,17 +14,19 @@
 #    limitations under the License.
 source ./install/setup.bash &&
  ROS_DOMAIN_ID=42 ros2 launch launch_gazebo add_robot.launch.py \
- start_index:=2 \
+ start_index:=4 \
+ gazebo_world:=arena_large.world \
  pattern:=random_walk_pattern \
  number_robots:=2 \
  log_level:=info \
- robot:=thymio \
- sensor_type:=ir \
+ robot:=burger \
+ sensor_type:=lidar \
  version:=2 \
  x_start:=1.0 \
  x_dist:=0.5 \
  y_start:=0.0 \
- y_dist:=1.0 
+ y_dist:=1.0 \
+ driving_swarm:=True 
  
 # -p pattern_name
 ## movement pattern:
