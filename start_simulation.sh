@@ -18,6 +18,7 @@ source ./install/setup.bash &&
  gazebo_world:=arena_large.world \
  pattern:=drive_pattern \
  number_robots:=4 \
+ total_robots:=4 \
  log_level:=info \
  robot:=burger \
  sensor_type:=lidar \
@@ -25,8 +26,9 @@ source ./install/setup.bash &&
  x_dist:=0.0 \
  y_start:=0.0 \
  y_dist:=1.0 \
- driving_swarm:=True \
- total_robots:=6 
+ driving_swarm:=False \
+ logging:=True 
+
  
 # to add heterogeneous swarm / robots  
 # bash add_robots_to_simulation.sh 

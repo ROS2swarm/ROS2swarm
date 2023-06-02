@@ -69,6 +69,8 @@ def generate_launch_description():
                 # map file for driving swarm 
                 yaml_file = gazebo_world[:-6] + '.yaml' 
                 map_file = os.path.join(launch_file_dir, 'maps', yaml_file)
+        elif arg.startswith("logging:="):  # log data in rosbag 
+            logging = arg.split(":=")[1]
         else:
             if arg not in ['/opt/ros/galactic/bin/ros2',
                            'launch',
@@ -262,7 +264,7 @@ def generate_launch_description():
         ld.add_action(launch_patterns)
 
     
-    if driving_swarm=='True':
+    if logging=='True':
 
     
         exp_measurement_dir = get_package_share_directory('experiment_measurement')
