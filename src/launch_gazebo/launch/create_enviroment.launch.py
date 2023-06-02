@@ -72,7 +72,7 @@ def generate_launch_description():
         elif arg.startswith("logging:="):  # log data in rosbag 
             logging = arg.split(":=")[1]
         else:
-            if arg not in ['/opt/ros/galactic/bin/ros2',
+            if arg not in ['/opt/ros/foxy/bin/ros2',
                            'launch',
                            'launch_gazebo',
                            'create_enviroment.launch.py']:
@@ -252,6 +252,7 @@ def generate_launch_description():
                               'robot_type': robot_type,
 			                  'sensor_type': sensor_type,
                               'robot_namespace': ['robot_', str(i)],
+                              'sensor_type': sensor_type, 
                               'pattern': pattern_path,
                               'config_dir': config_dir,
                               'urdf_file': urdf_file, 

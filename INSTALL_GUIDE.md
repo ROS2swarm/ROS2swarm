@@ -3,7 +3,8 @@
 This guide is a detailed step by step instruction to install the ROS2swarm package on top of a Ubuntu 20.04 OS for the use with 
 - the TurtleBot 3
 - the Jackal UGV or
-- the Thymio II. 
+- the Thymio II or
+- the AgileX Limo. 
 
 It is based on the guide to set up a turtlebot3 development environment and uses the manual install of
 - https://emanual.robotis.com/docs/en/platform/turtlebot3/quick-start/
@@ -14,7 +15,7 @@ It is based on the guide to set up a turtlebot3 development environment and uses
 
 This guide expects that the OS Ubuntu Bionic 20.04 is already installed.
 
-### Install ROS 2 Galactic
+### Install ROS 2 Foxy
 Install ROS 2 desktop version following:
 
 https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html
@@ -39,8 +40,8 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-a
 Install ROS 2 packages
 ```
 sudo apt update
-sudo apt install ros-galactic-desktop
-echo 'source /opt/ros/galactic/setup.bash' >> ~/.bashrc
+sudo apt install ros-foxy-desktop
+echo 'source /opt/ros/foxy/setup.bash' >> ~/.bashrc
 ```
 Install argcomplete (optional)
 ```
@@ -62,19 +63,19 @@ sudo apt install python3-colcon-common-extensions
 
 Install Gazebo
 ```
-sudo apt install ros-galactic-gazebo-ros-pkgs
+sudo apt install ros-foxy-gazebo-ros-pkgs
 ```
 
 Install Cartographer
 ```
-sudo apt install ros-galactic-cartographer
-sudo apt install ros-galactic-cartographer-ros
+sudo apt install ros-foxy-cartographer
+sudo apt install ros-foxy-cartographer-ros
 ```
 
 Install Navigation2
 ```
-sudo apt install ros-galactic-navigation2
-sudo apt install ros-galactic-nav2-bringup
+sudo apt install ros-foxy-navigation2
+sudo apt install ros-foxy-nav2-bringup
 ```
 <!--
 Install vcstool
@@ -88,9 +89,9 @@ Install TurtleBot3 Packages
 <!--
 ```
 source ~/.bashrc
-sudo apt install ros-galactic-dynamixel-sdk
-sudo apt install ros-galactic-turtlebot3-msgs
-sudo apt install ros-galactic-turtlebot3
+sudo apt install ros-foxy-dynamixel-sdk
+sudo apt install ros-foxy-turtlebot3-msgs
+sudo apt install ros-foxy-turtlebot3
 ```
 -->
 
@@ -98,9 +99,9 @@ TurtleBot3 packages with source code:
 ```
 mkdir -p ~/turtlebot3_ws/src
 cd ~/turtlebot3_ws/src/
-git clone -b galactic-devel https://github.com/ROBOTIS-GIT/turtlebot3_msgs.git
-git clone -b galactic-devel https://github.com/ROBOTIS-GIT/turtlebot3.git
-sudo apt install ros-galactic-dynamixel-sdk
+git clone -b foxy-devel https://github.com/ROBOTIS-GIT/turtlebot3_msgs.git
+git clone -b foxy-devel https://github.com/ROBOTIS-GIT/turtlebot3.git
+sudo apt install ros-foxy-dynamixel-sdk
 cd ~/turtlebot3_ws && colcon build --symlink-install
 ```
 
@@ -113,7 +114,7 @@ echo 'export ROS_DOMAIN_ID=30 #TURTLEBOT3' >> ~/.bashrc
 Install turtlebot3_simulation package
 ```
 cd ~/turtlebot3_ws/src/
-git clone -b galactic-devel https://github.com/ROBOTIS-GIT/turtlebot3_simulations.git
+git clone -b foxy-devel https://github.com/ROBOTIS-GIT/turtlebot3_simulations.git
 ```
 
 Set the gazebo model path
