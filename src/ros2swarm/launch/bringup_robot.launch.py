@@ -77,6 +77,9 @@ def generate_launch_description():
     elif robot_type.startswith('thymio'):
         robot_type = "thymio"
         robot_node = False 
+    elif robot_type.startswith('limo'):
+        robot_type = "limo"
+        robot_node = False 
     elif robot_type.startswith('jackal'):
         robot_type = "jackal"
         robot_node = False
@@ -95,7 +98,7 @@ def generate_launch_description():
 
     if robot_node:
         # add turtle node
-        turtle_namespace = ['robot_namespace_', str(robot_number)]
+        turtle_namespace = ['robot_', str(robot_number)]
         turtle_node = IncludeLaunchDescription(
             PythonLaunchDescriptionSource([launch_file_dir, '/turtlebot3_bringup.launch.py']),
             launch_arguments={'turtle_namespace': turtle_namespace,
@@ -121,7 +124,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource([launch_file_dir, '/' + 'bringup_patterns.launch.py']),
         launch_arguments={'robot': robot,
                           'robot_type': robot_type,
-                          'robot_namespace': ['robot_namespace_', str(robot_number)],
+                          'robot_namespace': ['robot_', str(robot_number)],
                           'pattern': pattern_path,
                           'config_dir': config_dir,
                           'urdf_file': urdf_file

@@ -3,7 +3,8 @@
 This guide is a detailed step by step instruction to install the ROS2swarm package on top of a Ubuntu 20.04 OS for the use with 
 - the TurtleBot 3
 - the Jackal UGV or
-- the Thymio II. 
+- the Thymio II or
+- the AgileX Limo. 
 
 It is based on the guide to set up a turtlebot3 development environment and uses the manual install of
 - https://emanual.robotis.com/docs/en/platform/turtlebot3/quick-start/
@@ -114,25 +115,6 @@ Install turtlebot3_simulation package
 ```
 cd ~/turtlebot3_ws/src/
 git clone -b foxy-devel https://github.com/ROBOTIS-GIT/turtlebot3_simulations.git
-```
-
-### switch to supported commits
-The ROS2swarm package only supports the following commits of the turtlebot3 packages.
-
-turtlebot3:
-```
-cd  ~/turtlebot3_ws/src/turtlebot3
-git checkout 8237b796ea1571033bf3230fbc78d1143968ddd1
-```
-turtlebot3_msgs:
-```
-cd ~/turtlebot3_ws/src/turtlebot3_msgs
-git checkout cf5c56be94b335b1d2c9817bd2dcaceec21ccc68
-```
-turtlebot3_simulations:
-```
-cd ~/turtlebot3_ws/src/turtlebot3_simulations
-git checkout f5d86bbeb614f46a176f47b3697c85a8a9b989f9
 ```
 
 Set the gazebo model path

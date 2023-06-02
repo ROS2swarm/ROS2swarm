@@ -1,0 +1,9 @@
+/**:
+  ros__parameters:
+    random_walk_timer_period: 0.25
+    random_walk_linear: 0.26
+    random_walk_angular: 1.82
+    random_walk_rot_interval: 3.5
+    random_walk_lin_interval_min: 10.0
+    random_walk_lin_interval_max: 15.0
+

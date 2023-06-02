@@ -39,12 +39,12 @@ class HardwareProtectionLayer(AbstractPattern):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('hardware_protection_layer_max_range', None),
-                ('hardware_protection_layer_min_range', None),
-                ('hardware_protection_layer_front_attraction', None),
-                ('hardware_protection_layer_threshold', None),
-                ('max_translational_velocity', None),
-                ('max_rotational_velocity', None)
+                ('hardware_protection_layer_max_range', 0.0),
+                ('hardware_protection_layer_min_range', 0.0),
+                ('hardware_protection_layer_front_attraction', 0.0),
+                ('hardware_protection_layer_threshold', 0),
+                ('max_translational_velocity', 0.0),
+                ('max_rotational_velocity', 0.0)
             ])
 
         self.command_subscription = self.create_subscription(

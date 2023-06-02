@@ -36,14 +36,14 @@ class AttractionPattern(MovementPattern):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('attraction_max_range', None),
-                ('attraction_min_range', None),
-                ('attraction_front_attraction', None),
-                ('attraction_threshold', None),
-                ('attraction_linear_if_alone', None),
-                ('attraction_angular_if_alone', None),
-                ('max_translational_velocity', None),
-                ('max_rotational_velocity', None)
+                ('attraction_max_range', 0.0),
+                ('attraction_min_range', 0.0),
+                ('attraction_front_attraction', 0.0),
+                ('attraction_threshold', 0),
+                ('attraction_linear_if_alone', 0.0),
+                ('attraction_angular_if_alone', 0.0),
+                ('max_translational_velocity', 0.0),
+                ('max_rotational_velocity', 0.0)
             ])
 
         self.scan_subscription = self.create_subscription(

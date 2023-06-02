@@ -45,7 +45,7 @@ test_process = launch.actions.ExecuteProcess(
 )
 
 log_level = 'info'
-robot_namespace = 'robot_namespace_1'
+robot_namespace = 'robot_1'
 
 
 # @pytest.mark.rostest

@@ -18,6 +18,7 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
@@ -33,7 +34,8 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Int8Message.msg"
   "msg/RangeData.msg"
   "msg/FloatArray.msg"
-  DEPENDENCIES builtin_interfaces std_msgs
+  "msg/ModelStatesStamped.msg"
+  DEPENDENCIES builtin_interfaces std_msgs geometry_msgs
 )
 
 if(BUILD_TESTING)

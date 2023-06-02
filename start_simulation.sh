@@ -13,14 +13,26 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 colcon build --symlink-install --allow-overriding communication_interfaces launch_gazebo ros2swarm&&
- source ./install/setup.bash &&
+source ./install/setup.bash &&
  ROS_DOMAIN_ID=42 ros2 launch launch_gazebo create_enviroment.launch.py \
  gazebo_world:=arena_large.world \
  pattern:=drive_pattern \
- number_robots:=2 \
+ number_robots:=4 \
+ total_robots:=4 \
  log_level:=info \
- robot:=thymio \
- sensor_type:=ir
+ robot:=burger \
+ sensor_type:=lidar \
+ x_start:=0.0 \
+ x_dist:=0.0 \
+ y_start:=0.0 \
+ y_dist:=1.0 \
+ driving_swarm:=False \
+ logging:=True 
+
+ 
+# to add heterogeneous swarm / robots  
+# bash add_robots_to_simulation.sh 
+# total_robots: int - total number of robots when using add_robots to create heterogeneous swarm 
  
 # gazebo_world arena_large.world | arena.world | empty.world | turtle.world | 560x540m.world | Ymaze.world | Ymaze_camber.world | Ymaze_camber_top.world
 
@@ -47,3 +59,5 @@ colcon build --symlink-install --allow-overriding communication_interfaces launc
 # log_level: info | DEBUG
 # robot: burger | waffle_pi | jackal | thymio
 # sensor_type: lidar | ir | ir_tf
+# driving_swarm: true | false - use driving swarm framework by OVGU Magdeburg
+
