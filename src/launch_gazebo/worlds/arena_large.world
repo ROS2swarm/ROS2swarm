@@ -87,9 +87,9 @@
       <elevation>0</elevation>
       <heading_deg>0</heading_deg>
     </spherical_coordinates>
-    <model name='wall0'>
+    <model name='wall_0'>
       <static>1</static>
-      <pose frame=''>-2.51676 -1.50167 0.5 0 -0 0</pose>
+      <pose frame=''>-9.5 0 0.5 0 0 0</pose>
       <link name='link'>
         <inertial>
           <mass>1</mass>
@@ -101,7 +101,7 @@
             <iyz>0</iyz>
             <izz>0.166667</izz>
           </inertia>
-          <pose frame=''>0 0 0 0 -0 0</pose>
+          <pose frame=''>-9.5 0 0.5 0 0 0</pose>
         </inertial>
         <collision name='collision'>
           <geometry>
@@ -141,9 +141,9 @@
         <kinematic>0</kinematic>
       </link>
     </model>
-    <model name='wall1'>
+    <model name='wall_1'>
       <static>1</static>
-      <pose frame=''>5.48201 -0.504041 0.5 0 -0 0</pose>
+      <pose frame=''>9.5 0 0.5 0 0 0</pose>
       <link name='link'>
         <inertial>
           <mass>1</mass>
@@ -155,7 +155,7 @@
             <iyz>0</iyz>
             <izz>0.166667</izz>
           </inertia>
-          <pose frame=''>0 0 0 0 -0 0</pose>
+          <pose frame=''>9.5 0 0.5 0 0 0</pose>
         </inertial>
         <collision name='collision'>
           <geometry>
@@ -195,9 +195,9 @@
         <kinematic>0</kinematic>
       </link>
     </model>
-    <model name='wall2'>
+    <model name='wall_2'>
       <static>1</static>
-      <pose frame=''>-0.638992 -3.03536 0.5 0 -0 0</pose>
+      <pose frame=''>0 -9.5 0.5 0 0 -1.57071</pose>
       <link name='link'>
         <inertial>
           <mass>1</mass>
@@ -209,7 +209,7 @@
             <iyz>0</iyz>
             <izz>0.166667</izz>
           </inertia>
-          <pose frame=''>0 0 0 0 -0 0</pose>
+          <pose frame=''>0 -9.5 0.5 0 0 -1.57071</pose>
         </inertial>
         <collision name='collision'>
           <geometry>
@@ -249,9 +249,9 @@
         <kinematic>0</kinematic>
       </link>
     </model>
-    <model name='wall3'>
+    <model name='wall_3'>
       <static>1</static>
-      <pose frame=''>-0.881147 5.50913 0.5 0 -0 0</pose>
+      <pose frame=''>0 9.5 0.5 0 0 -1.57071</pose>
       <link name='link'>
         <inertial>
           <mass>1</mass>
@@ -263,7 +263,7 @@
             <iyz>0</iyz>
             <izz>0.166667</izz>
           </inertia>
-          <pose frame=''>0 0 0 0 -0 0</pose>
+          <pose frame=''>0 9.5 0.5 0 0 -1.57071</pose>
         </inertial>
         <collision name='collision'>
           <geometry>
@@ -318,7 +318,7 @@
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
-      <model name='wall0'>
+      <model name='wall_0'>
         <pose frame=''>-9.5 0 0.5 0 0 0</pose>
         <scale>1 1 1</scale>
         <link name='link'>
@@ -328,7 +328,7 @@
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
-      <model name='wall1'>
+      <model name='wall_1'>
         <pose frame=''>9.5 0 0.5 0 0 0</pose>
         <scale>1 1 1</scale>
         <link name='link'>
@@ -338,7 +338,7 @@
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
-      <model name='wall2'>
+      <model name='wall_2'>
         <pose frame=''>0 -9.5 0.5 0 0 -1.57071</pose>
         <scale>1 1 1</scale>
         <link name='link'>
@@ -348,7 +348,7 @@
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
-      <model name='wall3'>
+      <model name='wall_3'>
         <pose frame=''>0 9.5 0.5 0 0 -1.57071</pose>
         <scale>1 1 1</scale>
         <link name='link'>
@@ -364,7 +364,7 @@
     </state>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose frame=''>0 0 34.827 3.14159 1.57079 3.14159</pose>
+        <pose frame=''>0 0 35 -1.57071 1.57071 0</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
