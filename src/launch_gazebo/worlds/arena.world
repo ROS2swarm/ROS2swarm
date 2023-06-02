@@ -100,7 +100,7 @@
         <collision name='collision'>
           <geometry>
             <box>
-              <size>1 0.999997 1</size>
+              <size>1 10 1</size>
             </box>
           </geometry>
           <max_contacts>10</max_contacts>
@@ -120,7 +120,7 @@
         <visual name='visual'>
           <geometry>
             <box>
-              <size>1 0.999997 1</size>
+              <size>1 10 1</size>
             </box>
           </geometry>
           <material>
@@ -138,60 +138,6 @@
     <model name='unit_box_clone'>
       <static>1</static>
       <pose frame=''>5.48201 -0.504041 0.5 0 -0 0</pose>
-      <link name='link'>
-        <inertial>
-          <mass>1</mass>
-          <inertia>
-            <ixx>0.166667</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>0.166667</iyy>
-            <iyz>0</iyz>
-            <izz>0.166667</izz>
-          </inertia>
-          <pose frame=''>0 0 0 0 -0 0</pose>
-        </inertial>
-        <collision name='collision'>
-          <geometry>
-            <box>
-              <size>1 8.9713 1</size>
-            </box>
-          </geometry>
-          <max_contacts>10</max_contacts>
-          <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-            <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
-            </friction>
-          </surface>
-        </collision>
-        <visual name='visual'>
-          <geometry>
-            <box>
-              <size>1 8.9713 1</size>
-            </box>
-          </geometry>
-          <material>
-            <script>
-              <name>Gazebo/FlatBlack</name>
-              <uri>file://media/materials/scripts/gazebo.material</uri>
-            </script>
-          </material>
-        </visual>
-        <self_collide>0</self_collide>
-        <enable_wind>0</enable_wind>
-        <kinematic>0</kinematic>
-      </link>
-    </model>
-    <model name='unit_box_clone_clone'>
-      <static>1</static>
-      <pose frame=''>-0.638992 -3.03536 0.5 0 -0 0</pose>
       <link name='link'>
         <inertial>
           <mass>1</mass>
@@ -228,7 +174,61 @@
         <visual name='visual'>
           <geometry>
             <box>
-              <size>1 8.9713 1</size>
+              <size>1 10 1</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/FlatBlack</name>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+    </model>
+    <model name='unit_box_clone_clone'>
+      <static>1</static>
+      <pose frame=''>-0.638992 -3.03536 0.5 0 0 0</pose>
+      <link name='link'>
+        <inertial>
+          <mass>1</mass>
+          <inertia>
+            <ixx>0.166667</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.166667</iyy>
+            <iyz>0</iyz>
+            <izz>0.166667</izz>
+          </inertia>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>1 8 1</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <box>
+              <size>1 8 1</size>
             </box>
           </geometry>
           <material>
@@ -262,7 +262,7 @@
         <collision name='collision'>
           <geometry>
             <box>
-              <size>1 8.9713 1</size>
+              <size>1 8 1</size>
             </box>
           </geometry>
           <max_contacts>10</max_contacts>
@@ -282,7 +282,7 @@
         <visual name='visual'>
           <geometry>
             <box>
-              <size>1 8.9713 1</size>
+              <size>1 8 1</size>
             </box>
           </geometry>
           <material>
@@ -313,40 +313,40 @@
         </link>
       </model>
       <model name='unit_box'>
-        <pose frame=''>-4.57146 -0.016405 0.472601 0.006119 2.1e-05 -0.003317</pose>
-        <scale>1 8.97133 1</scale>
+        <pose frame=''>-4.5 0 0.5 0 0 0</pose>
+        <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>-4.57146 -0.016405 0.472601 0.006119 2.1e-05 -0.003317</pose>
+          <pose frame=''>-4.5 -0.0 0.5 0 0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='unit_box_clone'>
-        <pose frame=''>4.59449 0.349026 0.472594 -0.006121 -2.2e-05 0.001897</pose>
+        <pose frame=''>4.5 0.0 0.5 0 0 0</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>4.59449 0.349026 0.472594 -0.006121 -2.2e-05 0.001897</pose>
+          <pose frame=''>4.5 0 0.5 0 0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='unit_box_clone_clone'>
-        <pose frame=''>-0.059281 -4.582 0.472603 -0.006119 -2.3e-05 -1.5749</pose>
+        <pose frame=''>0 -4.5 0.5 0 0 -1.57071</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>-0.059281 -4.582 0.472603 -0.006119 -2.3e-05 -1.5749</pose>
+          <pose frame=''>0 -4.5 0.5 0 0 -1.57071</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='unit_box_clone_clone_0'>
-        <pose frame=''>-0.11265 4.59642 0.472594 0.00612 -1.9e-05 -1.56848</pose>
+        <pose frame=''>0 4.5 0.472594 0 0 -1.57071</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>-0.11265 4.59642 0.472594 0.00612 -1.9e-05 -1.56848</pose>
+          <pose frame=''>0 4.5 0.5 0 0 -1.57071</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
