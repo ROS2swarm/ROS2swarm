@@ -250,7 +250,7 @@ def generate_launch_description():
                 [launch_bringup_dir, '/' + 'bringup_patterns.launch.py']),
                  launch_arguments={'robot': robot,
                               'robot_type': robot_type,
-			                  'sensor_type': sensor_type,
+			                        'sensor_type': sensor_type,
                               'robot_namespace': ['robot_', str(i)],
                               'sensor_type': sensor_type, 
                               'pattern': pattern_path,
