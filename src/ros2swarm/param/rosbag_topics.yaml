@@ -14,4 +14,4 @@
 - 'scan_delay'
 - 'nav/cell'
 - 'nav/plan'
-- 'scan'
+- 'odom'
