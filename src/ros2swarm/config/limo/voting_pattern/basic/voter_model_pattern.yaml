@@ -1,0 +1,7 @@
+/**:
+  ros__parameters:
+    voter_model_choose_start_value_at_random: true
+    voter_model_initial_value: 0 # voting_model_choose_start_value_at_random is False use this value
+    voter_model_min_opinion: 0 # [voter_model_min_opinion,voter_model_max_opinion)
+    voter_model_max_opinion: 5 # [voter_model_min_opinion,voter_model_max_opinion)
+    voter_model_timer_period: 2.0 # in sec

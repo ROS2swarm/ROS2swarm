@@ -41,14 +41,14 @@ class VoterModelWithLimiterPattern(VotingPattern):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('voter_model_with_limiter_number_of_near_robots', None),
-                ('voter_model_with_limiter_initial_value', None),
-                ('voter_model_with_limiter_choose_start_value_at_random', None),
-                ('voter_model_with_limiter_min_opinion', None),
-                ('voter_model_with_limiter_max_opinion', None),
-                ('voter_model_with_limiter_timer_period', None),
-                ('voter_model_with_limiter_required_dDm_to_be_near', None),
-                ('voter_model_with_limiter_wifi_interface_name', None),
+                ('voter_model_with_limiter_number_of_near_robots', 0),
+                ('voter_model_with_limiter_initial_value', 0),
+                ('voter_model_with_limiter_choose_start_value_at_random', True),
+                ('voter_model_with_limiter_min_opinion', 0),
+                ('voter_model_with_limiter_max_opinion', 0),
+                ('voter_model_with_limiter_timer_period', 0.0),
+                ('voter_model_with_limiter_required_dDm_to_be_near', 0),
+                ('voter_model_with_limiter_wifi_interface_name', ''),
             ])
 
         self.param_number_of_near_robots = self.get_parameter(

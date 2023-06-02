@@ -39,14 +39,14 @@ class MagnetometerPattern(MovementPattern):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('magnetometer_target_direction_x', None),
-                ('magnetometer_front_attraction', None),
-                ('magnetometer_stop_when_target_direction_reached', None),
-                ('magnetometer_allowed_delta_in_target_direction', None),
-                ('magnetometer_rotational_velocity', None),
-                ('max_translational_velocity', None),
-                ('max_rotational_velocity', None),
-                ('lidar_config', None)
+                ('magnetometer_target_direction_x', 0.0),
+                ('magnetometer_front_attraction', 0.0),
+                ('magnetometer_stop_when_target_direction_reached', False),
+                ('magnetometer_allowed_delta_in_target_direction', 0.0),
+                ('magnetometer_rotational_velocity', 0.0),
+                ('max_translational_velocity', 0.0),
+                ('max_rotational_velocity', 0.0),
+                ('lidar_config', 3)
             ])
 
         self.magnetometer_subscription = self.create_subscription(

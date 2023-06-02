@@ -46,10 +46,10 @@ class IRLayer(Node):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('angles', None),
-                ('range_topics', None),
-                ('max_range', None),
-                ('min_range', None),
+                ('angles', [0.0]),
+                ('range_topics', ['']),
+                ('max_range', 0.0),
+                ('min_range', 0.0),
             ])
             
         # get the parameter values from sensor_specifications file

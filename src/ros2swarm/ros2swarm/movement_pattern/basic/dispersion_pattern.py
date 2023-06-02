@@ -37,15 +37,15 @@ class DispersionPattern(MovementPattern):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('dispersion_max_range', None),
-                ('dispersion_min_range', None),
-                ('dispersion_front_attraction', None),
-                ('dispersion_threshold', None),
-                ('dispersion_linear_if_alone', None),
-                ('dispersion_angular_if_alone', None),
+                ('dispersion_max_range', 0.0),
+                ('dispersion_min_range', 0.0),
+                ('dispersion_front_attraction', 0.0),
+                ('dispersion_threshold', 0),
+                ('dispersion_linear_if_alone', 0.0),
+                ('dispersion_angular_if_alone', 0.0),
                 ('dispersion_allow_dynamic_max_range_setting', False),
-                ('max_translational_velocity', None),
-                ('max_rotational_velocity', None)
+                ('max_translational_velocity', 0.0),
+                ('max_rotational_velocity', 0.0)
             ])
 
         self.range_data_subscription = self.create_subscription(

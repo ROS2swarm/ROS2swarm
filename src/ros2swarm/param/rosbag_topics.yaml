@@ -1,0 +1,17 @@
+# for topics without namespace, WITH leading slash
+- '/clock'
+- '/tf'
+- '/command'
+- '/plan'
+- '/ground_truth'
+# for namespaced topics, WITHOUT leading slash
+- 'tf'
+- 'status'
+- 'amcl_pose'
+- 'cmd_vel'
+- 'scan'
+- 'nav/desired'
+- 'scan_delay'
+- 'nav/cell'
+- 'nav/plan'
+- 'odom'

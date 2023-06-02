@@ -67,6 +67,16 @@ setup(
          glob('config/thymio/movement_pattern/combined/*.yaml')),
         (os.path.join('share', package_name, 'config', 'thymio', 'voting_pattern', 'basic'),
          glob('config/thymio/voting_pattern/basic/*.yaml')),
+         
+        (os.path.join('share', package_name, 'config', 'limo'), glob('config/limo/*.yaml')),
+        (os.path.join('share', package_name, 'config', 'limo', 'movement_pattern'),
+         glob('config/limo/movement_pattern/*.yaml')),
+        (os.path.join('share', package_name, 'config', 'limo', 'movement_pattern', 'basic'),
+         glob('config/limo/movement_pattern/basic/*.yaml')),
+        (os.path.join('limo', package_name, 'config', 'limo', 'movement_pattern', 'combined'),
+         glob('config/limo/movement_pattern/combined/*.yaml')),
+        (os.path.join('share', package_name, 'config', 'limo', 'voting_pattern', 'basic'),
+         glob('config/limo/voting_pattern/basic/*.yaml')),
 
         (os.path.join('share', package_name, 'param'), glob('param/*.yaml')),
     ],
