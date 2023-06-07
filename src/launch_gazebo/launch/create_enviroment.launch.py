@@ -33,6 +33,7 @@ def generate_launch_description():
     launch_pattern_dir = os.path.join(get_package_share_directory('ros2swarm'), 'launch', 'pattern')
     launch_bringup_dir = os.path.join(get_package_share_directory('ros2swarm'))
     map_file = 'default.yaml' 
+    robot_file = os.path.join(get_package_share_directory('ros2swarm'), 'param', 'ROS2swarm_sim.yaml')
     
     ld = LaunchDescription()
     
@@ -63,7 +64,6 @@ def generate_launch_description():
             driving_swarm = arg.split(":=")[1]
             
             if driving_swarm == 'True':
-                robot_file = os.path.join(get_package_share_directory('ros2swarm'), 'param', 'ROS2swarm_sim.yaml')
                 yaml_file = gazebo_world[:-6] + '.yaml' 
                 map_file = os.path.join(launch_file_dir, 'maps', yaml_file)
         elif arg.startswith("logging:="):  # log data in rosbag 
