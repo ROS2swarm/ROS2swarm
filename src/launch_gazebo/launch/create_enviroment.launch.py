@@ -32,10 +32,7 @@ def generate_launch_description():
     launch_file_dir = os.path.join(get_package_share_directory('launch_gazebo'))
     launch_pattern_dir = os.path.join(get_package_share_directory('ros2swarm'), 'launch', 'pattern')
     launch_bringup_dir = os.path.join(get_package_share_directory('ros2swarm'))
-    # driving swarm 
-    robot_file = os.path.join(get_package_share_directory('ros2swarm'), 'param', 'ROS2swarm_sim.yaml')
-    map_file = os.path.join(launch_file_dir, 'maps', 'default.yaml') 
-    tf_exchange_dir = get_package_share_directory('tf_exchange')
+    map_file = 'default.yaml' 
     
     ld = LaunchDescription()
     
@@ -66,7 +63,7 @@ def generate_launch_description():
             driving_swarm = arg.split(":=")[1]
             
             if driving_swarm == 'True':
-                # map file for driving swarm 
+                robot_file = os.path.join(get_package_share_directory('ros2swarm'), 'param', 'ROS2swarm_sim.yaml')
                 yaml_file = gazebo_world[:-6] + '.yaml' 
                 map_file = os.path.join(launch_file_dir, 'maps', yaml_file)
         elif arg.startswith("logging:="):  # log data in rosbag 
@@ -192,7 +189,7 @@ def generate_launch_description():
                 # DRIVING SWARM 
                 tf_exchange = IncludeLaunchDescription(
 		        PythonLaunchDescriptionSource(
-		            os.path.join(tf_exchange_dir, 'launch', 'tf_exchange.launch.py')),
+		            os.path.join(get_package_share_directory('tf_exchange'), 'launch', 'tf_exchange.launch.py')),
 		            launch_arguments={
 		            'namespace': ['robot_', str(i)],
 		            'robot_name': ['robot_', str(i)],

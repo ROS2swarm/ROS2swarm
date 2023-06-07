@@ -38,12 +38,8 @@ def generate_launch_description():
     local_map = LaunchConfiguration('map')
     
     # driving swarm 
-    tf_exchange_dir = get_package_share_directory('tf_exchange')
-    nav2_dir = get_package_share_directory('nav2_bringup')
     slam = LaunchConfiguration('slam', default='False')
     autostart = 'True'
-    bringup_dir = get_package_share_directory('driving_swarm_bringup')
-
     params_file = LaunchConfiguration('params_file', default=os.path.join(get_package_share_directory('ros2swarm'), 'params', 'nav2_params_waffle_pi_namespaced.yaml'))
 
     ld = LaunchDescription()
@@ -111,7 +107,7 @@ def generate_launch_description():
   	            
 
         IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(os.path.join(nav2_dir, 'launch',
+            PythonLaunchDescriptionSource(os.path.join(get_package_share_directory('nav2_bringup'), 'launch',
                                                   'localization_launch.py')),
             condition=LaunchConfigurationEquals('driving_swarm', 'True'),
             launch_arguments={'namespace': robot_namespace,
