@@ -14,6 +14,8 @@
 from rclpy.node import Node
 from communication_interfaces.msg import Int8Message
 from ros2swarm.utils.swarm_controll import SwarmState
+from std_msgs.msg import String
+import rclpy 
 
 
 class AbstractPattern(Node):
@@ -28,6 +30,14 @@ class AbstractPattern(Node):
         self.swarm_command_subscription = \
             self.create_subscription(Int8Message, '/swarm_command',
                                      self.swarm_command_callback, 10)
+                                     
+        qos_profile = rclpy.qos.qos_profile_system_default
+        qos_profile.reliability = rclpy.qos.QoSReliabilityPolicy\
+            .RMW_QOS_POLICY_RELIABILITY_RELIABLE
+        qos_profile.durability = rclpy.qos.QoSDurabilityPolicy\
+            .RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL
+        
+        self.status_publisher = self.create_publisher(String, 'status', qos_profile)
 
     def swarm_command_callback(self, msg: Int8Message):
         """
@@ -41,9 +51,12 @@ class AbstractPattern(Node):
         self.get_logger().debug('Robot "{}" received command "{}"'.format(self.get_namespace(), msg.data))
         if msg.data == int(SwarmState.START):
             self.start_flag = True
+            self.status_publisher.publish(String(data='ready'))
+
         if msg.data == int(SwarmState.STOP):
             self.start_flag = False
-
+            self.status_publisher.publish(String(data='done'))
+      
     def swarm_command_controlled(self, callback_func):
         """
         The callback function is only called if the start flag is set to true, which is done by publishing

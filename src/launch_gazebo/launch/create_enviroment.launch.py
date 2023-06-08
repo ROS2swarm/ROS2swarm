@@ -34,6 +34,8 @@ def generate_launch_description():
     launch_bringup_dir = os.path.join(get_package_share_directory('ros2swarm'))
     map_file = 'default.yaml' 
     robot_file = os.path.join(get_package_share_directory('ros2swarm'), 'param', 'ROS2swarm_sim.yaml')
+    run_timeout = 5.0 
+    init_timeout = 0.0 
     
     ld = LaunchDescription()
     
@@ -60,6 +62,15 @@ def generate_launch_description():
             y_start = float(arg.split(":=")[1])
         elif arg.startswith("y_dist:="):  # increment of positions on y-axis 
             y_dist = float(arg.split(":=")[1])
+        elif arg.startswith("gui:="):  # GUI or no GUI 
+            if arg.split(":=")[1]: 
+                simulator = 'gazebo'
+            else: 
+                simulator = 'gzserver'
+        elif arg.startswith("run_timeout:="):  # duration of experiment
+            run_timeout = float(arg.split(":=")[1])
+        elif arg.startswith("init_timeout:="):  # timeout before experiment start
+            init_timeout = float(arg.split(":=")[1])
         elif arg.startswith("driving_swarm:="):  # use driving swarm framework 
             driving_swarm = arg.split(":=")[1]
             
@@ -133,7 +144,8 @@ def generate_launch_description():
         # Add gazebo start script
         gazebo_start = IncludeLaunchDescription(
             PythonLaunchDescriptionSource([launch_file_dir, '/start_gazebo.launch.py']),
-            launch_arguments={'world_name': world_file_name}.items(),
+            launch_arguments={'world_name': world_file_name,
+                              'simulator': simulator}.items(),
         )
         ld.add_action(gazebo_start)
         
@@ -145,26 +157,25 @@ def generate_launch_description():
                           }])
         ld.add_action(state_node)
         
+        
         # driving swarm 
-        if driving_swarm == 'True': 
-            run_timeout = LaunchConfiguration('run_timeout', default=5)
-            init_timeout = LaunchConfiguration('init_timeout', default=0)
+        if driving_swarm == 'True' or logging=='True': 
         
             command_node = Node(package="experiment_supervisor",
-                        executable="command_node",
-                        output="screen",
-                        parameters=[{
-                           'use_sim_time': True,
-                           'run_timeout': run_timeout,
-                           'init_timeout': init_timeout,
-                           'robots': ['robot_' + str(i) for i in range(number_robots)],
-                           }])
+                                executable="command_node",
+                                output="screen",
+                                parameters=[{
+                                    'use_sim_time': True,
+                                    'run_timeout': run_timeout,
+                                    'init_timeout': init_timeout,
+                                    'robots': ['robot_' + str(i) for i in range(number_robots)],
+                               }])
 
             exit_event_handler = RegisterEventHandler(event_handler=OnProcessExit(
                                                       target_action=command_node,
                                                       on_exit=EmitEvent(event=Shutdown(reason="command node exited"))
                                                       )
-                                                  )
+                                                     )
             ld.add_action(command_node)
             ld.add_action(exit_event_handler)
 
@@ -200,7 +211,7 @@ def generate_launch_description():
             
             
             # add gazebo node
-            gazebo_node = launch_ros.actions.Node(
+            gazebo_node = Node(
                 package='launch_gazebo',
                 executable='add_bot_node',
                 namespace=['namespace_', str(i)],

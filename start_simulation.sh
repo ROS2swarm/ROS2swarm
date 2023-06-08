@@ -15,19 +15,24 @@
 colcon build --symlink-install --allow-overriding communication_interfaces launch_gazebo ros2swarm&&
 source ./install/setup.bash &&
  ROS_DOMAIN_ID=42 ros2 launch launch_gazebo create_enviroment.launch.py \
- gazebo_world:=arena_large.world \
+ gazebo_world:=two_rooms.world \
  pattern:=drive_pattern \
- number_robots:=4 \
- total_robots:=4 \
+ number_robots:=3 \
+ total_robots:=3 \
  log_level:=info \
  robot:=burger \
  sensor_type:=lidar \
- x_start:=0.0 \
- x_dist:=0.0 \
- y_start:=0.0 \
+ x_start:=-3.5 \
+ x_dist:=1.0 \
+ y_start:=-2 \
  y_dist:=1.0 \
  driving_swarm:=False \
- logging:=True 
+ logging:=True \
+ run_timeout:=30.0 \
+ init_timeout:=0.0 \
+ gui:=true 
+ 
+ 
 
  
 # to add heterogeneous swarm / robots  
@@ -60,4 +65,9 @@ source ./install/setup.bash &&
 # robot: burger | waffle_pi | jackal | thymio
 # sensor_type: lidar | ir | ir_tf
 # driving_swarm: true | false - use driving swarm framework by OVGU Magdeburg
+# logging: true | false - create rosbag or not 
+
+# simulator
+# gazebo - with GUI
+# gzserver - without GUI 
 

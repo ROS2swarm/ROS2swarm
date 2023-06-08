@@ -27,21 +27,17 @@ def generate_launch_description():
 
     world_name = LaunchConfiguration('world_name', default='arena_large.world')
     world_directory = os.path.join(get_package_share_directory('launch_gazebo'), 'worlds')
+    simulator = LaunchConfiguration('simulator') 
     #use_sim_time = LaunchConfiguration('use_sim_time', default='True')
 
     return LaunchDescription([
-        DeclareLaunchArgument('world_name', description='The name of the world to load, default: turtle.world'),
+        DeclareLaunchArgument('world_name', description='The name of the world to load'),
+        DeclareLaunchArgument('simulator', default_value='gazebo', description='Simulator with or without GUI'), 
          
         ExecuteProcess(
             # To start in paused mode add: '--pause'
-            cmd=['gazebo', [world_directory, '/', world_name], '-s', 'libgazebo_ros_factory.so', '-s', 'libgazebo_ros_init.so'],
-            #cmd=['gazebo', '--verbose', [world_directory, '/', world_name], '-s', 'libgazebo_ros_factory.so'],
+            cmd=[simulator, [world_directory, '/', world_name], '-s', 'libgazebo_ros_factory.so', '-s', 'libgazebo_ros_init.so'],
             output='screen'
         ),
 
-        # died eventually at startup
-        #ExecuteProcess(
-        #   cmd=['ros2', 'param', 'set', '/gazebo', 'use_sim_time', use_sim_time],
-        #   output='screen'
-        # ),
     ])
