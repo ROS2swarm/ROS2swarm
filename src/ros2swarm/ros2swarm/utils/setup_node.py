@@ -23,6 +23,10 @@ def init_and_spin(args, pattern_node):
     :param pattern_node: the pattern node constructor as function
     """
     rclpy.init(args=args)
-    rclpy.spin(pattern_node())
-    pattern_node.destroy_node()
-    rclpy.shutdown()
+    
+    try:
+        node = pattern_node()
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        node.destroy_node()
+        rclpy.shutdown()

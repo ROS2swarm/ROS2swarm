@@ -25,6 +25,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch_ros.substitutions import FindPackageShare
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
+from datetime import datetime 
 
 def generate_launch_description():
     """Creates the environment with gazebo, add robots and starts their behaviour"""
@@ -34,8 +35,9 @@ def generate_launch_description():
     launch_bringup_dir = os.path.join(get_package_share_directory('ros2swarm'))
     map_file = 'default.yaml' 
     robot_file = os.path.join(get_package_share_directory('ros2swarm'), 'param', 'ROS2swarm_sim.yaml')
-    run_timeout = 5.0 
-    init_timeout = 0.0 
+    run_timeout = 0.0 
+    init_timeout = 0.0
+    logging_output_dir = None 
     
     ld = LaunchDescription()
     
@@ -62,6 +64,8 @@ def generate_launch_description():
             y_start = float(arg.split(":=")[1])
         elif arg.startswith("y_dist:="):  # increment of positions on y-axis 
             y_dist = float(arg.split(":=")[1])
+        elif arg.startswith("logging_output_dir:="):  # increment of positions on y-axis 
+            logging_output_dir = arg.split(":=")[1]
         elif arg.startswith("gui:="):  # GUI or no GUI 
             if arg.split(":=")[1]: 
                 simulator = 'gazebo'
@@ -87,6 +91,9 @@ def generate_launch_description():
                 print("Argument not known: '", arg, "'")
 
     world_file_name = gazebo_world
+    
+    if logging_output_dir == None:             
+        logging_output_dir = str(gazebo_world[:-6]) + '_' + str(total_robots) + '_' + str(pattern[:-8]) + '_' + str(x_start) + '_' + str(y_start) + '_' + str(x_dist) + '_' + str(y_dist) + '_'  + datetime.utcnow().strftime('%Y-%m-%d_%H:%M:%S') 
 
 
     print("---------------------------------------")
@@ -287,6 +294,7 @@ def generate_launch_description():
                               'use_rosbag': 'True',
                               'rosbag_topics_file': os.path.join(get_package_share_directory('ros2swarm'), 'param', 'rosbag_topics.yaml'), 
                               'qos_override_file': os.path.join(get_package_share_directory('experiment_measurement'), 'params', 'qos_override.yaml'),
+                              'rosbag_output_dir': logging_output_dir, 
                              }.items()
         )
     
