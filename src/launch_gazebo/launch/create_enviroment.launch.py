@@ -46,8 +46,10 @@ def generate_launch_description():
             gazebo_world = arg.split(":=")[1]        
         elif arg.startswith("number_robots:="):  # The number of robots to spawn in the world
             number_robots = int(arg.split(":=")[1])
+            total_robots = number_robots 
         elif arg.startswith("total_robots:="):  # The number of robots to spawn in the world
-            total_robots = int(arg.split(":=")[1])
+            if int(arg.split(":=")[1]) > 0:
+                total_robots = int(arg.split(":=")[1])
         elif arg.startswith("pattern:="):  # The pattern executed by the robots
             pattern = arg.split(":=")[1]
         elif arg.startswith("log_level:="):  # The log level used in this execution
