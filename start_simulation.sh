@@ -28,9 +28,9 @@ source ./install/setup.bash &&
  y_dist:=1.0 \
  driving_swarm:=False \
  logging:=True \
- run_timeout:=10.0 \
+ run_timeout:=5.0 \
  init_timeout:=0.0 \
- gui:=true 
+ gui:=true
 
  
 # to add heterogeneous swarm / robots  

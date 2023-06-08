@@ -130,7 +130,11 @@ def main():
     request.initial_pose.position.x = float(args.x)
     request.initial_pose.position.y = float(args.y)
     request.initial_pose.position.z = float(args.z)
-
+    request.initial_pose.orientation.x = 0.0 
+    request.initial_pose.orientation.y = 0.0
+    request.initial_pose.orientation.z = 0.0
+    request.initial_pose.orientation.w = 1.0
+        
     node.get_logger().debug("Sending service request to `/spawn_entity`")
     future = client.call_async(request)
     rclpy.spin_until_future_complete(node, future)
