@@ -1,5 +1,11 @@
 <sdf version='1.6'>
   <world name='default'>
+    <plugin name="gazebo_ros_state" filename="libgazebo_ros_state.so">
+       <ros>
+       <namespace>/gazebo</namespace>
+       </ros>
+       <update_rate>1.0</update_rate>
+    </plugin>
     <light name='sun' type='directional'>
       <cast_shadows>1</cast_shadows>
       <pose frame=''>0 0 10 0 -0 0</pose>
@@ -676,7 +682,7 @@
     </state>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose frame=''>-3.46932 -0.546786 11.8085 0 1.18364 -0.079805</pose>
+        <pose frame=''>0 0 35 -1.57071 1.57071 0</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
