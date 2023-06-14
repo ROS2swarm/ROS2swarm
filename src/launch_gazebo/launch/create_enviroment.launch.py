@@ -95,7 +95,7 @@ def generate_launch_description():
     world_file_name = gazebo_world
     
     if logging_output_dir == None:             
-        logging_output_dir = str(gazebo_world[:-6]).replace("_", "-") + '_' + str(total_robots) + '_' + str(pattern[:-8]).replace("_", "-") + '_' + str(x_start) + '_' + str(y_start) + '_' + str(x_dist) + '_' + str(y_dist) + '_'  + datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S') 
+        logging_output_dir = str(gazebo_world[:-6]).replace("_", "-") + '_' + str(total_robots) + '_' + str(robot) + '_' + str(pattern[:-8]).replace("_", "-") + '_' + str(x_start) + '_' + str(y_start) + '_' + str(x_dist) + '_' + str(y_dist) + '_'  + datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S') 
 
 
     print("---------------------------------------")
