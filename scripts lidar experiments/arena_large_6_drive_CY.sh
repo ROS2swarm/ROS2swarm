@@ -20,14 +20,21 @@ ROS_DOMAIN_ID=42 ros2 launch launch_gazebo create_enviroment.launch.py \
  number_robots:=6 \
  total_robots:=6 \
  log_level:=info \
- robot:=burger \
+ robot:=waffle_pi \
  sensor_type:=lidar \
  x_start:=-0.0 \
  x_dist:=0.0 \
  y_start:=-2.5 \
  y_dist:=1.0 \
  driving_swarm:=False \
- logging:=True 
+ logging:=True  \
+ run_timeout:=60.0 \
+ init_timeout:=0.0 \
+ gui:=true &
+ 
+ sleep 5
+ 
+ROS_DOMAIN_ID=42 ros2 topic pub --once /swarm_command communication_interfaces/msg/Int8Message "{data: 1}"
 
  
 # to add heterogeneous swarm / robots  
