@@ -145,9 +145,11 @@ def generate_launch_description():
 
 
     for i in range(number_robots):
+
+        num = i + start_index        
         
         if driving_swarm == 'True': 
-            num = i + start_index
+
                 
             rviz_config_file = LaunchConfiguration('rviz_config_file', default=os.path.join(get_package_share_directory('driving_swarm_bringup'), 'rviz', 'custom.rviz'))
                 
