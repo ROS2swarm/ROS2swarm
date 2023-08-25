@@ -34,7 +34,7 @@ def generate_launch_description():
     robot_type = LaunchConfiguration('robot_type', default='robot_type_default')
     sensor_type = LaunchConfiguration('sensor_type', default='sensor_type_default')
     use_sim_time = LaunchConfiguration('use_sim_time', default='True')
-    driving_swarm = LaunchConfiguration('driving_swarm', default='True')
+    driving_swarm = LaunchConfiguration('driving_swarm', default='False')
     local_map = LaunchConfiguration('map')
     
     # driving swarm 
