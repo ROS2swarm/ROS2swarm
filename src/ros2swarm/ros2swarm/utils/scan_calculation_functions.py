@@ -58,12 +58,8 @@ class ScanCalculationFunctions:
     	:param mask: mask 
     	:return: the ranges with unrelevant values set to 0.0
     	"""
-
-        # ToDo update with numpy multipy version
-
-        ranges = [ranges[i] * mask[i] if ranges is not math.isinf(ranges[i]) else ranges[i] for i in range(0, len(ranges))]
-
-        return ranges
+        
+        return np.multiply(ranges, mask).tolist()
 
     @staticmethod
     def adjust_ranges(ranges, min_range, max_range):
@@ -300,12 +296,12 @@ class ScanCalculationFunctions:
         """
 
         ranges = ScanCalculationFunctions.adjust_ranges(sensor_ranges, min_range, max_range)
+        
 
         if masking:
             ranges = ScanCalculationFunctions.mask_ranges(ranges, mask)
 
         if masking:
-            # ToDo if mask is 0 --> obstacle free set to True
             obstacle_free = True if sum(mask) == 0.0 else False
         else:
             obstacle_free = ScanCalculationFunctions.is_obstacle_free(max_range, ranges, threshold)
@@ -317,6 +313,7 @@ class ScanCalculationFunctions:
         vector = ScanCalculationFunctions.calculate_vector_normed(flipped_front_attraction, ranges,
                                                                   angles)
         vector = ScanCalculationFunctions.flip_vector(vector)
+        
         direction = ScanCalculationFunctions.create_normed_twist_message(
             vector,
             max_translational_velocity,

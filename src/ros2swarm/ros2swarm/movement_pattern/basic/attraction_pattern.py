@@ -109,7 +109,7 @@ class AttractionPattern(MovementPattern):
             ranges = torch.tensor(ranges).view(1, 1, 360)
             out = self.model(ranges).tolist()
 
-            self.mask = [1.0 if out[0][1][i] < out[0][0][i] else 0.0 for i in range(0, len(out[0][0]))]
+            self.mask = [1.0 if out[0][1][i] > out[0][0][i] else 0.0 for i in range(0, len(out[0][0]))]
 
         direction, alone = ScanCalculationFunctions.repulsion_field(
             self.param_front_attraction,
