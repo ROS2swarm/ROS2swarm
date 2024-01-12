@@ -13,18 +13,16 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 import math
-import yaml
-import torch
 import numpy as np
-from easydict import EasyDict
+import torch 
 from geometry_msgs.msg import Twist
 from ros2swarm.utils import setup_node
 from communication_interfaces.msg import RangeData
 from rclpy.qos import qos_profile_sensor_data
 from ros2swarm.movement_pattern.movement_pattern import MovementPattern
 from ros2swarm.utils.scan_calculation_functions import ScanCalculationFunctions
-from ros2swarm.utils.model import SimpleModel
-from ament_index_python.packages import get_package_share_directory
+from ros2swarm.utils.kin_detection_functions import KinDetectionFunctions
+
 
 
 class AttractionPattern(MovementPattern):
@@ -81,13 +79,8 @@ class AttractionPattern(MovementPattern):
 
         if self.masking:
             # load pytorch model (pretrained)
-            with open(get_package_share_directory('ros2swarm') + '/kin_detection_models/kin_detection_config.yaml',
-                      'r') as f:
-                config = EasyDict(yaml.load(f, Loader=yaml.FullLoader))
+            self.model = KinDetectionFunctions.load_model() 
 
-            self.model = SimpleModel(config.model)
-            self.model.load_state_dict(torch.load(get_package_share_directory('ros2swarm') + '/kin_detection_models'
-                                                                                             '/simple_10.pth')['model'])
 
         self.direction_if_alone = Twist()
         self.direction_if_alone.linear.x = self.param_linear_if_alone
@@ -104,12 +97,7 @@ class AttractionPattern(MovementPattern):
             return Twist()
 
         if self.masking:
-            # input vector
-            ranges = [3.6 if math.isinf(el) else el for el in current_msg.ranges]
-            ranges = torch.tensor(ranges).view(1, 1, 360)
-            out = self.model(ranges).tolist()
-
-            self.mask = [1.0 if out[0][1][i] > out[0][0][i] else 0.0 for i in range(0, len(out[0][0]))]
+            self.mask = KinDetectionFunctions.propagate_input(current_msg.ranges, 3.6, self.model)
 
         direction, alone = ScanCalculationFunctions.repulsion_field(
             self.param_front_attraction,

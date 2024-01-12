@@ -176,11 +176,7 @@ class ScanCalculationFunctions:
         if masking:
             ranges = ScanCalculationFunctions.mask_ranges(ranges, mask)
 
-        if masking:
-            # ToDo if mask is 0 --> obstacle free set to True
-            obstacle_free = True
-        else:
-            obstacle_free = ScanCalculationFunctions.is_obstacle_free(max_range, ranges, threshold)
+        obstacle_free = ScanCalculationFunctions.is_obstacle_free(max_range, ranges, threshold)
 
         ranges = ScanCalculationFunctions.linear_rating(ranges, max_range)
 
@@ -250,7 +246,7 @@ class ScanCalculationFunctions:
     @staticmethod
     def attraction_field(front_attraction, max_range, max_rotational_velocity,
                          max_translational_velocity, min_range, threshold, sensor_ranges, angles,
-                         masking=False, mask=[]):
+                         masking=False, mask=None):
         """
         Create a potential field based on the given range data message and the other parameters.
 
@@ -259,10 +255,11 @@ class ScanCalculationFunctions:
         The nearest range is __most__ important.
         """
 
-        if masking:
-            sensor_ranges = ScanCalculationFunctions.mask_ranges(sensor_ranges, mask)
-
         ranges = ScanCalculationFunctions.adjust_ranges(sensor_ranges, min_range, max_range)
+
+        if masking:
+            ranges = ScanCalculationFunctions.mask_ranges(ranges, mask)
+
         obstacle_free = ScanCalculationFunctions.is_obstacle_free(max_range, ranges, threshold)
 
         ranges = ScanCalculationFunctions.linear_rating(ranges, max_range)
@@ -286,7 +283,7 @@ class ScanCalculationFunctions:
     @staticmethod
     def repulsion_field(front_attraction, max_range, max_rotational_velocity,
                         max_translational_velocity, min_range, threshold, sensor_ranges, angles,
-                        masking=False, mask=[]):
+                        masking=False, mask=None):
         """
         Create a potential field based on the given range data message and the other parameters.
 
@@ -296,15 +293,11 @@ class ScanCalculationFunctions:
         """
 
         ranges = ScanCalculationFunctions.adjust_ranges(sensor_ranges, min_range, max_range)
-        
 
         if masking:
             ranges = ScanCalculationFunctions.mask_ranges(ranges, mask)
 
-        if masking:
-            obstacle_free = True if sum(mask) == 0.0 else False
-        else:
-            obstacle_free = ScanCalculationFunctions.is_obstacle_free(max_range, ranges, threshold)
+        obstacle_free = ScanCalculationFunctions.is_obstacle_free(max_range, ranges, threshold)
 
         ranges = ScanCalculationFunctions.linear_rating2(ranges, max_range)
 
