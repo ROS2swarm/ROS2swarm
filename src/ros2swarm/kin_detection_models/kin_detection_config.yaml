@@ -1,0 +1,21 @@
+dataset : {
+    DATASET_PATH: '/home/tanja/LiDAR Data Set for ML',
+    ARENAS_TRAIN: ['arena-boxes-pillars'],
+    ARENAS_VAL: [ 'arena'],
+    BEHAVIOURS: ['dispersion', 'drive', 'attraction'],
+    ROBOTS: ['burger'],
+    NROBOTS: [3,4,5,6,7,8],
+    DATA_VALID: True
+}
+
+general : {
+    EPOCHS :  100,
+    BATCH_SZ : 64,
+    LR : 0.0001,
+    NUM_DSWORK : 10
+}
+
+model : {
+    NAME : 'simple',
+    LAYERS : [1, 32, 32, 32, 2],
+}
