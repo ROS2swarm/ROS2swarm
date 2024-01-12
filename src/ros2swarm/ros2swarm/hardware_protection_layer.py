@@ -36,6 +36,7 @@ class HardwareProtectionLayer(AbstractPattern):
         """Initialize the node."""
         super().__init__('hardware_protection_layer')
 
+        self.angles = None
         self.declare_parameters(
             namespace='',
             parameters=[
@@ -55,7 +56,7 @@ class HardwareProtectionLayer(AbstractPattern):
 
         self.current_angles = None
         self.current_ranges = None
-        
+
         self.range_data_subscription = self.create_subscription(
             RangeData,
             self.get_namespace() + '/range_data',
@@ -99,13 +100,13 @@ class HardwareProtectionLayer(AbstractPattern):
 
         avoid_distance = self.param_max_range
         direction, obstacle_free = ScanCalculationFunctions.potential_field(self.param_front_attraction,
-                                                     avoid_distance,
-                                                     self.param_max_rotational_velocity,
-                                                     self.param_max_translational_velocity,
-                                                     self.param_min_range,
-                                                     self.param_threshold,
-                                                     self.current_ranges,
-                                                     self.angles)
+                                                                            avoid_distance,
+                                                                            self.param_max_rotational_velocity,
+                                                                            self.param_max_translational_velocity,
+                                                                            self.param_min_range,
+                                                                            self.param_threshold,
+                                                                            self.current_ranges,
+                                                                            self.angles)
         avoid_needed = not obstacle_free
 
         return [avoid_needed, direction]
@@ -135,14 +136,15 @@ class HardwareProtectionLayer(AbstractPattern):
         """
         self.current_ranges = msg.ranges
         self.angles = msg.angles
-        
+
         self.get_logger().debug('heard: "%s"' % msg)
 
         [adjust, direction] = self.vector_calc()
-        
+
         if adjust:
             self.publisher_cmd_vel.publish(direction)
             self.get_logger().debug('Adjusting to"%s"' % direction)
+
 
 def main(args=None):
     setup_node.init_and_spin(args, HardwareProtectionLayer)

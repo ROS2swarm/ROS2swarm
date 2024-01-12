@@ -79,6 +79,9 @@ setup(
          glob('config/limo/voting_pattern/basic/*.yaml')),
 
         (os.path.join('share', package_name, 'param'), glob('param/*.yaml')),
+        
+        (os.path.join('share', package_name, 'kin_detection_models'), glob('kin_detection_models/*.pth')),
+        (os.path.join('share', package_name, 'kin_detection_models'), glob('kin_detection_models/*.yaml')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,

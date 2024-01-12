@@ -49,7 +49,7 @@ class ScanCalculationFunctions:
 
     @staticmethod
     def mask_ranges(ranges, mask):
-    	"""
+        """
     	Multiply ranges with mask to set all ranges that should 
     	not be considered in calculations to 0.0 
     	returns masked ranges 
@@ -58,10 +58,13 @@ class ScanCalculationFunctions:
     	:param mask: mask 
     	:return: the ranges with unrelevant values set to 0.0
     	"""
-   	
-   	return np.multiply(ranges, mask).tolist()
-   	
-    
+
+        # ToDo update with numpy multipy version
+
+        ranges = [ranges[i] * mask[i] if ranges is not math.isinf(ranges[i]) else ranges[i] for i in range(0, len(ranges))]
+
+        return ranges
+
     @staticmethod
     def adjust_ranges(ranges, min_range, max_range):
         """
@@ -76,6 +79,7 @@ class ScanCalculationFunctions:
         """
         ranges = [max_range if x > max_range else x for x in ranges]
         ranges = [0.0 if x < min_range else x for x in ranges]
+
         return ranges
 
     @staticmethod
@@ -163,19 +167,24 @@ class ScanCalculationFunctions:
     @staticmethod
     def potential_field(front_attraction, max_range, max_rotational_velocity,
                         max_translational_velocity,
-                        min_range, threshold, sensor_ranges, angles, masking=False, mask=[]):
+                        min_range, threshold, sensor_ranges, angles, masking=False, mask=None):
         """
         Create a potential field based on the given range data message and the other parameters.
 
         The second return value is true if no obstacle within the max range is detected.
         threshold is the number of scans below the max_range which is needed to detect obstacles.
         """
-        
-        if masking: 
-            ranges = mask_ranges(sensor_ranges, mask) 
-            
+
         ranges = ScanCalculationFunctions.adjust_ranges(sensor_ranges, min_range, max_range)
-        obstacle_free = ScanCalculationFunctions.is_obstacle_free(max_range, ranges, threshold)
+
+        if masking:
+            ranges = ScanCalculationFunctions.mask_ranges(ranges, mask)
+
+        if masking:
+            # ToDo if mask is 0 --> obstacle free set to True
+            obstacle_free = True
+        else:
+            obstacle_free = ScanCalculationFunctions.is_obstacle_free(max_range, ranges, threshold)
 
         ranges = ScanCalculationFunctions.linear_rating(ranges, max_range)
 
@@ -215,7 +224,7 @@ class ScanCalculationFunctions:
 
     @staticmethod
     def sum_ranges(max_range, ranges):
-        """Return the number of ranges shorter than max_range and greater then zero."""
+        """Return the number of ranges shorter than max_range and greater than zero."""
         return sum([1 if 0 < y < max_range else 0 for y in ranges])
 
     @staticmethod
@@ -244,7 +253,7 @@ class ScanCalculationFunctions:
 
     @staticmethod
     def attraction_field(front_attraction, max_range, max_rotational_velocity,
-                         max_translational_velocity, min_range, threshold, sensor_ranges, angles, 
+                         max_translational_velocity, min_range, threshold, sensor_ranges, angles,
                          masking=False, mask=[]):
         """
         Create a potential field based on the given range data message and the other parameters.
@@ -253,10 +262,10 @@ class ScanCalculationFunctions:
         threshold is the number of scans below the max_range which is needed to detect obstacles.
         The nearest range is __most__ important.
         """
-        
-        if masking: 
-            ranges = mask_ranges(sensor_ranges, mask) 
-            
+
+        if masking:
+            sensor_ranges = ScanCalculationFunctions.mask_ranges(sensor_ranges, mask)
+
         ranges = ScanCalculationFunctions.adjust_ranges(sensor_ranges, min_range, max_range)
         obstacle_free = ScanCalculationFunctions.is_obstacle_free(max_range, ranges, threshold)
 
@@ -280,7 +289,7 @@ class ScanCalculationFunctions:
 
     @staticmethod
     def repulsion_field(front_attraction, max_range, max_rotational_velocity,
-                        max_translational_velocity, min_range, threshold, sensor_ranges, angles, 
+                        max_translational_velocity, min_range, threshold, sensor_ranges, angles,
                         masking=False, mask=[]):
         """
         Create a potential field based on the given range data message and the other parameters.
@@ -289,12 +298,17 @@ class ScanCalculationFunctions:
         threshold is the number of scans below the max_range which is needed to detect obstacles.
         The nearest range is __least__ important.
         """
-        
-        if masking: 
-            ranges = mask_ranges(sensor_ranges, mask) 
-        
+
         ranges = ScanCalculationFunctions.adjust_ranges(sensor_ranges, min_range, max_range)
-        obstacle_free = ScanCalculationFunctions.is_obstacle_free(max_range, ranges, threshold)
+
+        if masking:
+            ranges = ScanCalculationFunctions.mask_ranges(ranges, mask)
+
+        if masking:
+            # ToDo if mask is 0 --> obstacle free set to True
+            obstacle_free = True if sum(mask) == 0.0 else False
+        else:
+            obstacle_free = ScanCalculationFunctions.is_obstacle_free(max_range, ranges, threshold)
 
         ranges = ScanCalculationFunctions.linear_rating2(ranges, max_range)
 
@@ -394,7 +408,7 @@ class ScanCalculationFunctions:
 
         if current_object:
             object_list.append(list(current_object))
-            
+
         return cleanup(object_list)
 
     @staticmethod

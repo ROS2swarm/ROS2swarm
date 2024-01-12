@@ -12,13 +12,19 @@
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
-
+import math
+import yaml
+import torch
+import numpy as np
+from easydict import EasyDict
 from geometry_msgs.msg import Twist
 from ros2swarm.utils import setup_node
 from communication_interfaces.msg import RangeData
 from rclpy.qos import qos_profile_sensor_data
 from ros2swarm.movement_pattern.movement_pattern import MovementPattern
 from ros2swarm.utils.scan_calculation_functions import ScanCalculationFunctions
+from ros2swarm.utils.model import SimpleModel
+from ament_index_python.packages import get_package_share_directory
 
 
 class AttractionPattern(MovementPattern):
@@ -43,7 +49,8 @@ class AttractionPattern(MovementPattern):
                 ('attraction_linear_if_alone', 0.0),
                 ('attraction_angular_if_alone', 0.0),
                 ('max_translational_velocity', 0.0),
-                ('max_rotational_velocity', 0.0)
+                ('max_rotational_velocity', 0.0),
+                ('masking', True)
             ])
 
         self.scan_subscription = self.create_subscription(
@@ -69,11 +76,23 @@ class AttractionPattern(MovementPattern):
             "max_translational_velocity").get_parameter_value().double_value
         self.param_max_rotational_velocity = self.get_parameter(
             "max_rotational_velocity").get_parameter_value().double_value
+        self.masking = self.get_parameter("masking").get_parameter_value().bool_value
+        self.mask = []
+
+        if self.masking:
+            # load pytorch model (pretrained)
+            with open(get_package_share_directory('ros2swarm') + '/kin_detection_models/kin_detection_config.yaml',
+                      'r') as f:
+                config = EasyDict(yaml.load(f, Loader=yaml.FullLoader))
+
+            self.model = SimpleModel(config.model)
+            self.model.load_state_dict(torch.load(get_package_share_directory('ros2swarm') + '/kin_detection_models'
+                                                                                             '/simple_10.pth')['model'])
 
         self.direction_if_alone = Twist()
         self.direction_if_alone.linear.x = self.param_linear_if_alone
         self.direction_if_alone.angular.z = self.param_angular_if_alone
-        
+
     def range_data_callback(self, incoming_msg):
         """Call back if a new scan msg is available."""
         direction = self.vector_calc(incoming_msg)
@@ -84,6 +103,14 @@ class AttractionPattern(MovementPattern):
         if current_msg is None:
             return Twist()
 
+        if self.masking:
+            # input vector
+            ranges = [3.6 if math.isinf(el) else el for el in current_msg.ranges]
+            ranges = torch.tensor(ranges).view(1, 1, 360)
+            out = self.model(ranges).tolist()
+
+            self.mask = [1.0 if out[0][1][i] < out[0][0][i] else 0.0 for i in range(0, len(out[0][0]))]
+
         direction, alone = ScanCalculationFunctions.repulsion_field(
             self.param_front_attraction,
             self.param_max_range,
@@ -92,7 +119,9 @@ class AttractionPattern(MovementPattern):
             self.param_min_range,
             self.param_threshold,
             current_msg.ranges,
-            current_msg.angles)
+            current_msg.angles,
+            masking=self.masking,
+            mask=self.mask)
 
         direction = self.direction_if_alone if alone else direction
 
