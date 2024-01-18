@@ -13,7 +13,8 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 import math
-
+import numpy as np
+import torch 
 from geometry_msgs.msg import Twist
 from ros2swarm.utils import setup_node
 from communication_interfaces.msg import RangeData
@@ -21,7 +22,7 @@ from rclpy.qos import qos_profile_sensor_data
 from ros2swarm.movement_pattern.movement_pattern import MovementPattern
 from ros2swarm.utils.state import State
 from ros2swarm.utils.scan_calculation_functions import ScanCalculationFunctions, ReductionOption
-
+from ros2swarm.utils.kin_detection_functions import KinDetectionFunctions
 
 class AggregationPattern(MovementPattern):
     """
@@ -52,7 +53,8 @@ class AggregationPattern(MovementPattern):
                 ('aggregation_object_max_width', 0),
                 ('aggregation_stay_in_growing_groups', False),
                 ('max_translational_velocity', 0.0),
-                ('max_rotational_velocity', 0.0)
+                ('max_rotational_velocity', 0.0), 
+                ('masking', False)
             ])
             
         self.state = State.INIT
@@ -95,6 +97,15 @@ class AggregationPattern(MovementPattern):
             "max_translational_velocity").get_parameter_value().double_value
         self.param_max_rotational_velocity = self.get_parameter(
             "max_rotational_velocity").get_parameter_value().double_value
+        
+        self.masking = self.get_parameter("masking").get_parameter_value().bool_value
+        self.mask = []
+        
+        
+        if self.masking:
+            # load pytorch model (pretrained)
+            self.model = KinDetectionFunctions.load_model() 
+            
 
     def range_data_callback(self, incoming_msg):
         """Call back if a new scan msg is available."""
@@ -136,7 +147,11 @@ class AggregationPattern(MovementPattern):
         -> JOIN_GROUP : else, moving towards group.
         """
 
-        robots, robots_center = self.identify_robots(range_data)
+        if not self.masking: 
+            robots, robots_center = self.identify_robots(range_data)
+        else: 
+            #ToDo 
+        
         result = Twist()
         if not robots:
             state = State.EXPLORE

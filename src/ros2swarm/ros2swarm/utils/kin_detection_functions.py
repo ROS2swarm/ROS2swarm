@@ -16,7 +16,8 @@ class KinDetectionFunctions:
 
             model = SimpleModel(config.model)
             model.load_state_dict(torch.load(get_package_share_directory('ros2swarm') + '/kin_detection_models'
-                                                                                        '/simple_10.pth')['model'])
+                                                                                        '/simple_50.pth')['model'])
+            model.eval()
         
         return model 
    

@@ -14,7 +14,7 @@
 #    limitations under the License.
 import math
 import random
-
+import torch 
 from geometry_msgs.msg import Twist
 from ros2swarm.utils import setup_node
 from communication_interfaces.msg import RangeData
@@ -23,7 +23,7 @@ from ros2swarm.movement_pattern.movement_pattern import MovementPattern
 from ros2swarm.utils.state import State
 from ros2swarm.utils.scan_calculation_functions import ScanCalculationFunctions
 from enum import IntEnum, unique
-
+from ros2swarm.utils.kin_detection_functions import KinDetectionFunctions
 
 def check_robot(max_range, min_range, current_ranges, threshold):
     """Check if there is a robot in the area"""
@@ -68,7 +68,8 @@ class MinimalistFlockingPattern(MovementPattern):
                 ('minimalist_flocking_robot_threshold', 0),
                 ('minimalist_flocking_zone_borders', [0.0,0.0]),
                 ('max_range', 0.0),
-                ('min_range', 0.0)
+                ('min_range', 0.0), 
+                ('masking', True)
             ])
 
         self.state = State.INIT
@@ -111,6 +112,12 @@ class MinimalistFlockingPattern(MovementPattern):
             "max_range").get_parameter_value().double_value
         self.param_min_range = self.get_parameter(
             "min_range").get_parameter_value().double_value
+        self.masking = self.get_parameter("masking").get_parameter_value().bool_value
+        self.mask = []
+
+        if self.masking:
+            # load pytorch model (pretrained)
+            self.model = KinDetectionFunctions.load_model() 
 
         self.turn_right = Twist()
         self.turn_right.angular.z = self.param_rotational_right_velocity
@@ -126,22 +133,28 @@ class MinimalistFlockingPattern(MovementPattern):
         adj_ranges = ScanCalculationFunctions.adjust_ranges(incoming_msg.ranges,
                                                             self.param_min_range,
                                                             self.param_max_range)
+                                                            
+        # ToDo masking 
+        if self.masking:
+            self.mask = KinDetectionFunctions.propagate_input(incoming_msg.ranges, 3.6, self.model)
+            adj_ranges = ScanCalculationFunctions.mask_ranges(adj_ranges, self.mask)
+        
 
         # Divide the ranges of the scan in 4 parts:
         # [0] = front, [1] = left, [2] = behind, [3] = right
-        for i in range(len(incoming_msg.ranges)):
+        for i in range(len(adj_ranges)):
             #right
             if  self.param_zone_borders[2] < incoming_msg.angles[i] <= self.param_zone_borders[3]:
-                self.ranges[Directions.RIGHT].append(incoming_msg.ranges[i])
+                self.ranges[Directions.RIGHT].append(adj_ranges[i])
             #front
             elif self.param_zone_borders[3] < incoming_msg.angles[i] or incoming_msg.angles[i] <= self.param_zone_borders[0]:
-                self.ranges[Directions.FRONT].append(incoming_msg.ranges[i])
+                self.ranges[Directions.FRONT].append(adj_ranges[i])
             #left
             elif self.param_zone_borders[0] < incoming_msg.angles[i] <= self.param_zone_borders[1]:
-                self.ranges[Directions.LEFT].append(incoming_msg.ranges[i])
+                self.ranges[Directions.LEFT].append(adj_ranges[i])
             #rear
             elif self.param_zone_borders[1] < incoming_msg.angles[i] <= self.param_zone_borders[2]:
-                self.ranges[Directions.BEHIND].append(incoming_msg.ranges[i])
+                self.ranges[Directions.BEHIND].append(adj_ranges[i])
               
         self.direction = self.vector_calc()
         self.command_publisher.publish(self.direction)

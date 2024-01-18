@@ -12,12 +12,14 @@
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
-
+import math
+import numpy as np
+import torch 
 from geometry_msgs.msg import Twist
 from ros2swarm.utils import setup_node
 from rclpy.qos import qos_profile_sensor_data
 from ros2swarm.movement_pattern.movement_pattern import MovementPattern
-
+from ros2swarm.utils.kin_detection_functions import KinDetectionFunctions
 from ros2swarm.utils.scan_calculation_functions import ScanCalculationFunctions
 from communication_interfaces.msg import DoubleMessage, RangeData
 
@@ -45,7 +47,8 @@ class DispersionPattern(MovementPattern):
                 ('dispersion_angular_if_alone', 0.0),
                 ('dispersion_allow_dynamic_max_range_setting', False),
                 ('max_translational_velocity', 0.0),
-                ('max_rotational_velocity', 0.0)
+                ('max_rotational_velocity', 0.0), 
+                ('masking', True)
             ])
 
         self.range_data_subscription = self.create_subscription(
@@ -80,7 +83,14 @@ class DispersionPattern(MovementPattern):
             "max_translational_velocity").get_parameter_value().double_value
         self.param_max_rotational_velocity = self.get_parameter(
             "max_rotational_velocity").get_parameter_value().double_value
-            
+        self.masking = self.get_parameter("masking").get_parameter_value().bool_value
+        self.mask = []
+        
+        
+        if self.masking:
+            # load pytorch model (pretrained)
+            self.model = KinDetectionFunctions.load_model() 
+                    
         self.direction_if_alone = Twist()
         self.direction_if_alone.linear.x = self.param_linear_if_alone
         self.direction_if_alone.angular.z = self.param_angular_if_alone
@@ -100,6 +110,9 @@ class DispersionPattern(MovementPattern):
         """Calculate the direction vector for the current scan."""
         if ranges is None:
             return Twist()
+            
+        if self.masking:
+            self.mask = KinDetectionFunctions.propagate_input(ranges, 3.6, self.model)
 
         direction, alone = ScanCalculationFunctions.potential_field(self.param_front_attraction,
                                                                    self.param_max_range,
@@ -107,7 +120,10 @@ class DispersionPattern(MovementPattern):
                                                                    self.param_max_translational_velocity,
                                                                    self.param_min_range,
                                                                    self.param_threshold,
-                                                                   ranges, angles)
+                                                                   ranges, 
+                                                                   angles, 
+                                                                   masking=self.masking,
+                                                                   mask=self.mask)
                                                                    
         direction = self.direction_if_alone if alone else direction
             

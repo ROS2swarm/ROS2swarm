@@ -81,7 +81,6 @@ class AttractionPattern(MovementPattern):
             # load pytorch model (pretrained)
             self.model = KinDetectionFunctions.load_model() 
 
-
         self.direction_if_alone = Twist()
         self.direction_if_alone.linear.x = self.param_linear_if_alone
         self.direction_if_alone.angular.z = self.param_angular_if_alone

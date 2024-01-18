@@ -170,15 +170,16 @@ class ScanCalculationFunctions:
         The second return value is true if no obstacle within the max range is detected.
         threshold is the number of scans below the max_range which is needed to detect obstacles.
         """
-
+        
         ranges = ScanCalculationFunctions.adjust_ranges(sensor_ranges, min_range, max_range)
 
         if masking:
             ranges = ScanCalculationFunctions.mask_ranges(ranges, mask)
-
+        
         obstacle_free = ScanCalculationFunctions.is_obstacle_free(max_range, ranges, threshold)
 
         ranges = ScanCalculationFunctions.linear_rating(ranges, max_range)
+        
 
         vector = ScanCalculationFunctions.calculate_vector_normed(front_attraction, ranges, angles)
         direction = ScanCalculationFunctions.create_normed_twist_message(
@@ -192,7 +193,7 @@ class ScanCalculationFunctions:
                 'calculated Twist message contains NaN value, '
                 'adjusting to a stop message')
             direction = Twist()
-
+        
         return direction, obstacle_free
 
     @staticmethod
@@ -296,8 +297,12 @@ class ScanCalculationFunctions:
 
         if masking:
             ranges = ScanCalculationFunctions.mask_ranges(ranges, mask)
+            
+        print(sensor_ranges) 
+        print(ranges) 
 
         obstacle_free = ScanCalculationFunctions.is_obstacle_free(max_range, ranges, threshold)
+        print(obstacle_free) 
 
         ranges = ScanCalculationFunctions.linear_rating2(ranges, max_range)
 
