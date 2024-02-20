@@ -1,3 +1,5 @@
+import torch
+
 from functools import partial
 from torch import nn, Tensor
 from torch.nn import functional as F
@@ -14,7 +16,7 @@ model_urls = {
     "mobilenet_v3_small": "https://download.pytorch.org/models/mobilenet_v3_small-047dcff4.pth",
 }
 
-class CloseRing(nn.Module):
+class CloseRing(torch.nn.Module):
     def __init__(self):
         super().__init__()
 
@@ -47,6 +49,7 @@ class ConvBNActivation(nn.Sequential):
             activation_layer(inplace=True)
         )
         self.out_channels = out_planes
+        self.stride = stride
 
 
 class SqueezeExcitation(nn.Module):
@@ -123,6 +126,7 @@ class InvertedResidual(nn.Module):
         self.block = nn.Sequential(*layers)
         self.out_channels = cnf.out_channels
         self._is_cn = cnf.stride > 1
+        self.stride = cnf.stride
 
     def forward(self, input: Tensor) -> Tensor:
         # print(input.shape)
@@ -166,26 +170,30 @@ class MobileNetV3(nn.Module):
         if norm_layer is None:
             norm_layer = partial(nn.BatchNorm1d, eps=0.001, momentum=0.01)
 
-        layers: List[nn.Module] = []
+        self.up_layers: torch.nn.ModuleList[nn.Module] = torch.nn.ModuleList()
+        self.down_layers: torch.nn.ModuleList[nn.Module] = torch.nn.ModuleList()
 
         # building first layer
         firstconv_output_channels = inverted_residual_setting[0].input_channels
-        layers.append(CloseRing())
-        layers.append(norm_layer(1))
-        layers.append(ConvBNActivation(1, firstconv_output_channels, kernel_size=3, stride=1, norm_layer=norm_layer,
-                                       activation_layer=nn.Hardswish))
+        self.up_layers.extend([CloseRing(), norm_layer(1)])
+        self.up_layers.extend([ConvBNActivation(1, firstconv_output_channels, kernel_size=3, stride=1, norm_layer=norm_layer,
+                                       activation_layer=nn.Hardswish)])
 
         # building inverted residual blocks
+        up = True
         for cnf in inverted_residual_setting:
-            layers.append(block(cnf, norm_layer))
+            if up and cnf.stride > 0:
+                self.up_layers.extend([block(cnf, norm_layer)])
+            else:
+                up = False
+                self.down_layers.extend([block(cnf, norm_layer)])
 
         # building last several layers
         lastconv_input_channels = inverted_residual_setting[-1].out_channels
         lastconv_output_channels = 2
-        layers.append(ConvBNActivation(lastconv_input_channels, lastconv_output_channels, kernel_size=1,
+        self.down_layers.append(ConvBNActivation(lastconv_input_channels, lastconv_output_channels, kernel_size=1,
                                        norm_layer=norm_layer, activation_layer=nn.Hardswish))
 
-        self.features = nn.Sequential(*layers)
 
         for m in self.modules():
             if isinstance(m, nn.Conv1d):
@@ -201,7 +209,16 @@ class MobileNetV3(nn.Module):
 
     def _forward_impl(self, x: Tensor) -> Tensor:
         # print(x.shape)
-        x = self.features(x)
+        up_feats = []
+        for i, layer in enumerate(self.up_layers):
+            x = layer(x)
+            up_feats.append(x)
+        for i, layer in enumerate(self.down_layers):
+            x = layer(x)
+            if layer.stride < 0:
+                if x.shape[2] != up_feats[-(i + 2)].shape[2]:
+                    x = x[:, :, :up_feats[-(i + 2)].shape[2]]
+                x = torch.cat((x, up_feats[-(i + 2)]), 1)
 
         return x
 
@@ -254,10 +271,65 @@ def _mobilenet_v3_conf(arch: str, width_mult: float = 1.0, reduced_tail: bool = 
     elif arch == "mobilenetPts_v3_small":
         inverted_residual_setting = [
             bneck_conf(16, 3, 16, 16, True, "RE", 2, 1),
+            bneck_conf(16, 3, 16, 16, True, "RE", -2, 1),
+            bneck_conf(32, 3, 16, 16, False, "RE", 1, 1),
+        ]
+        last_channel = 0
+    elif arch == "mobilenetPts_v3_medium":
+        inverted_residual_setting = [
+            bneck_conf(16, 3, 16, 16, True, "RE", 2, 1),
             bneck_conf(16, 3, 72, 24, False, "RE", 2, 1),
             bneck_conf(24, 3, 72, 16, False, "RE", -2, 1),
-            bneck_conf(16, 3, 16, 16, True, "RE", -2, 1),
-            bneck_conf(16, 3, 16, 2, False, "RE", 1, 1),
+            bneck_conf(32, 3, 16, 16, True, "RE", -2, 1),
+            bneck_conf(32, 3, 16, 16, False, "RE", 1, 1),
+        ]
+        last_channel = 0
+    elif arch == "mobilenetPts_v3_laarge":
+        inverted_residual_setting = [
+            bneck_conf(16, 3, 16, 16, False, "RE", 2, 1),
+            bneck_conf(16, 3, 72, 24, True, "RE", 2, 1),
+            bneck_conf(24, 3, 88, 24, True, "RE", 2, 1),
+            bneck_conf(24, 3, 128, 40, True, "RE", 2, 1),
+            bneck_conf(40, 3, 128, 24, True, "RE", -2, 1),
+            bneck_conf(48, 3, 88, 24, True, "RE", -2, 1),
+            bneck_conf(48, 3, 72, 16, True, "RE", -2, 1),
+            bneck_conf(32, 3, 32, 16, True, "RE", -2, 1),
+            bneck_conf(32, 3, 32, 16, False, "RE", 1, 1),
+        ]
+        last_channel = 0
+    elif arch == "mobilenetPts_v3_large":
+        inverted_residual_setting = [
+            bneck_conf(16, 3, 16, 16, True, "RE", 2, 1),
+            bneck_conf(16, 3, 72, 24, False, "RE", 2, 1),
+            bneck_conf(24, 3, 88, 24, False, "RE", 2, 1),
+            bneck_conf(24, 3, 88, 24, False, "RE", -2, 1),
+            bneck_conf(48, 3, 72, 16, False, "RE", -2, 1),
+            bneck_conf(32, 3, 32, 16, True, "RE", -2, 1),
+            bneck_conf(32, 3, 32, 16, False, "RE", 1, 1),
+        ]
+        last_channel = 0
+    elif arch == "mobilenetPts_v3_llarge":
+        inverted_residual_setting = [
+            bneck_conf(16, 3, 16, 16, False, "RE", 2, 1),
+            bneck_conf(16, 3, 72, 24, False, "RE", 1, 1),
+            bneck_conf(24, 3, 88, 24, True, "RE", 2, 1),
+            bneck_conf(24, 3, 96, 40, True, "RE", 2, 1),
+            bneck_conf(40, 3, 96, 24, True, "RE", -2, 1),
+            bneck_conf(48, 3, 88, 24, True, "RE", -2, 1),
+            bneck_conf(48, 3, 72, 16, True, "RE", 1, 1),
+            bneck_conf(16, 3, 32, 16, False, "RE", -2, 1),
+            bneck_conf(32, 3, 32, 16, False, "RE", 1, 1),
+        ]
+        last_channel = 0
+    elif arch == "mobilenetPts_v3_lmedium":
+        inverted_residual_setting = [
+            bneck_conf(16, 3, 16, 16, False, "RE", 2, 1),
+            bneck_conf(16, 3, 72, 16, True, "RE", 1, 1),
+            bneck_conf(16, 3, 88, 24, True, "RE", 2, 1),
+            bneck_conf(24, 3, 88, 16, True, "RE", -2, 1),
+            bneck_conf(32, 3, 72, 16, True, "RE", 1, 1),
+            bneck_conf(16, 3, 72, 16, False, "RE", -2, 1),
+            bneck_conf(32, 3, 16, 16, False, "RE", 1, 1),
         ]
         last_channel = 0
     else:

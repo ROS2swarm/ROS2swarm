@@ -48,7 +48,7 @@ class DispersionPattern(MovementPattern):
                 ('dispersion_allow_dynamic_max_range_setting', False),
                 ('max_translational_velocity', 0.0),
                 ('max_rotational_velocity', 0.0), 
-                ('masking', True)
+                ('masking', False)
             ])
 
         self.range_data_subscription = self.create_subscription(

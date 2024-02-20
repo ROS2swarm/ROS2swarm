@@ -297,12 +297,8 @@ class ScanCalculationFunctions:
 
         if masking:
             ranges = ScanCalculationFunctions.mask_ranges(ranges, mask)
-            
-        print(sensor_ranges) 
-        print(ranges) 
 
         obstacle_free = ScanCalculationFunctions.is_obstacle_free(max_range, ranges, threshold)
-        print(obstacle_free) 
 
         ranges = ScanCalculationFunctions.linear_rating2(ranges, max_range)
 
