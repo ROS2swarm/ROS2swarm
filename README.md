@@ -39,7 +39,7 @@ Basic patterns can be used by combined patterns to create more complex behaviors
 <a name="installation_guide"></a>
 ### **Installation guide**
 
-To see a full installation guide for the ROS2swarm package please see the [installation guide](INSTALL_GUIDE.md).
+To see a full installation guide for the ROS2swarm package, please see the [installation guide](https://ros2swarm.github.io/ROS2swarm_documentation/installation.html).
 
 <a name="how-to-use"></a>
 ### **How to use ROS2swarm**
