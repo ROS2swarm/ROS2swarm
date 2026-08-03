@@ -2,7 +2,7 @@
 
 ROS2swarm is a ROS 2 (Dashing, Foxy) package that provides swarm behavior patterns. 
 The project started at the **Institute of Computer Engineering** with support from the Institute of Robotics and the Institute for Electrical Engineering in Medicine of the **University of Lübeck, Germany**. 
-Currently, it is mainly developed by the **Cyber-Physical Systems Group** of the **University Konstanz, Germany**. 
+Currently, the package is not further maintained. 
 
 A list of all project contributors can be found [here](CONTRIBUTORS.md)
 
